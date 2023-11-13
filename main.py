@@ -7,12 +7,11 @@ screen = pygame.display.set_mode((1280, 720))
 screen.fill((99, 156, 247))
 pygame.display.set_caption("00 Racing")
 
-
 clock = pg.time.Clock()
 
 action = True
 
-start_button = pygame.Surface((300, 150))
+start_button = pygame.Surface((200, 100), 10)
 start_button.fill((255, 255, 255))
 
 myfont = pygame.font.Font("fonts/itim.ttf", 60)
@@ -20,7 +19,7 @@ start_button_text = myfont.render("START", True, (255, 43, 72))
 
 background = pygame.image.load("images/background1.png")
 
-bg_sound = pygame.mixer.Sound("audio/music1.mp3")
+bg_sound = pygame.mixer.Sound("audio/music.mp3")
 bg_sound.play()
 
 while action:
