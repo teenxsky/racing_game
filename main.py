@@ -1,3 +1,4 @@
+#кодик не оч
 import pygame
 import pygame as pg
 
