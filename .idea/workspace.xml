@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#Creat a window">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+Background and Start Button">
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -139,7 +138,14 @@
       <option name="project" value="LOCAL" />
       <updated>1699891302633</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="#+Background and Start Button">
+      <created>1699891727341</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1699891727341</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -156,6 +162,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ya pidor" />
     <MESSAGE value="#Creat a window" />
-    <option name="LAST_COMMIT_MESSAGE" value="#Creat a window" />
+    <MESSAGE value="#+Background and Start Button" />
+    <option name="LAST_COMMIT_MESSAGE" value="#+Background and Start Button" />
   </component>
 </project>

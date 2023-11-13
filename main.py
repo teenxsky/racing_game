@@ -22,6 +22,8 @@ background = pygame.image.load("images/background1.png")
 bg_sound = pygame.mixer.Sound("audio/music.mp3")
 bg_sound.play()
 
+motor_sound = pygame.mixer.Sound("audio/motor_sound.mp3")
+
 while action:
 
     pygame.display.update()
@@ -34,5 +36,8 @@ while action:
         if event.type == pygame.QUIT:
             action = False
             pygame.quit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                motor_sound.play()
 
     clock.tick(30)
