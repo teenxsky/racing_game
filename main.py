@@ -23,6 +23,7 @@ bg_sound = pygame.mixer.Sound("audio/music.mp3")
 bg_sound.play()
 
 motor_sound = pygame.mixer.Sound("audio/motor_sound.mp3")
+skype_sound = pygame.mixer.Sound("audio/skype.mp3")
 
 while action:
 
@@ -39,5 +40,6 @@ while action:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 motor_sound.play()
+                skype_sound.play()
 
     clock.tick(30)
