@@ -3,7 +3,7 @@ from menu import MainMenu
 from objects import Button, Picture
 
 pg.init()
-
+#zalupa
 
 class Game:
     def __init__(self):
@@ -20,7 +20,7 @@ class Game:
         self.main_menu = MainMenu(self)
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
 
-        game_background = pg.image.load("images/summer_road.png").convert_alpha()
+        game_background = pg.image.load("images/sumer_road.png").convert_alpha()
         self.game_background = Picture(0, 0, game_background)
         self.game_background.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
