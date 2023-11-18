@@ -63,7 +63,8 @@ class Picture:
 
         self.current_size = 0
         self.state_pulse = False
-
+    def coordinates(self, x, y):
+        self.coord = [x, y]
     def resize(self, width, height):
         self.image = pg.transform.scale(self.image, (width, height))
 

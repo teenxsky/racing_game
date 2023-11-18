@@ -1,0 +1,186 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"#Creat a window\" />\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"RESET_MODE\" value=\"HARD\" />\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2Y7tyl12DgHdbwMw63dnAZPd3tK\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"last_opened_file_path\": \"/Users/roman\",\n    \"settings.editor.selected.configurable\": \"org.jetbrains.plugins.github.ui.GithubSettingsConfigurable\"\n  }\n}]]></component>\n  <component name=\"RunManager\">\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Python.main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"\" />\n      <created>1699888702045</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1699888702045</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Ya pidor\">\n      <created>1699888777909</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699888777909</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"#Creat a window\">\n      <created>1699889537336</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889537336</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"#Creat a window\">\n      <created>1699889565743</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889565743</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"#Creat a window\">\n      <created>1699889842557</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889842557</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"#Creat a window\">\n      <created>1699889957653</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889957653</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"6\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"Ya pidor\" />\n    <MESSAGE value=\"#Creat a window\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"#Creat a window\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -1,7 +1,28 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#Creat a window" />
++    <list default="true" id="f449a60c-4f1a-48f7-9449-5cc0f6e80a40" name="Changes" comment="test commit">
++      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/racing_game.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/racing_game.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/ProjectX.iml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/misc.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/modules.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/vcs.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/ProjectX/main.py" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/audio/music.mp3" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/audio/music1.mp3" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/fonts/itim.ttf" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -9,27 +30,38 @@
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+-    <option name="RESET_MODE" value="HARD" />
++    <option name="RESET_MODE" value="MIXED" />
+     <option name="UPDATE_TYPE" value="REBASE" />
++  </component>
++  <component name="GitHubPullRequestSearchHistory">{
++  &quot;lastFilter&quot;: {
++    &quot;state&quot;: &quot;OPEN&quot;
++  }
++}</component>
++  <component name="GithubPullRequestsUISettings">
++    <option name="selectedUrlAndAccountId">
++      <UrlAndAccount>
++        <option name="accountId" value="0905aea8-ce32-43c9-ae9d-0692eed88c93" />
++        <option name="url" value="https://github.com/teenxsky/racing_game.git" />
++      </UrlAndAccount>
++    </option>
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+   </component>
+-  <component name="ProjectId" id="2Y7tyl12DgHdbwMw63dnAZPd3tK" />
++  <component name="ProjectId" id="2Y2OcgboLSL7kn6rN34QfqsWHQ5" />
+   <component name="ProjectViewState">
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "last_opened_file_path": "/Users/roman",
+-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RunManager">
+-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+       <module name="racing_game" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+@@ -50,57 +82,59 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
+-    <recent_temporary>
+-      <list>
+-        <item itemvalue="Python.main" />
+-      </list>
+-    </recent_temporary>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task active="true" id="Default" summary="Default task">
+-      <changelist id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="" />
+-      <created>1699888702045</created>
++      <changelist id="f449a60c-4f1a-48f7-9449-5cc0f6e80a40" name="Changes" comment="" />
++      <created>1699720289781</created>
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+-      <updated>1699888702045</updated>
++      <updated>1699720289781</updated>
+     </task>
+-    <task id="LOCAL-00001" summary="Ya pidor">
+-      <created>1699888777909</created>
++    <task id="LOCAL-00001" summary="test commit">
++      <created>1699720368717</created>
+       <option name="number" value="00001" />
+       <option name="presentableId" value="LOCAL-00001" />
+       <option name="project" value="LOCAL" />
+-      <updated>1699888777909</updated>
++      <updated>1699720368717</updated>
+     </task>
+-    <task id="LOCAL-00002" summary="#Creat a window">
+-      <created>1699889537336</created>
++    <task id="LOCAL-00002" summary="test commit">
++      <created>1699889098121</created>
+       <option name="number" value="00002" />
+       <option name="presentableId" value="LOCAL-00002" />
+       <option name="project" value="LOCAL" />
+-      <updated>1699889537336</updated>
++      <updated>1699889098121</updated>
+     </task>
+-    <task id="LOCAL-00003" summary="#Creat a window">
+-      <created>1699889565743</created>
++    <task id="LOCAL-00003" summary="test commitwrqw">
++      <created>1699889349294</created>
+       <option name="number" value="00003" />
+       <option name="presentableId" value="LOCAL-00003" />
+       <option name="project" value="LOCAL" />
+-      <updated>1699889565743</updated>
++      <updated>1699889349294</updated>
+     </task>
+-    <task id="LOCAL-00004" summary="#Creat a window">
+-      <created>1699889842557</created>
++    <task id="LOCAL-00004" summary="test commitwrqw">
++      <created>1699889396514</created>
+       <option name="number" value="00004" />
+       <option name="presentableId" value="LOCAL-00004" />
+       <option name="project" value="LOCAL" />
+-      <updated>1699889842557</updated>
++      <updated>1699889396514</updated>
+     </task>
+-    <task id="LOCAL-00005" summary="#Creat a window">
+-      <created>1699889957653</created>
++    <task id="LOCAL-00005" summary="test commit">
++      <created>1699889525720</created>
+       <option name="number" value="00005" />
+       <option name="presentableId" value="LOCAL-00005" />
+       <option name="project" value="LOCAL" />
+-      <updated>1699889957653</updated>
++      <updated>1699889525720</updated>
+     </task>
+-    <option name="localTasksCounter" value="6" />
++    <task id="LOCAL-00006" summary="test commit">
++      <created>1699890043157</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1699890043157</updated>
++    </task>
++    <option name="localTasksCounter" value="7" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -115,8 +149,8 @@
+     </option>
+   </component>
+   <component name="VcsManagerConfiguration">
+-    <MESSAGE value="Ya pidor" />
+-    <MESSAGE value="#Creat a window" />
+-    <option name="LAST_COMMIT_MESSAGE" value="#Creat a window" />
++    <MESSAGE value="test commitwrqw" />
++    <MESSAGE value="test commit" />
++    <option name="LAST_COMMIT_MESSAGE" value="test commit" />
+   </component>
+ </project>
+\ No newline at end of file

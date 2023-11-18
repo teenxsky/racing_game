@@ -1,0 +1,355 @@
+Index: ProjectX/.idea/inspectionProfiles/profiles_settings.xml
+===================================================================
+diff --git a/ProjectX/.idea/inspectionProfiles/profiles_settings.xml b/ProjectX/.idea/inspectionProfiles/profiles_settings.xml
+deleted file mode 100644
+--- a/ProjectX/.idea/inspectionProfiles/profiles_settings.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,6 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <settings>
+-    <option name="USE_PROJECT_PROFILE" value="false" />
+-    <version value="1.0" />
+-  </settings>
+-</component>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+deleted file mode 100644
+--- a/.idea/inspectionProfiles/Project_Default.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,71 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <profile version="1.0">
+-    <option name="myName" value="Project Default" />
+-    <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+-      <option name="ignoredErrors">
+-        <list>
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-        </list>
+-      </option>
+-    </inspection_tool>
+-  </profile>
+-</component>
+\ No newline at end of file
+Index: ProjectX/.idea/inspectionProfiles/Project_Default.xml
+===================================================================
+diff --git a/ProjectX/.idea/inspectionProfiles/Project_Default.xml b/ProjectX/.idea/inspectionProfiles/Project_Default.xml
+deleted file mode 100644
+--- a/ProjectX/.idea/inspectionProfiles/Project_Default.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,73 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <profile version="1.0">
+-    <option name="myName" value="Project Default" />
+-    <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+-      <option name="ignoredErrors">
+-        <list>
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-          <option value="W29" />
+-          <option value="E501" />
+-        </list>
+-      </option>
+-    </inspection_tool>
+-  </profile>
+-</component>
+\ No newline at end of file
+Index: ProjectX/.idea/vcs.xml
+===================================================================
+diff --git a/ProjectX/.idea/vcs.xml b/ProjectX/.idea/vcs.xml
+deleted file mode 100644
+--- a/ProjectX/.idea/vcs.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: ProjectX/.idea/ProjectX.iml
+===================================================================
+diff --git a/ProjectX/.idea/ProjectX.iml b/ProjectX/.idea/ProjectX.iml
+deleted file mode 100644
+--- a/ProjectX/.idea/ProjectX.iml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<module type="PYTHON_MODULE" version="4">
+-  <component name="NewModuleRootManager">
+-    <content url="file://$MODULE_DIR$" />
+-    <orderEntry type="inheritedJdk" />
+-    <orderEntry type="sourceFolder" forTests="false" />
+-  </component>
+-</module>
+\ No newline at end of file
+Index: ProjectX/main.py
+===================================================================
+diff --git a/ProjectX/main.py b/ProjectX/main.py
+deleted file mode 100644
+--- a/ProjectX/main.py	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,21 +0,0 @@
+-import pygame
+-import pygame as pg
+-
+-
+-pygame.init()
+-
+-screen = pygame.display.set_mode((1280, 720))
+-clock = pg.time.Clock()
+-
+-action = True
+-
+-while action:
+-
+-    pygame.display.update()
+-
+-    for event in pygame.event.get():
+-        if event.type == pygame.QUIT:
+-            action = False
+-            pygame.quit()
+-
+-    clock.tick(30)
+Index: ProjectX/.idea/modules.xml
+===================================================================
+diff --git a/ProjectX/.idea/modules.xml b/ProjectX/.idea/modules.xml
+deleted file mode 100644
+--- a/ProjectX/.idea/modules.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ProjectModuleManager">
+-    <modules>
+-      <module fileurl="file://$PROJECT_DIR$/.idea/ProjectX.iml" filepath="$PROJECT_DIR$/.idea/ProjectX.iml" />
+-    </modules>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: ProjectX/.idea/misc.xml
+===================================================================
+diff --git a/ProjectX/.idea/misc.xml b/ProjectX/.idea/misc.xml
+deleted file mode 100644
+--- a/ProjectX/.idea/misc.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ /dev/null	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
+@@ -1,4 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
+-</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"VcsDirectoryMappings\">\n    <mapping directory=\"$PROJECT_DIR$\" vcs=\"Git\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+--- a/.idea/vcs.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ b/.idea/vcs.xml	(date 1699891482239)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++    <mapping directory="" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ b/.idea/misc.xml	(date 1699891482242)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (racing_game)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/racing_game.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module type=\"PYTHON_MODULE\" version=\"4\">\n  <component name=\"NewModuleRootManager\">\n    <content url=\"file://$MODULE_DIR$\" />\n    <orderEntry type=\"inheritedJdk\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n  </component>\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/racing_game.iml b/.idea/racing_game.iml
+--- a/.idea/racing_game.iml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ b/.idea/racing_game.iml	(date 1699891482245)
+@@ -1,8 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+-    <content url="file://$MODULE_DIR$" />
+-    <orderEntry type="inheritedJdk" />
++    <content url="file://$MODULE_DIR$">
++      <excludeFolder url="file://$MODULE_DIR$/venv" />
++    </content>
++    <orderEntry type="jdk" jdkName="Python 3.11 (racing_game)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"#Creat a window\" />\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"RESET_MODE\" value=\"HARD\" />\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2Y7tyl12DgHdbwMw63dnAZPd3tK\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"last_opened_file_path\": \"/Users/roman\",\n    \"settings.editor.selected.configurable\": \"org.jetbrains.plugins.github.ui.GithubSettingsConfigurable\"\n  }\n}]]></component>\n  <component name=\"RunManager\">\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Python.main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"\" />\n      <created>1699888702045</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1699888702045</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Ya pidor\">\n      <created>1699888777909</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699888777909</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"#Creat a window\">\n      <created>1699889537336</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889537336</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"#Creat a window\">\n      <created>1699889565743</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889565743</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"#Creat a window\">\n      <created>1699889842557</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889842557</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"#Creat a window\">\n      <created>1699889957653</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889957653</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"6\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"Ya pidor\" />\n    <MESSAGE value=\"#Creat a window\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"#Creat a window\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision d3945a6978a0a6aad608fa4bb9a261579be604f9)
++++ b/.idea/workspace.xml	(date 1699891492903)
+@@ -20,14 +20,14 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "last_opened_file_path": "/Users/roman",
+-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;/Users/roman&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RunManager">
+     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="racing_game" />
+diff --git a/ProjectX/.idea/.gitignore b/.idea/.gitignore
+rename from ProjectX/.idea/.gitignore
+rename to .idea/.gitignore

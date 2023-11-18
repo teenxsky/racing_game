@@ -1,0 +1,99 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"#+button class + menu buttons\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/button.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/button.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/game.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/game.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/main.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/menu.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/menu.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/utilities.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/utilities.py\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Python Script\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"RESET_MODE\" value=\"HARD\" />\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2Y7tyl12DgHdbwMw63dnAZPd3tK\" />\n  <component name=\"ProjectLevelVcsManager\">\n    <ConfirmationsSetting value=\"1\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/Users/roman/Desktop/racing_game&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Python.main\">\n    <configuration name=\"Project3\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/../GamePyGame/Test\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/../GamePyGame/Test/Project3.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Python.main\" />\n        <item itemvalue=\"Python.Project3\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"\" />\n      <created>1699888702045</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1699888702045</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Ya pidor\">\n      <created>1699888777909</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699888777909</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"#Creat a window\">\n      <created>1699889537336</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889537336</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"#Creat a window\">\n      <created>1699889565743</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889565743</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"#Creat a window\">\n      <created>1699889842557</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889842557</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"#Creat a window\">\n      <created>1699889957653</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889957653</updated>\n    </task>\n    <task id=\"LOCAL-00006\" summary=\"#Creat a window\">\n      <created>1699890205093</created>\n      <option name=\"number\" value=\"00006\" />\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699890205093</updated>\n    </task>\n    <task id=\"LOCAL-00007\" summary=\"#Creat a window\">\n      <created>1699891302633</created>\n      <option name=\"number\" value=\"00007\" />\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699891302633</updated>\n    </task>\n    <task id=\"LOCAL-00008\" summary=\"#+Background and Start Button\">\n      <created>1699891727341</created>\n      <option name=\"number\" value=\"00008\" />\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699891727341</updated>\n    </task>\n    <task id=\"LOCAL-00009\" summary=\"#+motor sound\">\n      <created>1699892057414</created>\n      <option name=\"number\" value=\"00009\" />\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699892057414</updated>\n    </task>\n    <task id=\"LOCAL-00010\" summary=\"#+skype sound\">\n      <created>1699892317254</created>\n      <option name=\"number\" value=\"00010\" />\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699892317254</updated>\n    </task>\n    <task id=\"LOCAL-00011\" summary=\"#+skype sound\">\n      <created>1699892462293</created>\n      <option name=\"number\" value=\"00011\" />\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699892462293</updated>\n    </task>\n    <task id=\"LOCAL-00012\" summary=\"#all changed\">\n      <created>1699975122040</created>\n      <option name=\"number\" value=\"00012\" />\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699975122040</updated>\n    </task>\n    <task id=\"LOCAL-00013\" summary=\"#button can change color\">\n      <created>1699998255452</created>\n      <option name=\"number\" value=\"00013\" />\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699998255452</updated>\n    </task>\n    <task id=\"LOCAL-00014\" summary=\"#add playlist\">\n      <created>1700007285227</created>\n      <option name=\"number\" value=\"00014\" />\n      <option name=\"presentableId\" value=\"LOCAL-00014\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700007285227</updated>\n    </task>\n    <task id=\"LOCAL-00015\" summary=\"#+button class + menu buttons\">\n      <created>1700241994186</created>\n      <option name=\"number\" value=\"00015\" />\n      <option name=\"presentableId\" value=\"LOCAL-00015\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700241994186</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"16\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"Ya pidor\" />\n    <MESSAGE value=\"#Creat a window\" />\n    <MESSAGE value=\"#+Background and Start Button\" />\n    <MESSAGE value=\"#+motor sound\" />\n    <MESSAGE value=\"#+skype sound\" />\n    <MESSAGE value=\"#all changed\" />\n    <MESSAGE value=\"#button can change color\" />\n    <MESSAGE value=\"#add playlist\" />\n    <MESSAGE value=\"#+button class + menu buttons\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"#+button class + menu buttons\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 1ae7830a83e47571b6eed2eaca71e6bf6cdf1857)
++++ b/.idea/workspace.xml	(date 1700294741178)
+@@ -1,38 +1,25 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+button class + menu buttons">
++    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#button can change color">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/button.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utilities.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
+-  </component>
+-  <component name="FileTemplateManagerImpl">
+-    <option name="RECENT_TEMPLATES">
+-      <list>
+-        <option value="Python Script" />
+-      </list>
+-    </option>
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+     <option name="RESET_MODE" value="HARD" />
+-    <option name="UPDATE_TYPE" value="REBASE" />
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+   </component>
+   <component name="ProjectId" id="2Y7tyl12DgHdbwMw63dnAZPd3tK" />
+-  <component name="ProjectLevelVcsManager">
+-    <ConfirmationsSetting value="1" id="Add" />
+-  </component>
+   <component name="ProjectViewState">
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+@@ -45,11 +32,6 @@
+     &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+   }
+ }</component>
+-  <component name="RecentsManager">
+-    <key name="CopyFile.RECENT_KEYS">
+-      <recent name="$PROJECT_DIR$" />
+-    </key>
+-  </component>
+   <component name="RunManager" selected="Python.main">
+     <configuration name="Project3" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="racing_game" />
+@@ -200,21 +182,7 @@
+       <option name="project" value="LOCAL" />
+       <updated>1699998255452</updated>
+     </task>
+-    <task id="LOCAL-00014" summary="#add playlist">
+-      <created>1700007285227</created>
+-      <option name="number" value="00014" />
+-      <option name="presentableId" value="LOCAL-00014" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1700007285227</updated>
+-    </task>
+-    <task id="LOCAL-00015" summary="#+button class + menu buttons">
+-      <created>1700241994186</created>
+-      <option name="number" value="00015" />
+-      <option name="presentableId" value="LOCAL-00015" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1700241994186</updated>
+-    </task>
+-    <option name="localTasksCounter" value="16" />
++    <option name="localTasksCounter" value="14" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -236,8 +204,6 @@
+     <MESSAGE value="#+skype sound" />
+     <MESSAGE value="#all changed" />
+     <MESSAGE value="#button can change color" />
+-    <MESSAGE value="#add playlist" />
+-    <MESSAGE value="#+button class + menu buttons" />
+-    <option name="LAST_COMMIT_MESSAGE" value="#+button class + menu buttons" />
++    <option name="LAST_COMMIT_MESSAGE" value="#button can change color" />
+   </component>
+ </project>
+\ No newline at end of file
