@@ -1,5 +1,5 @@
 import pygame as pg
-from button import Button, Picture
+from objects import Button, Picture
 
 
 class Menu:
@@ -43,7 +43,7 @@ class MainMenu(Menu):
         quit_button = Button(100, 550, quit_but_off, quit_but_on, button_sound, 0.3)
 
         title_image = pg.image.load("images/title_name.png")
-        title_picture = Picture(820, 130, title_image, 0.8)
+        title_picture = Picture(400, 15, title_image, 0.5)
 
         self.run_display = True
         pg.display.set_caption("menu")
@@ -53,7 +53,7 @@ class MainMenu(Menu):
             self.game.check_events()
             self.check_input()
 
-            title_picture.draw_with_anim(self.game.screen, 10)
+            title_picture.draw_with_pulse(self.game.screen, 15)
 
             if start_button.draw(self.game.screen):
                 self.state = "START"
@@ -78,5 +78,17 @@ class MainMenu(Menu):
             pass
         elif self.state == "SETS":
             pass
+
+'''
+class SetsMenu(Menu):
+    def __init__(self, game):
+        Menu.__init.(self, game)
+        self.state = None
+
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+'''
+
 
 

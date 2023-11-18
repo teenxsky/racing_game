@@ -53,30 +53,44 @@ class Button:
         return action
 
 
-class Picture(Button):
-    def __init__(self, x, y, image_off, scale=1):
-        Button.__init__(self, x, y, image_off, None, None, scale)
-        self.current_size = 0
-        self.state = False
+class Picture:
+    def __init__(self, x, y, image, scale=1):
+        self.width = image.get_width()
+        self.height = image.get_height()
+        self.image = pg.transform.scale(image, (int(self.width * scale), int(self.height * scale)))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
 
-    def draw_with_anim(self, surface, size):
-        if not self.state:
-            self.current_size += 1
-            new_width = self.image_off.get_width() + 1
-            new_height = self.image_off.get_height() + 1
-            self.image_off = pg.transform.scale(self.image_on, (new_width, new_height))
-            rect = self.image_off.get_rect(center=self.rect_off.topleft)
-            if self.current_size == size:
-                self.state = True
-            surface.blit(self.image_off, rect)
+        self.current_size = 0
+        self.state_pulse = False
+
+    def draw_just(self, surface):
+        surface.blit(self.image, self.rect)
+
+    def draw_with_pulse(self, surface, size, delta=1):
+        if not self.state_pulse:
+            self.current_size += delta
+            new = self.width + self.current_size, self.height + self.current_size
+            current_image = pg.transform.scale(self.image, new)
+            current_rect = current_image.get_rect(center=self.rect.center)
+            surface.blit(current_image, current_rect)
+            if self.current_size >= size:
+                self.state_pulse = True
         else:
-            self.current_size -= 1
-            new_width = self.image_off.get_width() - 1
-            new_height = self.image_off.get_height() - 1
-            self.image_off = pg.transform.scale(self.image_on, (new_width, new_height))
-            rect = self.image_off.get_rect(center=self.rect_off.topleft)
-            if self.current_size == 0:
-                self.state = False
-            surface.blit(self.image_off, rect)
+            self.current_size -= delta
+            new = self.width + self.current_size, self.height + self.current_size
+            current_image = pg.transform.scale(self.image, new)
+            current_rect = current_image.get_rect(center=self.rect.center)
+            surface.blit(current_image, current_rect)
+            if self.current_size <= 0:
+                self.state_pulse = False
+
+
+
+
+
+
+
+
 
 

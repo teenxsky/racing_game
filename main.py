@@ -1,6 +1,8 @@
 import pygame as pg
 from game import Game, MainMenu
 
+pg.mixer.pre_init(44100, 16, 2, 4096)
+
 g = Game()
 
 while g.running:

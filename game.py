@@ -1,6 +1,6 @@
 import pygame as pg
 from menu import MainMenu
-from button import Button, Picture
+from objects import Button, Picture
 
 
 class Game:
