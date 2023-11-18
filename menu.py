@@ -27,7 +27,7 @@ class MainMenu(Menu):
 
         while self.run_display:
 
-            self.game.screen.fill('black')
+            self.game.screen.fill('red')
             self.game.check_events()
             self.check_input()
 
