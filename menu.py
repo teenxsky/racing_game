@@ -20,10 +20,6 @@ class MainMenu(Menu):
         Menu.__init__(self, game)
         self.state = None
 
-        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
-
-
-
     def display_menu(self):
 
         self.run_display = True
@@ -31,7 +27,7 @@ class MainMenu(Menu):
 
         while self.run_display:
 
-            self.game.screen.fill('white')
+            self.game.screen.fill('black')
             self.game.check_events()
             self.check_input()
 

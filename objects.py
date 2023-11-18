@@ -1,7 +1,6 @@
 import pygame as pg
 
 
-
 class Button:
     def __init__(self, x, y, image_off, image_on, sound, scale):
         self.click_sound = sound
@@ -65,7 +64,7 @@ class Picture:
         self.current_size = 0
         self.state_pulse = False
 
-    def resize (self, width, height):
+    def resize(self, width, height):
         self.image = pg.transform.scale(self.image, (width, height))
 
     def draw_just(self, surface):
@@ -88,13 +87,3 @@ class Picture:
             surface.blit(current_image, current_rect)
             if self.current_size <= 0:
                 self.state_pulse = False
-
-
-
-
-
-
-
-
-
-
