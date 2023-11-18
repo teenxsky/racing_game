@@ -1,46 +1,82 @@
 import pygame as pg
-from game import Game
-from utilities import Picture
+from button import Button, Picture
 
 
-class Menu(Game):
-    cursor = pg.image.load().convert_alpha()
-
-    def __init__(self):
-        self.MIDDLE_WIDTH, self.MIDDLE_HEIGHT = self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT
+class Menu:
+    def __init__(self, game):
+        self.game = game
         self.run_display = True
-        self.cursor_rect = self.cursor.get_rect()
-        self.cursor = Picture("images/cursor.png").image_rect
-        self.offset = -100
-
-    def draw_cursor(self):
-        self.draw_text('*', 15, self.cursor_x, self.cursor.y)
 
     def blit_screen(self):
-        self.window.blit(self.screen, (0, 0))
+        self.game.window.blit(self.game.screen, (0, 0))
+        self.game.frame_per_second.tick(self.game.FPS)
         pg.display.update()
-        self.reset_keys()
+        self.game.reset_keys()
 
 
 class MainMenu(Menu):
-    def __init__(self):
-        Menu.__init__(self)
-        self.state = "START"
-        self.start_x, self.start_y = self.MIDDLE_WIDTH, self.MIDDLE_HEIGHT + 30
+    def __init__(self, game):
+        Menu.__init__(self, game)
+        self.state = None
 
-        self.credits = "GARAGE"
-        self.credits_x, self.credits_y = self.MIDDLE_WIDTH, self.MIDDLE_HEIGHT + 50
+    def display_menu(self):
+        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
 
-        self.options = "OPTIONS"
-        self.options_x, self.options_y = self.MIDDLE_WIDTH, self.MIDDLE_HEIGHT + 70
+        start_but_off = pg.image.load("images/buttons/start_button_off.png").convert_alpha()
+        start_but_on = pg.image.load("images/buttons/start_button_on.png").convert_alpha()
+        start_button = Button(100, 70, start_but_off, start_but_on, button_sound, 0.3)
 
-        self.credits = "CREDITS"
-        self.credits_x, self.credits_y = self.MIDDLE_WIDTH, self.MIDDLE_HEIGHT + 90
+        garage_but_off = pg.image.load("images/buttons/garage_button_off.png").convert_alpha()
+        garage_but_on = pg.image.load("images/buttons/garage_button_on.png").convert_alpha()
+        garage_button = Button(100, 190, garage_but_off, garage_but_on, button_sound, 0.3)
 
+        music_but_off = pg.image.load("images/buttons/music_button_off.png").convert_alpha()
+        music_but_on = pg.image.load("images/buttons/music_button_on.png").convert_alpha()
+        music_button = Button(100, 310, music_but_off, music_but_on, button_sound, 0.3)
 
+        sets_but_off = pg.image.load("images/buttons/settings_button_off.png").convert_alpha()
+        sets_but_on = pg.image.load("images/buttons/settings_button_on.png").convert_alpha()
+        sets_button = Button(100, 430, sets_but_off, sets_but_on, button_sound, 0.3)
 
+        quit_but_off = pg.image.load("images/buttons/quit_button_off.png").convert_alpha()
+        quit_but_on = pg.image.load("images/buttons/quit_button_on.png").convert_alpha()
+        quit_button = Button(100, 550, quit_but_off, quit_but_on, button_sound, 0.3)
 
+        title_image = pg.image.load("images/title_name.png")
+        title_picture = Picture(820, 130, title_image, 0.8)
 
+        self.run_display = True
+        pg.display.set_caption("menu")
+        while self.run_display:
 
+            self.game.screen.fill('white')
+            self.game.check_events()
+            self.check_input()
+
+            title_picture.draw_with_anim(self.game.screen, 10)
+
+            if start_button.draw(self.game.screen):
+                self.state = "START"
+            if garage_button.draw(self.game.screen):
+                self.state = "GARAGE"
+            if music_button.draw(self.game.screen):
+                self.state = "MUSIC"
+            if sets_button.draw(self.game.screen):
+                self.state = "SETS"
+            if quit_button.draw(self.game.screen):
+                self.game.running, self.game.playing, self.run_display = False, False, False
+
+            self.blit_screen()
+
+    def check_input(self):
+        if self.state == "START":
+            self.game.playing = True
+            self.run_display = False
+        elif self.state == "GARAGE":
+            pass
+        elif self.state == "MUSIC":
+            pass
+        elif self.state == "SETS":
+            pass
 
 

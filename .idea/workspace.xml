@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#add playlist">
-      <change afterPath="$PROJECT_DIR$/utilities.py" afterDir="false" />
+    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+button class + menu buttons">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/ProjectX.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectX/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Serious Sam 3 BFE.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/audio/maintheme.mp3" beforeDir="false" afterPath="$PROJECT_DIR$/audio/RADIOTAPOK - Monster.mp3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/background.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/background1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/car.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/pic1png.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -218,7 +207,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700007285227</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="#+button class + menu buttons">
+      <created>1700241994186</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1700241994186</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -241,6 +237,7 @@
     <MESSAGE value="#all changed" />
     <MESSAGE value="#button can change color" />
     <MESSAGE value="#add playlist" />
-    <option name="LAST_COMMIT_MESSAGE" value="#add playlist" />
+    <MESSAGE value="#+button class + menu buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="#+button class + menu buttons" />
   </component>
 </project>

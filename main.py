@@ -1,10 +1,10 @@
 import pygame as pg
-from game import Game
+from game import Game, MainMenu
 
 g = Game()
 
 while g.running:
-    g.playing = True
+    g.main_menu.display_menu()
     g.game_loop()
 
 '''

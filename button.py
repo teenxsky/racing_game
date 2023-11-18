@@ -19,8 +19,8 @@ class Button:
             self.image_on = self.image_off
             self.rect_on = self.rect_off
             self.rect_on.topleft = (x, y)
-        self.mouse_off = False
-        self.mouse_on = False
+
+        self.mouse_off, self.mouse_on = False, False
         self.clicked = False
         self.on_button = False
 
@@ -51,3 +51,32 @@ class Button:
             surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
 
         return action
+
+
+class Picture(Button):
+    def __init__(self, x, y, image_off, scale=1):
+        Button.__init__(self, x, y, image_off, None, None, scale)
+        self.current_size = 0
+        self.state = False
+
+    def draw_with_anim(self, surface, size):
+        if not self.state:
+            self.current_size += 1
+            new_width = self.image_off.get_width() + 1
+            new_height = self.image_off.get_height() + 1
+            self.image_off = pg.transform.scale(self.image_on, (new_width, new_height))
+            rect = self.image_off.get_rect(center=self.rect_off.topleft)
+            if self.current_size == size:
+                self.state = True
+            surface.blit(self.image_off, rect)
+        else:
+            self.current_size -= 1
+            new_width = self.image_off.get_width() - 1
+            new_height = self.image_off.get_height() - 1
+            self.image_off = pg.transform.scale(self.image_on, (new_width, new_height))
+            rect = self.image_off.get_rect(center=self.rect_off.topleft)
+            if self.current_size == 0:
+                self.state = False
+            surface.blit(self.image_off, rect)
+
+
