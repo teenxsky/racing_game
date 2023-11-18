@@ -20,6 +20,10 @@ class Game:
         self.main_menu = MainMenu(self)
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
 
+        game_background = pg.image.load("images/summer_road.png").convert_alpha()
+        self.game_background = Picture(0, 0, game_background)
+        self.game_background.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
+
         start_but_off = pg.image.load("images/buttons/start_button_off.png").convert_alpha()
         start_but_on = pg.image.load("images/buttons/start_button_on.png").convert_alpha()
         self.start_button = Button(100, 70, start_but_off, start_but_on, button_sound, 0.3)
@@ -60,8 +64,7 @@ class Game:
         while self.playing:
             self.check_events()
 
-            self.screen.fill('black')
-            self.window.blit(self.screen, (0, 0))
+            self.window.blit(self.game_background.image, (0, 0))
 
             if self.game_state == "PAUSE":
                 if self.close_button.draw(self.window):
