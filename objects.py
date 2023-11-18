@@ -35,14 +35,14 @@ class Button:
             if not self.on_button:
                 self.click_sound.play()
             self.on_button = True
-            if pg.mouse.get_pressed()[0] and not self.clicked:
+            if pg.mouse.get_pressed()[0] == 1 and not self.clicked:
                 action = True
         else:
             self.mouse_off = False
             self.mouse_on = True
             self.on_button = False
 
-        if not pg.mouse.get_pressed()[0]:
+        if pg.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
         if self.mouse_off:
@@ -55,6 +55,7 @@ class Button:
 
 class Picture:
     def __init__(self, x, y, image, scale=1):
+        self.coords = (x, y)
         self.width = image.get_width()
         self.height = image.get_height()
         self.image = pg.transform.scale(image, (int(self.width * scale), int(self.height * scale)))
@@ -63,8 +64,7 @@ class Picture:
 
         self.current_size = 0
         self.state_pulse = False
-    def coordinates(self, x, y):
-        self.coord = [x, y]
+
     def resize(self, width, height):
         self.image = pg.transform.scale(self.image, (width, height))
 
