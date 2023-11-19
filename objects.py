@@ -2,23 +2,23 @@ import pygame as pg
 
 
 class Button:
-    def __init__(self, x, y, image_off, image_on, sound, scale):
+    def __init__(self, x, y, image_off_name, image_on_name, sound, scale=1):
+        self.image_off = pg.image.load(image_off_name).convert_alpha()
+        self.image_on = pg.image.load(image_on_name).convert_alpha()
+
         self.click_sound = sound
-        width_off = image_off.get_width()
-        height_off = image_off.get_height()
-        self.image_off = pg.transform.scale(image_off, (int(width_off * scale), int(height_off * scale)))
+
+        width_off = self.image_off.get_width()
+        height_off = self.image_off.get_height()
+        self.image_off = pg.transform.scale(self.image_off, (int(width_off * scale), int(height_off * scale)))
         self.rect_off = self.image_off.get_rect()
-        self.rect_off.topleft = (x, y)
-        if image_on:
-            width_on = image_on.get_width()
-            height_on = image_on.get_height()
-            self.image_on = pg.transform.scale(image_on, (int(width_on * scale), int(height_on * scale)))
-            self.rect_on = self.image_on.get_rect()
-            self.rect_on.topleft = (x, y)
-        else:
-            self.image_on = self.image_off
-            self.rect_on = self.rect_off
-            self.rect_on.topleft = (x, y)
+        self.rect_off.x, self.rect_off.y = x, y
+
+        width_on = self.image_on.get_width()
+        height_on = self.image_on.get_height()
+        self.image_on = pg.transform.scale(self.image_on, (int(width_on * scale), int(height_on * scale)))
+        self.rect_on = self.image_on.get_rect()
+        self.rect_on.x, self.rect_on.y = x, y
 
         self.mouse_off, self.mouse_on = False, False
         self.clicked = False
@@ -54,13 +54,14 @@ class Button:
 
 
 class Picture:
-    def __init__(self, x, y, image, scale=1):
-        self.coords = (x, y)
-        self.width = image.get_width()
-        self.height = image.get_height()
-        self.image = pg.transform.scale(image, (int(self.width * scale), int(self.height * scale)))
+    def __init__(self, x, y, image_name, scale=1):
+        self.image = pg.image.load(image_name).convert_alpha()
+
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.image = pg.transform.scale(self.image, (int(self.width * scale), int(self.height * scale)))
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+        self.rect.x, self.rect.y = x, y  # coordinates
 
         self.current_size = 0
         self.state_pulse = False
@@ -88,3 +89,19 @@ class Picture:
             surface.blit(current_image, current_rect)
             if self.current_size <= 0:
                 self.state_pulse = False
+
+
+class Background(Picture):
+    def __init__(self, image_name, scale=1):
+        super().__init__(0, 0, image_name, scale)
+        self.bg_y = 0
+
+    def scroll(self, surface, speed):
+        self.bg_y += speed
+        surface.blit(self.image, (0, self.bg_y))
+        surface.blit(self.image, (0, self.bg_y - 720))
+        if self.bg_y == 720:
+            self.bg_y = 0
+
+
+

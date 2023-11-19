@@ -1,6 +1,6 @@
 import pygame as pg
 from menu import MainMenu
-from objects import Button, Picture
+from objects import Button, Picture, Background
 from sprites import Player, Enemy
 
 pg.init()
@@ -23,51 +23,26 @@ class Game:
         self.main_menu = MainMenu(self)
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
 
-        title_image = pg.image.load("images/title_name.png")
-        self.title_picture = Picture((self.SCREEN_WIDTH - title_image.get_width()) // 2, 20, title_image, 1)
-
-        start_but_off = pg.image.load("images/buttons/start_button_off.png").convert_alpha()
-        start_but_on = pg.image.load("images/buttons/start_button_on.png").convert_alpha()
-        self.start_button = Button(370, 247, start_but_off, start_but_on, button_sound, 0.3)
-
-        garage_but_off = pg.image.load("images/buttons/garage_button_off.png").convert_alpha()
-        garage_but_on = pg.image.load("images/buttons/garage_button_on.png").convert_alpha()
-        self.garage_button = Button(655, 247, garage_but_off, garage_but_on, button_sound, 0.3)
-
-        music_but_off = pg.image.load("images/buttons/music_button_off.png").convert_alpha()
-        music_but_on = pg.image.load("images/buttons/music_button_on.png").convert_alpha()
-        self.music_button = Button(370, 367, music_but_off, music_but_on, button_sound, 0.3)
-
-        sets_but_off = pg.image.load("images/buttons/settings_button_off.png").convert_alpha()
-        sets_but_on = pg.image.load("images/buttons/settings_button_on.png").convert_alpha()
-        self.sets_button = Button(655, 367, sets_but_off, sets_but_on, button_sound, 0.3)
-
-        quit_but_off = pg.image.load("images/buttons/quit_button_off.png").convert_alpha()
-        quit_but_on = pg.image.load("images/buttons/quit_button_on.png").convert_alpha()
-        self.quit_button = Button(512, 487, quit_but_off, quit_but_on, button_sound, 0.3)
-
-        close_but_off = pg.image.load("images/buttons/close_button_off.png").convert_alpha()
-        close_but_on = pg.image.load("images/buttons/close_button_on.png").convert_alpha()
-        self.close_button = Button(530, 300, close_but_off, close_but_on, button_sound, 0.25)
-
-        back_but_off = pg.image.load("images/buttons/back_button_off.png").convert_alpha()
-        back_but_on = pg.image.load("images/buttons/back_button_on.png").convert_alpha()
-        self.back_button = Button(645, 300, back_but_off, back_but_on, button_sound, 0.25)
+        self.title_picture = Picture(130, 20, "images/title_name.png", 1)
+        self.start_button = Button(370, 247, "images/buttons/start_button_off.png", "images/buttons/start_button_on.png", button_sound, 0.3)
+        self.garage_button = Button(655, 247, "images/buttons/garage_button_off.png", "images/buttons/garage_button_on.png", button_sound, 0.3)
+        self.music_button = Button(370, 367, "images/buttons/music_button_off.png", "images/buttons/music_button_on.png", button_sound, 0.3)
+        self.sets_button = Button(655, 367, "images/buttons/settings_button_off.png", "images/buttons/settings_button_on.png", button_sound, 0.3)
+        self.quit_button = Button(512, 487, "images/buttons/quit_button_off.png", "images/buttons/quit_button_on.png", button_sound, 0.3)
+        self.close_button = Button(530, 300, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
+        self.back_button = Button(645, 300, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
 
         # BACKGROUND
-        bg_summer_img = pg.image.load("images/backgrounds/background.png")
-        self.bg_summer = Picture(240, 0, bg_summer_img)
+        self.bg_summer = Background("images/backgrounds/background.png")
         self.bg_summer.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
-        self.game_state = "GAME"
 
         # CARS
-        player_car_1 = pg.image.load("images/cars/player_car_1.png").convert_alpha()
-        self.player_car_1 = Picture(750, 450, player_car_1, 1.1)
-
-        enemy_car_1 = pg.image.load("images/cars/opp1.png").convert_alpha()
-        self.enemy_car_1 = Picture(450, 100, enemy_car_1, 1.1)
+        self.player_car_1 = Picture(750, 450, "images/cars/player_car_1.png", 1.1)
+        self.enemy_car_1 = Picture(450, 100, "images/cars/opp1.png", 1.1)
 
         self.speed = 10
+
+        self.game_state = "GAME"
 
     def game_loop(self):
 
@@ -87,11 +62,7 @@ class Game:
 
             self.check_events()
 
-            self.screen.blit(self.bg_summer.image, self.bg_summer.rect)
-            self.screen.blit(self.bg_summer.image, (self.bg_summer.rect[0], self.bg_summer.rect[1] - self.SCREEN_HEIGHT))
-            if self.bg_summer.rect[1] == self.SCREEN_HEIGHT:
-                self.bg_summer.rect.topleft = (0, 0)
-            self.bg_summer.rect = self.bg_summer.rect.move([0, self.speed])
+            self.bg_summer.scroll(self.screen, self.speed)
 
             P1.move(self.screen)
             E1.move(self.screen)

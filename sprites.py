@@ -34,8 +34,8 @@ class Enemy:
 
 class Player(Car):
     def __init__(self, image, x, y):
-        #super().__init__(self, image)
-        self.image = pg.image.load(image).convert_alpha()
+        # super().__init__(self, image)
+        self.image = pg.image.load(image).convert_alpha() # почему-то не могу наследовать от старшего класса
         self.image.set_colorkey('white')
         self.rect = self.image.get_rect()
         self.rect.x = x
