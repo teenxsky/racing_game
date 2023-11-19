@@ -1,6 +1,7 @@
 import pygame as pg
 from menu import MainMenu
 from objects import Button, Picture
+from sprites import Player, Enemy
 
 pg.init()
 
@@ -10,19 +11,17 @@ class Game:
         pg.init()
         self.running, self.playing = True, False
         self.SCREEN_WIDTH, self.SCREEN_HEIGHT = 1280, 720
-        self.clicked = False
         self.window = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.FPS = 60
         self.font_name = "fonts/pixfont.ttf"
         self.frame_per_second = pg.time.Clock()
 
+        self.clicked = False
+
+        # MENU
         self.main_menu = MainMenu(self)
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
-
-        game_background = pg.image.load("images/sumer_road.png").convert_alpha()
-        self.game_background = Picture(0, 0, game_background)
-        self.game_background.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
         title_image = pg.image.load("images/title_name.png")
         self.title_picture = Picture((self.SCREEN_WIDTH - title_image.get_width()) // 2, 20, title_image, 1)
@@ -55,16 +54,47 @@ class Game:
         back_but_on = pg.image.load("images/buttons/back_button_on.png").convert_alpha()
         self.back_button = Button(645, 300, back_but_off, back_but_on, button_sound, 0.25)
 
-
+        # BACKGROUND
+        bg_summer_img = pg.image.load("images/backgrounds/background.png")
+        self.bg_summer = Picture(240, 0, bg_summer_img)
+        self.bg_summer.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.game_state = "GAME"
 
+        # CARS
+        player_car_1 = pg.image.load("images/cars/player_car_1.png").convert_alpha()
+        self.player_car_1 = Picture(750, 450, player_car_1, 1.1)
+
+        enemy_car_1 = pg.image.load("images/cars/opp1.png").convert_alpha()
+        self.enemy_car_1 = Picture(450, 100, enemy_car_1, 1.1)
+
+        self.speed = 10
+
     def game_loop(self):
-        pg.display.set_caption("gameloop")
+
+        #enemies_list = pg.sprite.Group()
+        #all_sprites_list = pg.sprite.Group()
+
+        P1 = Player("images/cars/player_car_1.png", 750, 450)
+        E1 = Enemy("images/cars/opp1.png")
+
+        #enemies_list.add(E1)
+        #all_sprites_list.add(P1)
+
+        P1.set_speed(self.speed)
+        E1.set_speed(self.speed)
+
         while self.playing:
 
             self.check_events()
 
-            self.screen.blit(self.game_background.image, (0, 0))
+            self.screen.blit(self.bg_summer.image, self.bg_summer.rect)
+            self.screen.blit(self.bg_summer.image, (self.bg_summer.rect[0], self.bg_summer.rect[1] - self.SCREEN_HEIGHT))
+            if self.bg_summer.rect[1] == self.SCREEN_HEIGHT:
+                self.bg_summer.rect.topleft = (0, 0)
+            self.bg_summer.rect = self.bg_summer.rect.move([0, self.speed])
+
+            P1.move(self.screen)
+            E1.move(self.screen)
 
             if self.game_state == "PAUSED":
                 if self.close_button.draw(self.screen):
@@ -85,6 +115,10 @@ class Game:
                 self.running, self.playing = False, False
                 self.main_menu.run_display = False
             elif event.type == pg.KEYDOWN:
+                if event.key in [pg.K_a, pg.K_LEFT] and self.player_car_1.rect[0] != 450:
+                    self.player_car_1.rect = self.player_car_1.rect.move([-300, 0])
+                if event.key in [pg.K_d, pg.K_RIGHT] and self.player_car_1.rect[0] != 750:
+                    self.player_car_1.rect = self.player_car_1.rect.move([300, 0])
                 if event.key == pg.K_ESCAPE:
                     if self.game_state == "PAUSED":
                         self.game_state = "GAME"
