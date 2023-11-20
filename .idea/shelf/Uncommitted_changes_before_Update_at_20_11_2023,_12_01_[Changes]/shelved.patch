@@ -1,0 +1,490 @@
+Index: game.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/game.py b/game.py
+--- a/game.py	
++++ b/game.py	
+@@ -1,9 +1,7 @@
+-import pygame as pg
+-from menu import MainMenu
+-from objects import Button, Picture, Background
+-from sprites import Player, Enemy
+-
+-pg.init()
++# import pygame as pg
++from menu import *
++from objects import *
++from sprites import *
+ 
+ 
+ class Game:
+@@ -14,26 +12,41 @@
+         self.window = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+         self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+         self.FPS = 60
+-        self.font_name = "fonts/pixfont.ttf"
++        self.font_name = "fonts/pxl_tactical.ttf"
+         self.frame_per_second = pg.time.Clock()
++        pg.mouse.set_cursor(pg.cursors.Cursor(pg.SYSTEM_CURSOR_HAND))
+ 
+         self.clicked = False
+ 
++        # BUTTONS
++
++        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
++        self.title_picture = Picture(130, 0, "images/title_name.png", 1)
++        self.start_button = Button(500, 287, "images/buttons/start_button_off.png", "images/buttons/start_button_on.png", button_sound, 0.3)
++        self.garage_button = Button(780, 287, "images/buttons/garage_button_off.png", "images/buttons/garage_button_on.png", button_sound, 0.3)
++        self.music_button = Button(500, 407, "images/buttons/music_button_off.png", "images/buttons/music_button_on.png", button_sound, 0.3)
++        self.sets_button = Button(780, 407, "images/buttons/settings_button_off.png", "images/buttons/settings_button_on.png", button_sound, 0.3)
++        self.quit_button = Button(640, 527, "images/buttons/quit_button_off.png", "images/buttons/quit_button_on.png", button_sound, 0.3)
++        self.close_button_game = Button(530, 300, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
++        self.close_button_sets = Button(390, 170, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
++        self.back_button = Button(645, 300, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
++
++        self.volume_button = Button(500, 300, r'/Users/roman/Desktop/racing_game/images/buttons/volume_button_off.png', r'/Users/roman/Desktop/racing_game/images/buttons/volume_button_on.png', button_sound, 0.25)
++        self.controls_button = Button(700, 300, r'/Users/roman/Desktop/racing_game/images/buttons/controls_button_off.png', r'/Users/roman/Desktop/racing_game/images/buttons/controls_button_on.png', button_sound, 0.25)
++
+         # MENU
++
+         self.main_menu = MainMenu(self)
+-        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
+-
+-        self.title_picture = Picture(130, 20, "images/title_name.png", 1)
+-        self.start_button = Button(370, 247, "images/buttons/start_button_off.png", "images/buttons/start_button_on.png", button_sound, 0.3)
+-        self.garage_button = Button(655, 247, "images/buttons/garage_button_off.png", "images/buttons/garage_button_on.png", button_sound, 0.3)
+-        self.music_button = Button(370, 367, "images/buttons/music_button_off.png", "images/buttons/music_button_on.png", button_sound, 0.3)
+-        self.sets_button = Button(655, 367, "images/buttons/settings_button_off.png", "images/buttons/settings_button_on.png", button_sound, 0.3)
+-        self.quit_button = Button(512, 487, "images/buttons/quit_button_off.png", "images/buttons/quit_button_on.png", button_sound, 0.3)
+-        self.close_button = Button(530, 300, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
+-        self.back_button = Button(645, 300, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
++        self.sets_menu = SetsMenu(self)
++        self.curr_menu = self.main_menu
++        self.menu_bg = Background("images/backgrounds/menu_bg.png")
++        self.menu_bg.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
++        self.sets_bg = Picture(100, 100, "images/backgrounds/sets_bg.png", 0.5)
++        self.sets_bg.rect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
+ 
+         # BACKGROUND
+-        self.bg_summer = Background("images/backgrounds/background.png")
++
++        self.bg_summer = Background("images/backgrounds/background.png", 1)
+         self.bg_summer.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
+ 
+         # CARS
+@@ -46,14 +59,14 @@
+ 
+     def game_loop(self):
+ 
+-        #enemies_list = pg.sprite.Group()
+-        #all_sprites_list = pg.sprite.Group()
++        # enemies_list = pg.sprite.Group()
++        # all_sprites_list = pg.sprite.Group()
+ 
+         P1 = Player("images/cars/player_car_1.png", 750, 450)
+         E1 = Enemy("images/cars/opp1.png")
+ 
+-        #enemies_list.add(E1)
+-        #all_sprites_list.add(P1)
++        # enemies_list.add(E1)
++        # all_sprites_list.add(P1)
+ 
+         P1.set_speed(self.speed)
+         E1.set_speed(self.speed)
+@@ -68,33 +81,36 @@
+             E1.move(self.screen)
+ 
+             if self.game_state == "PAUSED":
+-                if self.close_button.draw(self.screen):
++                if self.close_button_game.draw(self.screen, False):
+                     self.playing = False
+-                if self.back_button.draw(self.screen):
++                if self.back_button.draw(self.screen, False):
+                     self.game_state = "GAME"
+ 
+             self.window.blit(self.screen, (0, 0))
+             pg.display.update()
+             self.frame_per_second.tick(self.FPS)
+             self.reset_keys()
+-            if not self.playing:
+-                pg.time.delay(500)
++
++        pg.time.delay(500)
+ 
+     def check_events(self):
+         for event in pg.event.get():
+             if event.type == pg.QUIT:
+                 self.running, self.playing = False, False
+-                self.main_menu.run_display = False
++                self.curr_menu.run_display = False
+             elif event.type == pg.KEYDOWN:
+                 if event.key in [pg.K_a, pg.K_LEFT] and self.player_car_1.rect[0] != 450:
+                     self.player_car_1.rect = self.player_car_1.rect.move([-300, 0])
+                 if event.key in [pg.K_d, pg.K_RIGHT] and self.player_car_1.rect[0] != 750:
+                     self.player_car_1.rect = self.player_car_1.rect.move([300, 0])
++            elif event.type == pg.KEYUP:
+                 if event.key == pg.K_ESCAPE:
+                     if self.game_state == "PAUSED":
+                         self.game_state = "GAME"
+                     else:
+                         self.game_state = "PAUSED"
++        if not pg.mouse.get_focused:
++            self.game_state = "PAUSED"
+ 
+     def reset_keys(self):
+         self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+Index: objects.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/objects.py b/objects.py
+--- a/objects.py	
++++ b/objects.py	
+@@ -12,44 +12,36 @@
+         height_off = self.image_off.get_height()
+         self.image_off = pg.transform.scale(self.image_off, (int(width_off * scale), int(height_off * scale)))
+         self.rect_off = self.image_off.get_rect()
+-        self.rect_off.x, self.rect_off.y = x, y
++        self.rect_off.center = (x, y)
+ 
+         width_on = self.image_on.get_width()
+         height_on = self.image_on.get_height()
+         self.image_on = pg.transform.scale(self.image_on, (int(width_on * scale), int(height_on * scale)))
+         self.rect_on = self.image_on.get_rect()
+-        self.rect_on.x, self.rect_on.y = x, y
++        self.rect_on.center = (x, y)
+ 
+-        self.mouse_off, self.mouse_on = False, False
+-        self.clicked = False
+         self.on_button = False
+ 
+-    def draw(self, surface):
++    def draw(self, surface, block):
+         action = False
+ 
+-        pos = pg.mouse.get_pos()
+-
+-        if self.rect_off.collidepoint(pos) or self.rect_on.collidepoint(pos):
+-            self.mouse_off = True
+-            self.mouse_on = False
+-            if not self.on_button:
+-                self.click_sound.play()
+-            self.on_button = True
+-            if pg.mouse.get_pressed()[0] == 1 and not self.clicked:
+-                action = True
+-        else:
+-            self.mouse_off = False
+-            self.mouse_on = True
+-            self.on_button = False
++        if not block:
++            pos = pg.mouse.get_pos()
++            if self.rect_off.collidepoint(pos):
++                surface.blit(self.image_on, (self.rect_on.x, self.rect_on.y))
++                if pg.mouse.get_pressed()[0] == 1:
++                    action = True
++                self.on_button = True
++            else:
++                surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
++                self.on_button = False
+ 
+-        if pg.mouse.get_pressed()[0] == 0:
+-            self.clicked = False
+-
+-        if self.mouse_off:
+-            surface.blit(self.image_on, (self.rect_on.x, self.rect_on.y))
+         else:
+             surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
+ 
++        #if self.on_button:
++        #    self.click_sound.play()
++
+         return action
+ 
+ 
+@@ -91,6 +83,17 @@
+                 self.state_pulse = False
+ 
+ 
++class Text:
++    def __init__(self, x, y, text, scale):
++        font = pg.font.Font("fonts/pxl_tactical.ttf", scale)
++        self.text = font.render(text, False, (255, 255, 255)).convert_alpha()
++        self.text_rect = self.text.get_rect()
++        self.text_rect.center = (x, y)
++
++    def draw(self, surface):
++        surface.blit(self.text, self.text_rect)
++
++
+ class Background(Picture):
+     def __init__(self, image_name, scale=1):
+         super().__init__(0, 0, image_name, scale)
+@@ -102,6 +105,3 @@
+         surface.blit(self.image, (0, self.bg_y - 720))
+         if self.bg_y == 720:
+             self.bg_y = 0
+-
+-
+-
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	
++++ b/main.py	
+@@ -1,12 +1,12 @@
+ import pygame as pg
+-from game import Game, MainMenu
++from game import Game
+ 
+ pg.mixer.pre_init(44100, 16, 2, 4096)
+ 
+ g = Game()
+ 
+ while g.running:
+-    g.main_menu.display_menu()
++    g.curr_menu.display_menu()
+     g.game_loop()
+ 
+ '''
+Index: menu.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/menu.py b/menu.py
+--- a/menu.py	
++++ b/menu.py	
+@@ -1,5 +1,5 @@
+ import pygame as pg
+-from objects import Button, Picture
++from objects import *
+ 
+ 
+ class Menu:
+@@ -7,6 +7,15 @@
+         pg.init()
+         self.game = game
+         self.run_menu = True
++        self.keys = None
++
++    def check_events(self):
++        for event in pg.event.get():
++            if event.type == pg.QUIT:
++                self.game.running, self.game.playing = False, False
++                self.run_menu = False
++
++        self.keys = pg.key.get_pressed()
+ 
+     def blit_screen(self):
+         self.game.window.blit(self.game.screen, (0, 0))
+@@ -18,7 +27,9 @@
+ class MainMenu(Menu):
+     def __init__(self, game):
+         Menu.__init__(self, game)
+-        self.state = None
++        self.state = "MENU"
++        self.run_menu = True
++        self.block = False
+ 
+     def display_menu(self):
+         pg.display.set_caption("00 Racing")
+@@ -28,35 +39,33 @@
+ 
+             self.check_events()
+ 
++            self.game.screen.blit(self.game.menu_bg.image, (0, 0))
++
+             self.game.title_picture.draw_with_pulse(self.game.screen, 15)
+ 
+-            if self.game.start_button.draw(self.game.screen):
++            if self.game.start_button.draw(self.game.screen, self.block):
+                 self.state = "START"
+-                self.game.game_state = "GAME"
+-            if self.game.garage_button.draw(self.game.screen):
++            if self.game.garage_button.draw(self.game.screen, self.block):
+                 self.state = "GARAGE"
+-            if self.game.music_button.draw(self.game.screen):
++            if self.game.music_button.draw(self.game.screen, self.block):
+                 self.state = "MUSIC"
+-            if self.game.sets_button.draw(self.game.screen):
++            if self.game.sets_button.draw(self.game.screen, self.block):
+                 self.state = "SETS"
+-            if self.game.quit_button.draw(self.game.screen):
+-                self.game.running, self.game.playing, self.run_menu = False, False, False
++                self.game.sets_menu.run_sets = True
++            if self.game.quit_button.draw(self.game.screen, self.block):
++                self.game.running, self.game.playing = False, False
++                self.run_menu, self.game.sets_menu = False, False
+ 
+             self.check_input()
+ 
+             self.blit_screen()
+ 
+-            if not self.run_menu:
+-                pg.time.delay(500)
++        pg.time.delay(500)
+ 
+-    def check_events(self):
+-        for event in pg.event.get():
+-            if event.type == pg.QUIT:
+-                self.game.running, self.game.playing = False, False
+-                self.run_menu = False
+-
+     def check_input(self):
+-        if self.state == "START" and self.run_menu:
++        if self.state == "START":
++            self.state = "MENU"
++            self.game.game_state = "GAME"
+             self.game.playing = True
+             self.run_menu = False
+         elif self.state == "GARAGE":
+@@ -64,21 +73,88 @@
+         elif self.state == "MUSIC":
+             pass
+         elif self.state == "SETS":
+-            pass
+-        self.state = None
++            self.game.sets_menu.display_menu()
++
++
++class SetsMenu(Menu):
++    def __init__(self, game):
++        Menu.__init__(self, game)
++        self.state = "SETS"
++        self.text_volume = Text(640, 230, "VOLUME", 50)
++        self.text_controls = Text(640, 230, "CONTROLS", 50)
++
++    def display_menu(self):
++
++        self.game.screen.blit(self.game.sets_bg.image, self.game.sets_bg.rect)
++        self.game.main_menu.block = True
++
++        if self.state == "SETS":
++            self.display_sets()
++        if self.state == "VOLUME":
++            self.display_volume()
++        if self.state == "CONTROLS":
++            self.display_controls()
++
++        if self.game.close_button_sets.draw(self.game.screen, False):
++            self.game.main_menu.state = "MENU"
++            self.state = "SETS"
++            self.game.main_menu.block = False
++
++    def display_sets(self):
++        keys = self.game.main_menu.keys
++
++        if self.game.controls_button.draw(self.game.screen, False):
++            self.state = "CONTROLS"
++        if self.game.volume_button.draw(self.game.screen, False):
++            self.state = "VOLUME"
++
++    def display_volume(self):
++        keys = self.game.main_menu.keys
++
++        self.text_volume.draw(self.game.screen)
++
++        if keys[pg.K_ESCAPE]:
++            self.state = "SETS"
++
++    def display_controls(self):
++        keys = self.game.main_menu.keys
++
++        self.text_controls.draw(self.game.screen)
++
++        if keys[pg.K_ESCAPE]:
++            self.state = "SETS"
++
++#class MusicMenu:
++
+ 
+ 
+ 
+ '''
+ class SetsMenu(Menu):
+     def __init__(self, game):
+-        Menu.__init.(self, game)
++        Menu.__init__(self, game)
++        self.run_sets = None
+         self.state = None
+ 
+     def display_menu(self):
+-        self.run_display = True
+-        while self.run_display:
+-'''
++        
++        self.run_sets = True
++
++        while self.run_sets:
++            self.check_events()
+ 
++            self.game.screen.blit(self.game.sets_bg.image, self.game.sets_bg.rect)
+ 
++            self.game.window.blit(self.game.screen, (0, 0))
++            pg.display.update()
++            self.game.frame_per_second.tick(self.game.FPS)
++            self.check_input()
++            print('sets')
+ 
++    def check_input(self):
++        for event in pg.event.get():
++            if event.type == pg.KEYDOWN:
++                if event.key == pg.K_ESCAPE:
++                    self.game.curr_menu = self.game.main_menu
++                    self.run_sets = False
++'''
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -1,11 +1,12 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ChangeListManager">
+-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+test commit">
++    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+cleaning">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/sprites.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -260,7 +261,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1700368591011</updated>
+     </task>
+-    <option name="localTasksCounter" value="23" />
++    <task id="LOCAL-00023" summary="#+cleaning">
++      <created>1700371710608</created>
++      <option name="number" value="00023" />
++      <option name="presentableId" value="LOCAL-00023" />
++      <option name="project" value="LOCAL" />
++      <updated>1700371710608</updated>
++    </task>
++    <option name="localTasksCounter" value="24" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.History.Properties">
+@@ -300,6 +308,7 @@
+     <MESSAGE value="#test2" />
+     <MESSAGE value="#+added classes for cars" />
+     <MESSAGE value="#+test commit" />
+-    <option name="LAST_COMMIT_MESSAGE" value="#+test commit" />
++    <MESSAGE value="#+cleaning" />
++    <option name="LAST_COMMIT_MESSAGE" value="#+cleaning" />
+   </component>
+ </project>
+\ No newline at end of file
