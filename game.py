@@ -30,8 +30,8 @@ class Game:
 
         self.sets_close_button = Button(390, 180, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
         self.sets_back_button = Button(390, 270, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
-        self.sets_volume_button = Button(500, 300, r'/Users/roman/Desktop/racing_game/images/buttons/volume_button_off.png', r'/Users/roman/Desktop/racing_game/images/buttons/volume_button_on.png', button_sound, 0.25)
-        self.sets_controls_button = Button(700, 300, r'/Users/roman/Desktop/racing_game/images/buttons/controls_button_off.png', r'/Users/roman/Desktop/racing_game/images/buttons/controls_button_on.png', button_sound, 0.25)
+        self.sets_volume_button = Button(500, 300, "images/buttons/volume_button_off.png", "images/buttons/volume_button_on.png", button_sound, 0.25)
+        self.sets_controls_button = Button(700, 300, "images/buttons/controls_button_off.png", "images/buttons/controls_button_on.png", button_sound, 0.25)
 
         # BUTTONS GAME
 
