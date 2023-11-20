@@ -1,5 +1,6 @@
 import pygame as pg
-from objects import Button, Picture
+from importlib import reload
+import game, sprites
 
 
 class Menu:
@@ -57,6 +58,9 @@ class MainMenu(Menu):
 
     def check_input(self):
         if self.state == "START" and self.run_menu:
+            #reload(game.Game)
+
+            #reload(sprites)
             self.game.playing = True
             self.run_menu = False
         elif self.state == "GARAGE":
