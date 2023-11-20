@@ -105,3 +105,30 @@ class Background(Picture):
         surface.blit(self.image, (0, self.bg_y - 720))
         if self.bg_y == 720:
             self.bg_y = 0
+
+
+'''    def extractFrames(self, image_object):
+        image = Image.open(image_object)
+        for frame_numer in range(0, 5):
+            image.seek(self.frames_list[frame])'''
+
+
+'''class Vehicle(pg.sprite.Sprite):
+
+    def __init__(self, image, x, y):
+        pg.sprite.Sprite.__init__(self)
+
+        image_scale = 45 / image.get_rect().width
+        new_width = image.get_rect().width * image_scale
+        new_height = image.get_rect().height * image_scale
+        self.image = pg.transform.scale(image, (new_width, new_height))
+
+        self.rect = self.image.get_rect()
+        self.rect.center = [x, y]
+
+
+class PlayerVehicle(Vehicle):
+
+    def __init__(self, pic, x, y):
+        image = pic
+        super().__init__(image, x, y)'''

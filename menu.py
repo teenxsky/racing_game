@@ -95,7 +95,7 @@ class SetsMenu(Menu):
         if self.state == "CONTROLS":
             self.display_controls()
 
-        if self.game.close_button_menu.draw(self.game.screen, False):
+        if self.game.sets_close_button.draw(self.game.screen, False):
             self.game.main_menu.state = "MENU"
             self.state = "SETS"
             self.game.main_menu.block = False
@@ -103,17 +103,21 @@ class SetsMenu(Menu):
     def display_sets(self):
         keys = self.game.main_menu.keys
 
-        if self.game.controls_button.draw(self.game.screen, False):
+        if self.game.sets_controls_button.draw(self.game.screen, False):
             self.state = "CONTROLS"
-        if self.game.volume_button.draw(self.game.screen, False):
+        if self.game.sets_volume_button.draw(self.game.screen, False):
             self.state = "VOLUME"
+        if self.game.sets_back_button.draw(self.game.screen, False):
+            self.game.main_menu.state = "MENU"
+            self.state = "SETS"
+            self.game.main_menu.block = False
 
     def display_volume(self):
         keys = self.game.main_menu.keys
 
         self.text_volume.draw(self.game.screen)
 
-        if keys[pg.K_ESCAPE]:
+        if keys[pg.K_ESCAPE] or self.game.sets_back_button.draw(self.game.screen, False):
             self.state = "SETS"
 
     def display_controls(self):
@@ -121,7 +125,7 @@ class SetsMenu(Menu):
 
         self.text_controls.draw(self.game.screen)
 
-        if keys[pg.K_ESCAPE]:
+        if keys[pg.K_ESCAPE] or self.game.sets_back_button.draw(self.game.screen, False):
             self.state = "SETS"
 
 #class MusicMenu:
