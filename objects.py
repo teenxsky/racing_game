@@ -8,11 +8,15 @@ class Button:
 
         self.click_sound = sound
 
+        # FOR NON-PUSHED BUTTON
+
         width_off = self.image_off.get_width()
         height_off = self.image_off.get_height()
         self.image_off = pg.transform.scale(self.image_off, (int(width_off * scale), int(height_off * scale)))
         self.rect_off = self.image_off.get_rect()
         self.rect_off.center = (x, y)
+
+        # FOR PUSHED BUTTON
 
         width_on = self.image_on.get_width()
         height_on = self.image_on.get_height()
@@ -20,27 +24,28 @@ class Button:
         self.rect_on = self.image_on.get_rect()
         self.rect_on.center = (x, y)
 
+        # FOR BUTTON PUSHING
+
         self.on_button = False
 
-    def draw(self, surface, block):
+    def draw(self, surface, block):  # DRAW AND CHECKING IF MOUSE ON BUTTON
         action = False
 
         if not block:
             pos = pg.mouse.get_pos()
-            if self.rect_off.collidepoint(pos):
+            if self.rect_off.collidepoint(pos) or self.rect_on.collidepoint(pos):
+                if not self.on_button:
+                    self.on_button = True
+                    self.click_sound.play()
+
                 surface.blit(self.image_on, (self.rect_on.x, self.rect_on.y))
-                if pg.mouse.get_pressed()[0] == 1:
-                    action = True
-                self.on_button = True
+                action = True
             else:
-                surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
                 self.on_button = False
+                surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
 
         else:
             surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
-
-        #if self.on_button:
-        #    self.click_sound.play()
 
         return action
 
@@ -53,9 +58,12 @@ class Picture:
         self.height = self.image.get_height()
         self.image = pg.transform.scale(self.image, (int(self.width * scale), int(self.height * scale)))
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = x, y  # coordinates
+        self.rect.x, self.rect.y = x, y
 
         self.current_size = 0
+
+        # FOR JUMPING GAME TITLE
+
         self.state_pulse = False
 
     def resize(self, width, height):
@@ -64,7 +72,7 @@ class Picture:
     def draw_just(self, surface):
         surface.blit(self.image, self.rect)
 
-    def draw_with_pulse(self, surface, size, delta=1):
+    def draw_with_pulse(self, surface, size, delta=1):  # FOR JUMPING GAME TITLE
         if not self.state_pulse:
             self.current_size += delta
             new = self.width + self.current_size, self.height + self.current_size
@@ -111,7 +119,6 @@ class Background(Picture):
         image = Image.open(image_object)
         for frame_numer in range(0, 5):
             image.seek(self.frames_list[frame])'''
-
 
 '''class Vehicle(pg.sprite.Sprite):
 

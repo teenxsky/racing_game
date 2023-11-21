@@ -1,4 +1,3 @@
-import pygame as pg
 from objects import *
 
 
@@ -8,16 +7,22 @@ class Menu:
         self.game = game
         self.run_menu = True
         self.keys = None
+        self.clicked = False
 
     def check_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.game.running, self.game.playing = False, False
                 self.run_menu = False
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.clicked = True
 
         self.keys = pg.key.get_pressed()
 
     def blit_screen(self):
+        self.clicked = False
+
         self.game.window.blit(self.game.screen, (0, 0))
         pg.display.update()
         self.game.frame_per_second.tick(self.game.FPS)
@@ -43,16 +48,16 @@ class MainMenu(Menu):
 
             self.game.title_picture.draw_with_pulse(self.game.screen, 15)
 
-            if self.game.start_button.draw(self.game.screen, self.block):
+            if self.game.start_button.draw(self.game.screen, self.block) and self.clicked:
                 self.state = "START"
-            if self.game.garage_button.draw(self.game.screen, self.block):
+            if self.game.garage_button.draw(self.game.screen, self.block) and self.clicked:
                 self.state = "GARAGE"
-            if self.game.music_button.draw(self.game.screen, self.block):
+            if self.game.music_button.draw(self.game.screen, self.block) and self.clicked:
                 self.state = "MUSIC"
-            if self.game.sets_button.draw(self.game.screen, self.block):
+            if self.game.sets_button.draw(self.game.screen, self.block) and self.clicked:
                 self.state = "SETS"
                 self.game.sets_menu.run_sets = True
-            if self.game.quit_button.draw(self.game.screen, self.block):
+            if self.game.quit_button.draw(self.game.screen, self.block) and self.clicked:
                 self.game.running, self.game.playing = False, False
                 self.run_menu, self.game.sets_menu = False, False
 
@@ -95,19 +100,20 @@ class SetsMenu(Menu):
         if self.state == "CONTROLS":
             self.display_controls()
 
-        if self.game.sets_close_button.draw(self.game.screen, False):
+        if self.clicked:
+            print(self.clicked)
+
+        if self.game.sets_close_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
             self.game.main_menu.state = "MENU"
             self.state = "SETS"
             self.game.main_menu.block = False
 
     def display_sets(self):
-        keys = self.game.main_menu.keys
-
-        if self.game.sets_controls_button.draw(self.game.screen, False):
+        if self.game.sets_controls_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
             self.state = "CONTROLS"
-        if self.game.sets_volume_button.draw(self.game.screen, False):
+        if self.game.sets_volume_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
             self.state = "VOLUME"
-        if self.game.sets_back_button.draw(self.game.screen, False):
+        if self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
             self.game.main_menu.state = "MENU"
             self.state = "SETS"
             self.game.main_menu.block = False
@@ -117,7 +123,7 @@ class SetsMenu(Menu):
 
         self.text_volume.draw(self.game.screen)
 
-        if keys[pg.K_ESCAPE] or self.game.sets_back_button.draw(self.game.screen, False):
+        if keys[pg.K_ESCAPE] or (self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.clicked):
             self.state = "SETS"
 
     def display_controls(self):
@@ -125,12 +131,10 @@ class SetsMenu(Menu):
 
         self.text_controls.draw(self.game.screen)
 
-        if keys[pg.K_ESCAPE] or self.game.sets_back_button.draw(self.game.screen, False):
+        if keys[pg.K_ESCAPE] or (self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.clicked):
             self.state = "SETS"
 
-#class MusicMenu:
-
-
+# class MusicMenu:
 
 
 '''
