@@ -33,8 +33,8 @@ class Enemy:
     def move(self, surface):
         self.rect.move_ip(0, self.speed)
         if self.rect.y > 720 and self.rect.topright[1] > 720:
-            self.rect.x = random.randrange(450, 750)
-            self.rect.y = random.randrange(-200, -100)
+            self.rect.x = random.randrange(300, 900)
+            self.rect.y = -150
 
         surface.blit(self.image, self.rect)
 

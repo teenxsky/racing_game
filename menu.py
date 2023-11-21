@@ -6,8 +6,9 @@ class Menu:
         pg.init()
         self.game = game
         self.run_menu = True
-        self.keys = None
-        self.clicked = False
+        self.keys = {"MOUSEBUTTONDOWN" : False,
+                     "K_ESCAPE" : False
+                     }
 
     def check_events(self):
         for event in pg.event.get():
@@ -16,12 +17,14 @@ class Menu:
                 self.run_menu = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    self.clicked = True
-
-        self.keys = pg.key.get_pressed()
+                    self.keys["MOUSEBUTTONDOWN"] = True
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.keys["K_ESCAPE"] = True
 
     def blit_screen(self):
-        self.clicked = False
+        for button in self.keys.keys():
+            self.keys[button] = False
 
         self.game.window.blit(self.game.screen, (0, 0))
         pg.display.update()
@@ -48,16 +51,16 @@ class MainMenu(Menu):
 
             self.game.title_picture.draw_with_pulse(self.game.screen, 15)
 
-            if self.game.start_button.draw(self.game.screen, self.block) and self.clicked:
+            if self.game.start_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.state = "START"
-            if self.game.garage_button.draw(self.game.screen, self.block) and self.clicked:
+            if self.game.garage_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.state = "GARAGE"
-            if self.game.music_button.draw(self.game.screen, self.block) and self.clicked:
+            if self.game.music_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.state = "MUSIC"
-            if self.game.sets_button.draw(self.game.screen, self.block) and self.clicked:
+            if self.game.sets_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.state = "SETS"
                 self.game.sets_menu.run_sets = True
-            if self.game.quit_button.draw(self.game.screen, self.block) and self.clicked:
+            if self.game.quit_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.game.running, self.game.playing = False, False
                 self.run_menu, self.game.sets_menu = False, False
 
@@ -88,7 +91,7 @@ class SetsMenu(Menu):
         self.text_volume = Text(640, 230, "VOLUME", 50)
         self.text_controls = Text(640, 230, "CONTROLS", 50)
 
-        self.keys = self.game.main_menu.keys
+        self.keys = None
 
     def display_menu(self):
         self.game.screen.blit(self.game.sets_bg.image, self.game.sets_bg.rect)
@@ -101,38 +104,33 @@ class SetsMenu(Menu):
         if self.state == "CONTROLS":
             self.display_controls()
 
-        if self.game.sets_close_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
+        if self.game.sets_close_button.draw(self.game.screen, False) and self.game.main_menu.keys["MOUSEBUTTONDOWN"]:
             self.game.main_menu.block = False
             self.game.main_menu.state = "MENU"
             self.state = "SETS"
 
     def display_sets(self):
-        keys = self.game.main_menu.keys
 
-        if self.game.sets_controls_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
+        if self.game.sets_controls_button.draw(self.game.screen, False) and self.game.main_menu.keys["MOUSEBUTTONDOWN"]:
             self.state = "CONTROLS"
-        if self.game.sets_volume_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
+        if self.game.sets_volume_button.draw(self.game.screen, False) and self.game.main_menu.keys["MOUSEBUTTONDOWN"]:
             self.state = "VOLUME"
 
-        # if keys[pg.K_ESCAPE]:  ЗАВЕСТИ СЛОВАРЬ С НАЖАТЫМИ КЛАВИШАМИ КАК КЛЮЧИ И ЗАНЧЕНИЯМИ БУДУТ FALSE or TRUE
-        #    self.game.main_menu.block = False
-        #    self.game.main_menu.state = "MENU"
-
+        if self.game.main_menu.keys["K_ESCAPE"]:  # ЗАВЕСТИ СЛОВАРЬ С НАЖАТЫМИ КЛАВИШАМИ КАК КЛЮЧИ И ЗАНЧЕНИЯМИ БУДУТ FALSE or TRUE
+            self.game.main_menu.block = False
+            self.game.main_menu.state = "MENU"
 
     def display_volume(self):
-        keys = self.game.main_menu.keys
-
         self.text_volume.draw(self.game.screen)
 
-        if keys[pg.K_ESCAPE] or (self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.clicked):
+        if self.game.main_menu.keys["K_ESCAPE"] or (self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.keys["MOUSEBUTTONDOWN"]):
             self.state = "SETS"
 
     def display_controls(self):
-        keys = self.game.main_menu.keys
 
         self.text_controls.draw(self.game.screen)
 
-        if keys[pg.K_ESCAPE] or (self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.clicked):
+        if self.game.main_menu.keys["K_ESCAPE"] or (self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.keys["MOUSEBUTTONDOWN"]):
             self.state = "SETS"
 
 # class MusicMenu:

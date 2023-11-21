@@ -54,7 +54,7 @@ class Game:
         self.player_car_1 = Picture(750, 450, "images/cars/player_car_1.png", 1.1)
         self.enemy_car_1 = Picture(430, 100, "images/cars/opp1.png", 1.1)
 
-        self.speed = 8
+        self.speed = 15
 
         # crash = pg.image.load('images/crash.png')
 
