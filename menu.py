@@ -88,8 +88,9 @@ class SetsMenu(Menu):
         self.text_volume = Text(640, 230, "VOLUME", 50)
         self.text_controls = Text(640, 230, "CONTROLS", 50)
 
-    def display_menu(self):
+        self.keys = self.game.main_menu.keys
 
+    def display_menu(self):
         self.game.screen.blit(self.game.sets_bg.image, self.game.sets_bg.rect)
         self.game.main_menu.block = True
 
@@ -100,23 +101,23 @@ class SetsMenu(Menu):
         if self.state == "CONTROLS":
             self.display_controls()
 
-        if self.clicked:
-            print(self.clicked)
-
         if self.game.sets_close_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
+            self.game.main_menu.block = False
             self.game.main_menu.state = "MENU"
             self.state = "SETS"
-            self.game.main_menu.block = False
 
     def display_sets(self):
+        keys = self.game.main_menu.keys
+
         if self.game.sets_controls_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
             self.state = "CONTROLS"
         if self.game.sets_volume_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
             self.state = "VOLUME"
-        if self.game.sets_back_button.draw(self.game.screen, False) and self.game.main_menu.clicked:
-            self.game.main_menu.state = "MENU"
-            self.state = "SETS"
-            self.game.main_menu.block = False
+
+        # if keys[pg.K_ESCAPE]:  ЗАВЕСТИ СЛОВАРЬ С НАЖАТЫМИ КЛАВИШАМИ КАК КЛЮЧИ И ЗАНЧЕНИЯМИ БУДУТ FALSE or TRUE
+        #    self.game.main_menu.block = False
+        #    self.game.main_menu.state = "MENU"
+
 
     def display_volume(self):
         keys = self.game.main_menu.keys

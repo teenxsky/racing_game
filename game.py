@@ -138,6 +138,7 @@ class Game:
         self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.clicked = False
 
+
     def draw_text(self, text, size, x, y):
         font = pg.font.Font(self.font_name, size)
         text_surface = font.render(text, False, (255, 255, 255))
