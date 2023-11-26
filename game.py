@@ -1,4 +1,3 @@
-# import pygame as pg
 from menu import *
 from objects import *
 from sprites import *
@@ -6,6 +5,7 @@ from sprites import *
 
 class Game:
     def __init__(self):
+        pg.mixer.pre_init(44100, 16, 2, 4096)
         pg.init()
         self.running, self.playing = True, False
         self.SCREEN_WIDTH, self.SCREEN_HEIGHT = 1280, 720
@@ -138,8 +138,7 @@ class Game:
         self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.clicked = False
 
-
-    def draw_text(self, text, size, x, y):
+    def draw_text(self, x, y, text, size=30):
         font = pg.font.Font(self.font_name, size)
         text_surface = font.render(text, False, (255, 255, 255))
         text_rect = text_surface.get_rect()

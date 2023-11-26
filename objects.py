@@ -92,7 +92,7 @@ class Picture:
 
 
 class Text:
-    def __init__(self, x, y, text, scale):
+    def __init__(self, x, y, text, scale=20):
         font = pg.font.Font("fonts/pxl_tactical.ttf", scale)
         self.text = font.render(text, False, (255, 255, 255)).convert_alpha()
         self.text_rect = self.text.get_rect()

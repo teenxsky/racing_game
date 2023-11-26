@@ -1,4 +1,5 @@
 from objects import *
+from settings import *
 
 
 class Menu:
@@ -6,8 +7,8 @@ class Menu:
         pg.init()
         self.game = game
         self.run_menu = True
-        self.keys = {"MOUSEBUTTONDOWN" : False,
-                     "K_ESCAPE" : False
+        self.keys = {"MOUSEBUTTONDOWN": False,
+                     "K_ESCAPE": False
                      }
 
     def check_events(self):
@@ -39,6 +40,7 @@ class MainMenu(Menu):
         self.run_menu = True
         self.block = False
 
+
     def display_menu(self):
         pg.display.set_caption("00 Racing")
 
@@ -51,8 +53,12 @@ class MainMenu(Menu):
 
             self.game.title_picture.draw_with_pulse(self.game.screen, 15)
 
+            games = Text(640, 650, f'You played {settings.games} times', 40)
+            games.draw(self.game.screen)
+
             if self.game.start_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.state = "START"
+                settings.games += 1
             if self.game.garage_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
                 self.state = "GARAGE"
             if self.game.music_button.draw(self.game.screen, self.block) and self.keys["MOUSEBUTTONDOWN"]:
