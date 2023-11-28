@@ -7,6 +7,7 @@ class Game:
     def __init__(self):
         pg.mixer.pre_init(44100, 16, 2, 4096)
         pg.init()
+        pg.display.set_caption("00 Racing")
         self.running, self.playing = True, False
         self.SCREEN_WIDTH, self.SCREEN_HEIGHT = 1280, 720
         self.window = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
@@ -16,42 +17,31 @@ class Game:
         self.frame_per_second = pg.time.Clock()
         pg.mouse.set_cursor(pg.cursors.Cursor(pg.SYSTEM_CURSOR_HAND))
 
-        # BUTTONS MENU
+        # HANDLE_EVENTS
 
-        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
-        self.title_picture = Picture(130, 20, "images/title_name.png", 1)
-        self.start_button = Button(500, 277, "images/buttons/start_button_off.png", "images/buttons/start_button_on.png", button_sound, 0.3)
-        self.garage_button = Button(780, 277, "images/buttons/garage_button_off.png", "images/buttons/garage_button_on.png", button_sound, 0.3)
-        self.music_button = Button(500, 397, "images/buttons/music_button_off.png", "images/buttons/music_button_on.png", button_sound, 0.3)
-        self.sets_button = Button(780, 397, "images/buttons/settings_button_off.png", "images/buttons/settings_button_on.png", button_sound, 0.3)
-        self.quit_button = Button(640, 517, "images/buttons/quit_button_off.png", "images/buttons/quit_button_on.png", button_sound, 0.3)
-
-        self.sets_close_button = Button(390, 180, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
-        self.sets_back_button = Button(390, 270, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
-        self.sets_volume_button = Button(500, 300, "images/buttons/volume_button_off.png", "images/buttons/volume_button_on.png", button_sound, 0.25)
-        self.sets_controls_button = Button(700, 300, "images/buttons/controls_button_off.png", "images/buttons/controls_button_on.png", button_sound, 0.25)
-
-        # BUTTONS GAME
-
-        self.close_button_game = Button(580, 360, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
-        self.back_button = Button(700, 360, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
-
+        self.clicked = False
+        self.menu_state = "MENU"
+        self.game_state = "GAME"
+        self.keys = {"MOUSEBUTTONDOWN": False,
+                     "K_ESCAPE": False}
         # MENU
 
         self.main_menu = MainMenu(self)
         self.sets_menu = SetsMenu(self)
-        self.curr_menu = self.main_menu
-        self.menu_bg = Background("images/backgrounds/menu_bg.png")
-        self.menu_bg.resize(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
-        self.sets_bg = Picture(100, 100, "images/backgrounds/sets_bg.png", 0.5)
-        self.sets_bg.rect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
+        self.garage_menu = GarageMenu(self)
+
+        # BUTTONS GAME
+
+        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
+        self.close_button_game = Button(580, 360, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
+        self.back_button = Button(700, 360, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
 
         # BACKGROUND
 
         self.bg_summer = Background("images/backgrounds/background_new.png")
 
         # CARS
-        self.player_car_1 = Picture(750, 450, "images/cars/player_car_1.png", 1.1)
+        self.player_car_1 = Picture(750, 450, f'images/cars/opp{settings.car}.png', 1.1)
         self.enemy_car_1 = Picture(430, 100, "images/cars/opp1.png", 1.1)
 
         self.speed = 15
@@ -61,23 +51,15 @@ class Game:
         # player_group = pg.sprite.Group()
         # vehicle_group = pg.sprite.Group()
 
-        self.P1 = Player("images/cars/player_car_1.png", 750, 500)
-        self.P1.set_speed(self.speed)
-        self.player = Car("images/cars/player_car_1.png", 750, 500)
         # player_group.add(self.player)
 
-        self.E1 = Enemy("images/cars/opp1.png")
-        self.P1.set_speed(self.speed)
-        self.E1.set_speed(self.speed)
 
-        self.game_state = "GAME"
-
-        # HANDLE_EVENTS
-
-        self.clicked = False
 
     def game_loop(self):
-
+        P1 = Player(f'images/cars/opp{settings.car}.png', 750, 500)
+        P1.set_speed(self.speed)
+        E1 = Enemy("images/cars/opp1.png")
+        E1.set_speed(self.speed)
         # enemies_list = pg.sprite.Group()
         # all_sprites_list = pg.sprite.Group()
 
@@ -85,29 +67,28 @@ class Game:
         # all_sprites_list.add(P1)
 
         while self.playing:
-
             self.check_events()
 
-            self.P1.set_speed(self.speed)
-            self.E1.set_speed(self.speed)
-
             if self.game_state == "PAUSED":
-
                 self.bg_summer.scroll(self.screen, 0)
 
-                self.P1.set_speed(0)
-                self.E1.set_speed(0)
-                self.P1.move(self.screen)
-                self.E1.move(self.screen)
+                P1.set_speed(0)
+                E1.set_speed(0)
+                P1.move(self.screen)
+                E1.move(self.screen)
 
                 if self.close_button_game.draw(self.screen, False) and self.clicked:
                     self.playing = False
+                    self.game_state = "GAME"
                 if self.back_button.draw(self.screen, False) and self.clicked:
                     self.game_state = "GAME"
             else:
                 self.bg_summer.scroll(self.screen, self.speed)
-                self.P1.move(self.screen)
-                self.E1.move(self.screen)
+
+                P1.set_speed(self.speed)
+                E1.set_speed(self.speed)
+                P1.move(self.screen)
+                E1.move(self.screen)
 
             self.window.blit(self.screen, (0, 0))
             pg.display.update()
@@ -120,10 +101,11 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running, self.playing = False, False
-                self.curr_menu.run_display = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 self.clicked = True
-            elif event.type == pg.KEYDOWN:
+            else:
+                self.clicked = False
+            if event.type == pg.KEYDOWN:
                 if event.key in [pg.K_a, pg.K_LEFT] and self.player_car_1.rect[0] != 450:
                     self.player_car_1.rect = self.player_car_1.rect.move([-300, 0])
                 if event.key in [pg.K_d, pg.K_RIGHT] and self.player_car_1.rect[0] != 750:
@@ -136,7 +118,6 @@ class Game:
 
     def reset_keys(self):
         self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        self.clicked = False
 
     def draw_text(self, x, y, text, size=30):
         font = pg.font.Font(self.font_name, size)

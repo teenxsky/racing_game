@@ -1,7 +1,7 @@
 {
-  "car": "BMW",
+  "car": 2,
   "coins": 2,
-  "games": 6,
+  "games": 24,
   "name": "Roman",
   "score": 0
 }

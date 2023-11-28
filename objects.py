@@ -54,11 +54,12 @@ class Picture:
     def __init__(self, x, y, image_name, scale=1):
         self.image = pg.image.load(image_name).convert_alpha()
 
+        self.center = (x, y)
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.image = pg.transform.scale(self.image, (int(self.width * scale), int(self.height * scale)))
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = x, y
+        self.rect.center = self.center
 
         self.current_size = 0
 
@@ -68,27 +69,26 @@ class Picture:
 
     def resize(self, width, height):
         self.image = pg.transform.scale(self.image, (width, height))
+        self.rect = self.image.get_rect()
+        self.rect.center = self.center
 
-    def draw_just(self, surface):
+    def draw(self, surface):
         surface.blit(self.image, self.rect)
 
     def draw_with_pulse(self, surface, size, delta=1):  # FOR JUMPING GAME TITLE
         if not self.state_pulse:
             self.current_size += delta
             new = self.width + self.current_size, self.height + self.current_size
-            current_image = pg.transform.scale(self.image, new)
-            current_rect = current_image.get_rect(center=self.rect.center)
-            surface.blit(current_image, current_rect)
             if self.current_size >= size:
                 self.state_pulse = True
         else:
             self.current_size -= delta
             new = self.width + self.current_size, self.height + self.current_size
-            current_image = pg.transform.scale(self.image, new)
-            current_rect = current_image.get_rect(center=self.rect.center)
-            surface.blit(current_image, current_rect)
             if self.current_size <= 0:
                 self.state_pulse = False
+        current_image = pg.transform.scale(self.image, new)
+        current_rect = current_image.get_rect(center=self.rect.center)
+        surface.blit(current_image, current_rect)
 
 
 class Text:
