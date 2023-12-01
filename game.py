@@ -22,8 +22,8 @@ class Game:
         self.clicked = False
         self.menu_state = "MENU"
         self.game_state = "GAME"
-        self.keys = {"MOUSEBUTTONDOWN": False,
-                     "K_ESCAPE": False}
+        self.keys = {"MOUSEBUTTONDOWN": False, "BACK": False}
+
         # MENU
 
         self.main_menu = MainMenu(self)
@@ -38,39 +38,33 @@ class Game:
 
         # BACKGROUND
 
-        self.bg_summer = Background("images/backgrounds/background_new.png")
+        bg_summer_1 = Background("images/backgrounds/summer_road_1.png")
+        bg_summer_1.resize(1280, 720)
+        bg_summer_2 = Background("images/backgrounds/summer_road_2.png")
+        bg_summer_2.resize(1280, 720)
+        self.bgs = [bg_summer_1, bg_summer_2]
 
         # CARS
+
         self.player_car_1 = Picture(750, 450, f'images/cars/opp{settings.car}.png', 1.1)
         self.enemy_car_1 = Picture(430, 100, "images/cars/opp1.png", 1.1)
 
         self.speed = 15
 
-        # crash = pg.image.load('images/crash.png')
-
-        # player_group = pg.sprite.Group()
-        # vehicle_group = pg.sprite.Group()
-
-        # player_group.add(self.player)
-
-
-
     def game_loop(self):
-        P1 = Player(f'images/cars/opp{settings.car}.png', 750, 500)
-        P1.set_speed(self.speed)
-        E1 = Enemy("images/cars/opp1.png")
-        E1.set_speed(self.speed)
-        # enemies_list = pg.sprite.Group()
-        # all_sprites_list = pg.sprite.Group()
 
-        # enemies_list.add(E1)
-        # all_sprites_list.add(P1)
+        P1 = Player(f'images/cars/opp{settings.car}.png', 750, 500)
+        E1 = Enemy("images/cars/opp1.png")
+
+        bg_summer_0 = Background("images/backgrounds/summer_road_0.png")
+        bg_summer_0.resize(1280, 720)
+        bg_summer_0.set_bgs(self.bgs, (92, 100), 10)  # SETS FOR RANDOM BG
 
         while self.playing:
             self.check_events()
 
             if self.game_state == "PAUSED":
-                self.bg_summer.scroll(self.screen, 0)
+                bg_summer_0.random_scroll(self.screen, 0)
 
                 P1.set_speed(0)
                 E1.set_speed(0)
@@ -83,12 +77,13 @@ class Game:
                 if self.back_button.draw(self.screen, False) and self.clicked:
                     self.game_state = "GAME"
             else:
-                self.bg_summer.scroll(self.screen, self.speed)
+                bg_summer_0.random_scroll(self.screen, self.speed)
 
-                P1.set_speed(self.speed)
-                E1.set_speed(self.speed)
                 P1.move(self.screen)
                 E1.move(self.screen)
+
+                Player.blit_rotate_center(P1, self.screen)
+                self.speed = int(P1.get_speed())
 
             self.window.blit(self.screen, (0, 0))
             pg.display.update()
@@ -106,11 +101,7 @@ class Game:
             else:
                 self.clicked = False
             if event.type == pg.KEYDOWN:
-                if event.key in [pg.K_a, pg.K_LEFT] and self.player_car_1.rect[0] != 450:
-                    self.player_car_1.rect = self.player_car_1.rect.move([-300, 0])
-                if event.key in [pg.K_d, pg.K_RIGHT] and self.player_car_1.rect[0] != 750:
-                    self.player_car_1.rect = self.player_car_1.rect.move([300, 0])
-                if event.key == pg.K_ESCAPE:
+                if event.key == settings.KEYS["MOVE BACK"]:
                     if self.game_state == "PAUSED":
                         self.game_state = "GAME"
                     else:

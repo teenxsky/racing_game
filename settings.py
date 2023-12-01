@@ -1,5 +1,5 @@
 import json
-from sprites import*
+#from sprites import*
 
 
 class MyEncoder(json.JSONEncoder):

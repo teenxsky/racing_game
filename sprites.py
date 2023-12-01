@@ -1,6 +1,7 @@
 import pygame as pg
 import random
 import math
+from settings import *
 
 
 class Car(pg.sprite.Sprite):
@@ -46,65 +47,121 @@ class Player:
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 5
+        self.speed = 0
+        self.max_speed = 30
 
-        self.rotation_vel = 4
-        self.vel = 0
-        self.max_vel = self.speed
+        self.rotation_vel = 0.3
+        self.vel = 0.1
+        self.max_vel = 20
         self.angle = 0
-        self.acceleration = 2
-        self.reduce_vel = self.speed
+        self.acceleration = 0.1
+        self.reduce_vel = 0.5
+        self.vel_of_forward = 0.01
+        self.vel_of_horizontal_stop = 1
+        self.horizontal = 1
+        self.moving_lr_vel = 0.003
 
         self.screen = None
 
     def set_speed(self, speed):
         self.speed = speed
 
+    def get_speed(self):
+        return self.speed
+
     def move(self, screen):
-        # pressed_keys = pg.mouse.get_pressed()
         keys = pg.key.get_pressed()
         self.screen = screen
 
-        if self.speed != 0:
-            if keys[pg.K_a] or keys[pg.K_LEFT]:
-                if math.radians(self.angle + self.rotation_vel) < 1.0472:
-                    self.angle += self.rotation_vel
-                self.vel = min(self.vel + self.acceleration, self.max_vel)
-                self.mathematical_calculations(Forward=True)
+        if self.angle != 0 and not keys[settings.KEYS["MOVE LEFT"]] and not keys[settings.KEYS["MOVE RIGHT"]]:
+            if self.angle > 0:
+                self.angle -= self.rotation_vel
+                if math.radians(self.angle) > 0.2:
+                    self.rotation_vel *= 1.2
+                else:
+                    self.rotation_vel /= 1.2
 
-            elif keys[pg.K_d] or keys[pg.K_RIGHT]:
-                if math.radians(self.angle + self.rotation_vel) > -1.0472:
-                    self.angle -= self.rotation_vel
-                self.vel = min(self.vel + self.acceleration, self.max_vel)
-                self.mathematical_calculations(Forward=True)
+                '''self.rect.x -= self.horizontal
+                self.horizontal /= 1.01'''
+                #self.mathematical_calculations(Forward=False)
 
-            elif keys[pg.K_w] or keys[pg.K_UP]:
-                self.vel = min(self.vel + self.acceleration, self.max_vel)
-                self.mathematical_calculations(Forward=True)
+            if self.angle < 0:
+                self.angle += self.rotation_vel
+                if math.radians(self.angle) < -0.2:
+                    self.rotation_vel *= 1.2
+                else:
+                    self.rotation_vel /= 1.2
 
+                '''self.rect.x -= self.horizontal
+                self.horizontal /= 1.01'''
+
+            if 0 < self.angle < 1:
+                self.angle = 0
+                self.rotation_vel = 0.1
+                #self.mathematical_calculations(Forward=False)
+
+        elif keys[settings.KEYS["MOVE LEFT"]]:
+            if math.radians(self.angle + self.rotation_vel) < 0.4:
+                self.angle += self.rotation_vel
+                if math.radians(self.angle) < 0.2:
+                    self.rotation_vel *= 1.2
+                else:
+                    self.rotation_vel /= 1.2
+                # if self
+                # self.moving_lr_vel *= 1.2
+            # self.vel = min(self.vel + self.acceleration, self.max_vel)
+
+            self.mathematical_calculations(Left=True)
+
+        elif keys[settings.KEYS["MOVE RIGHT"]]:
+            if math.radians(self.angle + self.rotation_vel) > -0.4:
+                self.angle -= self.rotation_vel
+                if math.radians(self.angle) > -0.2:
+                    self.rotation_vel *= 1.2
+                else:
+                    self.rotation_vel /= 1.2
+            self.vel = min(self.vel + self.acceleration, self.max_vel)
+            self.mathematical_calculations(Right=True)
+
+        elif keys[settings.KEYS["MOVE UP"]]:
+            if self.rect.x < 150:
+                self.vel_of_forward *= 1.2
             else:
-                self.vel = max(self.vel - self.acceleration / 5, 0)
-                self.mathematical_calculations(Back=True)
+                self.vel_of_forward /= 1.2
+            self.speed = min(self.speed + self.acceleration, self.max_speed)
+            self.mathematical_calculations(Forward=True)
 
-        self.blit_rotate_center()
+        else:
+            self.vel = max(self.vel - self.acceleration, 0)
+            self.mathematical_calculations(SoftBack=True)
 
-    def mathematical_calculations(self, Forward=False, Back=False):
+    def mathematical_calculations(self, Forward=False, Back=False, Left=False, Right=False, SoftBack=False):
         radians = math.radians(self.angle)
-        vertical = math.cos(radians) * self.vel
-        horizontal = math.sin(radians) * self.vel
+        vertical = math.cos(radians) * self.vel_of_forward
+        self.horizontal = 0
 
-        if Forward and self.rect.y > 0:
-            self.rect.x -= horizontal
-            self.rect.y -= vertical
+        if Forward and self.rect.y > 20:
+            if self.speed >= self.max_speed:
+                self.rect.y -= self.speed
             self.reduce_vel = self.speed
-        if Back and self.rect.y < 500:
-            self.rect.y += self.reduce_vel
-            self.reduce_vel /= 1.01
 
-    def blit_rotate_center(self):
-        rotated_image = pg.transform.rotate(self.image, self.angle)
+        if SoftBack and 515 >= self.rect.y + self.speed >= 20:
+            self.rect.y += self.speed
+            self.speed /= 1.01
+            self.vel_of_horizontal_stop = 1
+
+        if 365 <= self.rect.x <= 850 and self.speed != 0:
+            if self.rect.x - self.horizontal > 850:
+                self.rect.x = 850
+            elif self.rect.x - self.horizontal < 365:
+                self.rect.x = 365
+            elif Left:
+                self.rect.x -= self.moving_lr_vel
+
+    def blit_rotate_center(self, screen):
+        rotated_image = pg.transform.rotate(self.image, self.angle + 180)
         new_rect = rotated_image.get_rect(center=self.image.get_rect(topleft=(self.rect.x, self.rect.y)).center)
-        self.screen.blit(rotated_image, new_rect.topleft)
+        screen.blit(rotated_image, new_rect.topleft)
 
 
 '''    def move_forward(self):

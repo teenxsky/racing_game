@@ -1,6 +1,13 @@
 {
+  "KEYS": {
+    "MOVE BACK": 27,
+    "MOVE DOWN": 115,
+    "MOVE LEFT": 97,
+    "MOVE RIGHT": 100,
+    "MOVE UP": 119
+  },
   "car": 2,
-  "coins": 2,
+  "coins": 139,
   "games": 24,
   "name": "Roman",
   "score": 0

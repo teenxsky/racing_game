@@ -1,4 +1,6 @@
 import pygame as pg
+from settings import *
+import random
 
 
 class Button:
@@ -52,20 +54,22 @@ class Button:
 
 class Picture:
     def __init__(self, x, y, image_name, scale=1):
-        self.image = pg.image.load(image_name).convert_alpha()
+        image = pg.image.load(image_name).convert_alpha()
+        width = image.get_width()
+        height = image.get_height()
 
-        self.center = (x, y)
+        self.image = pg.transform.scale(image, (width * scale, height * scale))
         self.width = self.image.get_width()
         self.height = self.image.get_height()
-        self.image = pg.transform.scale(self.image, (int(self.width * scale), int(self.height * scale)))
+
+        self.center = (x, y)
         self.rect = self.image.get_rect()
         self.rect.center = self.center
 
         self.current_size = 0
+        self.pulse = True
 
-        # FOR JUMPING GAME TITLE
-
-        self.state_pulse = False
+        self.last_update = pg.time.get_ticks()
 
     def resize(self, width, height):
         self.image = pg.transform.scale(self.image, (width, height))
@@ -73,39 +77,43 @@ class Picture:
         self.rect.center = self.center
 
     def draw(self, surface):
+        action = False
+        pos = pg.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            action = True
         surface.blit(self.image, self.rect)
+        return action
 
-    def draw_with_pulse(self, surface, size, delta=1):  # FOR JUMPING GAME TITLE
-        if not self.state_pulse:
-            self.current_size += delta
-            new = self.width + self.current_size, self.height + self.current_size
-            if self.current_size >= size:
-                self.state_pulse = True
-        else:
-            self.current_size -= delta
-            new = self.width + self.current_size, self.height + self.current_size
-            if self.current_size <= 0:
-                self.state_pulse = False
+    def draw_with_pulse(self, surface, size=20, time=15):  # FOR JUMPING GAME TITLE
+        current_time = pg.time.get_ticks()
+
+        if current_time - self.last_update >= time:
+            if self.pulse:
+                self.current_size += 1
+                if self.current_size == size:
+                    self.pulse = False
+            else:
+                self.current_size -= 1
+                if self.current_size == 0:
+                    self.pulse = True
+            self.last_update = current_time
+
+        new = self.width + self.current_size, self.height + self.current_size
         current_image = pg.transform.scale(self.image, new)
         current_rect = current_image.get_rect(center=self.rect.center)
         surface.blit(current_image, current_rect)
 
 
-class Text:
-    def __init__(self, x, y, text, scale=20):
-        font = pg.font.Font("fonts/pxl_tactical.ttf", scale)
-        self.text = font.render(text, False, (255, 255, 255)).convert_alpha()
-        self.text_rect = self.text.get_rect()
-        self.text_rect.center = (x, y)
-
-    def draw(self, surface):
-        surface.blit(self.text, self.text_rect)
-
-
 class Background(Picture):
     def __init__(self, image_name, scale=1):
         super().__init__(0, 0, image_name, scale)
+
         self.bg_y = 0
+
+        self.bgs = []
+        self.bgs_origin, self.cum_w, self.k = [], 0, 0
+        self.scrolls = 0
+        self.last_bg = self
 
     def scroll(self, surface, speed):
         self.bg_y += speed
@@ -114,28 +122,104 @@ class Background(Picture):
         if self.bg_y == 720:
             self.bg_y = 0
 
+    def set_bgs(self, bgs, cum_weight, k=10):
+        self.bgs = random.choices(bgs, cum_weights=cum_weight, k=k)
+        self.bgs_origin, self.cum_w, self.k = bgs, cum_weight, k
 
-'''    def extractFrames(self, image_object):
-        image = Image.open(image_object)
-        for frame_numer in range(0, 5):
-            image.seek(self.frames_list[frame])'''
+    def random_scroll(self, surface, speed):
+        self.bg_y += speed
 
-'''class Vehicle(pg.sprite.Sprite):
+        if self.scrolls == 0:
+            surface.blit(self.last_bg.image, (0, self.bg_y))
+            surface.blit(self.bgs[self.scrolls].image, (0, self.bg_y - 720))
+        else:
+            surface.blit(self.bgs[self.scrolls - 1].image, (0, self.bg_y))
+            surface.blit(self.bgs[self.scrolls].image, (0, self.bg_y - 720))
 
-    def __init__(self, image, x, y):
-        pg.sprite.Sprite.__init__(self)
+        if (self.scrolls == len(self.bgs) - 1) and (self.bg_y >= 720):
+            self.last_bg = self.bgs[self.scrolls]
+            self.set_bgs(self.bgs_origin, self.cum_w, self.k)
+            self.scrolls = -1
 
-        image_scale = 45 / image.get_rect().width
-        new_width = image.get_rect().width * image_scale
-        new_height = image.get_rect().height * image_scale
-        self.image = pg.transform.scale(image, (new_width, new_height))
-
-        self.rect = self.image.get_rect()
-        self.rect.center = [x, y]
+        if self.bg_y >= 720:
+            self.bg_y = 0
+            self.scrolls += 1
 
 
-class PlayerVehicle(Vehicle):
+class HUD:
+    def __init__(self, coins_size=1):
+        coins_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
+        self.coins_sheets = self.get_sheets(coins_image)
+        self.frame = 0
 
-    def __init__(self, pic, x, y):
-        image = pic
-        super().__init__(image, x, y)'''
+        self.last_update = pg.time.get_ticks()
+
+    def get_image(self, sheet, frame, scale=1, colour=(0, 0, 0)):
+        width, height = sheet.get_height(), sheet.get_height()
+        image = pg.Surface((width, height)).convert_alpha()
+        image.blit(sheet, (0, 0), ((frame * width), 0, width,height))
+        image = pg.transform.scale(image, (width * scale, height * scale))
+        image.set_colorkey(colour)
+        return image
+
+    def get_sheets(self, image):
+        sheets = []
+        for i in range(image.get_width() // image.get_height()):
+            sheets.append(self.get_image(image, i, 5))
+        return sheets
+
+    def draw_coins(self, surface, x, y, time): #Сделать в ХУД класс выведения коин или другого на экран со всеми примочками
+        current_time = pg.time.get_ticks()
+
+        coin_rect = self.coins_sheets[0].get_rect()
+        coin_rect.center = (x, y)
+
+        coin_val = Text(x + 70, y, str(settings.coins), 50)
+        coin_val.rect.midleft = (coin_rect.midright[0] + 5, coin_rect.midright[1])
+
+        surface.blit(self.coins_sheets[self.frame], coin_rect)
+        surface.blit(coin_val.text, coin_val.rect)
+
+        if current_time - self.last_update >= time:
+            self.frame += 1
+            self.last_update = current_time
+            if self.frame == len(self.coins_sheets):
+                self.frame = 0
+
+
+class Text:
+    def __init__(self, x, y, text, scale=20, sound=None, color=(255, 255, 255)):
+        font = pg.font.Font("fonts/pxl_tactical.ttf", scale)
+        self.scale = scale
+        self.color = color
+        self.string = text
+        self.text = font.render(text, False, self.color).convert_alpha()
+        self.rect = self.text.get_rect()
+        self.rect.center = (x, y)
+
+        self.on_button = False
+        self.sound = sound
+        self.color_on = (255, 255, 200)
+        self.text_on = font.render(text, False, self.color_on).convert_alpha()
+        self.rect_on = self.text_on.get_rect()
+        self.rect_on.center = (x, y)
+
+    def draw(self, surface):
+        surface.blit(self.text, self.rect)
+
+    def draw_as_button(self, surface):
+        action = False
+
+        pos = pg.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            if not self.on_button:
+                self.on_button = True
+                self.sound.play()
+
+            surface.blit(self.text_on, (self.rect_on.x, self.rect_on.y))
+            action = True
+        else:
+            self.on_button = False
+            surface.blit(self.text, (self.rect.x, self.rect.y))
+
+        return action

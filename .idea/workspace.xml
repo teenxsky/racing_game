@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+added raw config file (now saves only amount of games you played)">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Reset_at_20_11_2023,_11_59_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Reset_at_20_11_2023__11_59__Changes_.xml" beforeDir="false" />
+    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+many changes (check garage lol)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/audio/Motley Crue - Girls.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/audio/RADIOTAPOK - Monster.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/audio/music.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/audio/music1.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/audio/skype.mp3" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fonts/itim.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fonts/pixfont.ttf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/sets_bg1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/sets_bg11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/sumer_road.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/summer_details.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/car_down.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/yellow_car_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/cars/yellow_car_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/yellow_car_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/cars/yellow_car_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cursor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cursor_imgs.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/kandinsky-download-1701051226748.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/kandinsky-download-1701051432258.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/sprites.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +91,48 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="racing_game" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5/game.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="racing_game" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="racing_game" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -131,6 +178,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.main (1)" />
+        <item itemvalue="Python.game" />
         <item itemvalue="Python.settings" />
         <item itemvalue="Python.Project3" />
       </list>
@@ -348,7 +397,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700982437058</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="#+many changes (check garage lol)">
+      <created>1701184040740</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1701184040741</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -394,6 +450,7 @@
     <MESSAGE value="#+work from here" />
     <MESSAGE value="#+working buttons" />
     <MESSAGE value="#+added raw config file (now saves only amount of games you played)" />
-    <option name="LAST_COMMIT_MESSAGE" value="#+added raw config file (now saves only amount of games you played)" />
+    <MESSAGE value="#+many changes (check garage lol)" />
+    <option name="LAST_COMMIT_MESSAGE" value="#+many changes (check garage lol)" />
   </component>
 </project>
