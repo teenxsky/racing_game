@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 import random
+import os
 
 
 class Button:
@@ -188,38 +189,81 @@ class HUD:
 
 
 class Text:
-    def __init__(self, x, y, text, scale=20, sound=None, color=(255, 255, 255)):
-        font = pg.font.Font("fonts/pxl_tactical.ttf", scale)
+    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255)):
+        self.center = (x, y)
         self.scale = scale
+        self.sound = sound
         self.color = color
         self.string = text
-        self.text = font.render(text, False, self.color).convert_alpha()
+
+        self.font = pg.font.Font("fonts/pxl_tactical.ttf", self.scale)
+        self.text = self.font.render(self.string, False, self.color).convert_alpha()
         self.rect = self.text.get_rect()
         self.rect.center = (x, y)
 
         self.on_button = False
-        self.sound = sound
-        self.color_on = (255, 255, 200)
-        self.text_on = font.render(text, False, self.color_on).convert_alpha()
-        self.rect_on = self.text_on.get_rect()
-        self.rect_on.center = (x, y)
 
     def draw(self, surface):
         surface.blit(self.text, self.rect)
 
-    def draw_as_button(self, surface):
+    def draw_as_button(self, surface, press_color=(255, 255, 200)):
         action = False
-
         pos = pg.mouse.get_pos()
         if self.rect.collidepoint(pos):
+            action = True
             if not self.on_button:
                 self.on_button = True
-                self.sound.play()
-
-            surface.blit(self.text_on, (self.rect_on.x, self.rect_on.y))
-            action = True
+                if self.sound:
+                    self.sound.play()
+            press_text = self.font.render(self.string, False, press_color).convert_alpha()
+            surface.blit(press_text, self.rect)
         else:
             self.on_button = False
-            surface.blit(self.text, (self.rect.x, self.rect.y))
+            surface.blit(self.text, self.rect)
 
         return action
+
+    def typing(self, surface):
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_DELETE and len(self.string) > 0:
+                    self.string = self.string[:-1]
+                else:
+                    self.string += event.unicode
+
+        self.text = self.font.render(self.string, False, self.color).convert_alpha()
+        self.rect = self.text.get_rect()
+        self.rect.center = self.center
+        self.draw(surface)
+
+
+class GIF:
+    def __init__(self, path):
+        self.path = path
+        self.gif = []
+
+        for file in sorted(os.listdir(self.path)):
+            self.gif.append(Picture(640, 360, self.path + file))
+
+        self.last_update = pg.time.get_ticks()
+        self.frame = 0
+
+    def resize(self, width, height):
+        for frame in self.gif:
+            frame.resize(width, height)
+
+    def move(self, x, y):
+        for frame in self.gif:
+            frame.rect.center = (x, y)
+
+    def draw(self, screen, speed=20):
+        current_time = pg.time.get_ticks()
+        if current_time - self.last_update >= speed:
+            self.gif[self.frame].draw(screen)
+            self.last_update = current_time
+            self.frame += 1
+            if self.frame == len(self.gif):
+                self.frame = 0
+
+
+#for row, line in enumerate(text)

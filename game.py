@@ -29,6 +29,7 @@ class Game:
         self.main_menu = MainMenu(self)
         self.sets_menu = SetsMenu(self)
         self.garage_menu = GarageMenu(self)
+        self.music_menu = MusicMenu(self)
 
         # BUTTONS GAME
 
@@ -58,7 +59,7 @@ class Game:
 
         bg_summer_0 = Background("images/backgrounds/summer_road_0.png")
         bg_summer_0.resize(1280, 720)
-        bg_summer_0.set_bgs(self.bgs, (92, 100), 10)  # SETS FOR RANDOM BG
+        bg_summer_0.set_bgs(self.bgs, (95, 100), 10)  # SETS FOR RANDOM BG
 
         while self.playing:
             self.check_events()
@@ -85,10 +86,7 @@ class Game:
                 Player.blit_rotate_center(P1, self.screen)
                 self.speed = int(P1.get_speed())
 
-            self.window.blit(self.screen, (0, 0))
-            pg.display.update()
-            self.frame_per_second.tick(self.FPS)
-            self.reset_keys()
+            self.blit_screen()
 
         pg.time.delay(500)
 
@@ -107,8 +105,12 @@ class Game:
                     else:
                         self.game_state = "PAUSED"
 
-    def reset_keys(self):
-        self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+    def blit_screen(self):
+        for button in self.keys.keys():
+            self.keys[button] = False
+        self.window.blit(self.screen, (0, 0))
+        pg.display.update()
+        self.frame_per_second.tick(self.FPS)
 
     def draw_text(self, x, y, text, size=30):
         font = pg.font.Font(self.font_name, size)

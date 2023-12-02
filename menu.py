@@ -1,5 +1,7 @@
 from objects import *
 from settings import *
+import os
+import fnmatch
 
 
 class Menu:
@@ -16,26 +18,19 @@ class Menu:
                     self.game.keys["MOUSEBUTTONDOWN"] = True
             if event.type == pg.KEYDOWN:
                 print(pg.key.name(event.key), event.key)
-                if event.key == settings.KEYS["BACK"]:
-
+                if event.key == settings.KEYS["MOVE BACK"]:
                     self.game.keys["BACK"] = True
-
-    def blit_screen(self):
-        for button in self.game.keys.keys():
-            self.game.keys[button] = False
-
-        self.game.window.blit(self.game.screen, (0, 0))
-        pg.display.update()
-        self.game.frame_per_second.tick(self.game.FPS)
-        self.game.reset_keys()
 
 
 class MainMenu(Menu):
     def __init__(self, game):
         super().__init__(game)
 
-        self.menu_bg = Background("images/backgrounds/background3.png", 1.25)
-        self.menu_bg.resize(game.SCREEN_WIDTH, game.SCREEN_HEIGHT)
+        self.root = "images/backgrounds/menu_bg/"
+
+        self.menu_bg = GIF(self.root)
+        self.menu_bg.resize(1280, 720)
+
         self.title_picture = Picture(640, 150, "images/title_name.png", 1)
 
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
@@ -54,7 +49,7 @@ class MainMenu(Menu):
 
             self.check_events()
 
-            self.game.screen.blit(self.menu_bg.image, (0, 0))
+            self.menu_bg.draw(self.game.screen)
 
             self.title_picture.draw_with_pulse(self.game.screen)
 
@@ -69,7 +64,6 @@ class MainMenu(Menu):
                 self.game.menu_state = "GARAGE"
             if self.music_button.draw(self.game.screen, self.block) and self.game.keys["MOUSEBUTTONDOWN"]:
                 self.game.menu_state = "MUSIC"
-                settings.coins += 1
             if self.sets_button.draw(self.game.screen, self.block) and self.game.keys["MOUSEBUTTONDOWN"]:
                 self.game.menu_state = "SETS"
             if self.quit_button.draw(self.game.screen, self.block) and self.game.keys["MOUSEBUTTONDOWN"]:
@@ -77,23 +71,26 @@ class MainMenu(Menu):
 
             self.check_input()
 
-            self.blit_screen()
+            self.game.blit_screen()
 
         pg.time.delay(500)
 
     def check_input(self):
+        self.block = self.game.menu_state == "MUSIC"\
+                     or self.game.menu_state == "SETS"
+
         if self.game.menu_state == "START":
             self.game.playing = True
-        elif self.game.menu_state == "GARAGE":
+
+        if self.game.menu_state == "GARAGE":
             pg.time.delay(500)
             self.game.garage_menu.display_menu()
-        elif self.game.menu_state == "MUSIC":
-            pass
-        elif self.game.menu_state == "SETS":
+
+        if self.game.menu_state == "MUSIC":
+            self.game.music_menu.display_menu()
+
+        if self.game.menu_state == "SETS":
             self.game.sets_menu.display_menu()
-            self.block = True
-        else:
-            self.block = False
 
 
 class SetsMenu(Menu):
@@ -104,6 +101,8 @@ class SetsMenu(Menu):
         self.sets_bg = Picture(640, 360, "images/backgrounds/window_2.png", 0.5)
         self.sets_close_button = Button(860, 230, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
         self.sets_back_button = Button(420, 230, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
+
+        self.text_settings = Text(640, 230, "SETTNGS", 50, button_sound)
 
         self.sets_volume_button = Button(420, 330, "images/buttons/volume_button_off.png", "images/buttons/volume_button_on.png", button_sound, 0.25)
         self.text_volume_sub = Text(*self.sets_volume_button.rect_on.midright, "VOLUME", 40, button_sound)
@@ -140,6 +139,8 @@ class SetsMenu(Menu):
             self.sub_state = "SETS"
 
     def display_sets(self):
+        self.text_settings.draw(self.game.screen)
+
         if self.sets_controls_button.draw(self.game.screen, False):
             self.text_controls_sub.draw(self.game.screen)
             if self.game.keys["MOUSEBUTTONDOWN"]:
@@ -231,10 +232,76 @@ class GarageMenu(Menu):
             if self.game.keys["BACK"] or (self.garage_close_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]):
                 self.game.menu_state = "MENU"
 
-            self.blit_screen()
+            self.game.blit_screen()
 
         pg.time.delay(500)
 
 
-#class MusicMenu(Menu):
+class MusicMenu(Menu):
+    def __init__(self, game):
+        super().__init__(game)
+        self.root = "audio/music"
+        self.pattern = "*.mp3"
+        self.songs = []
+
+        for root, dirs, files in os.walk(self.root):
+            for filename in fnmatch.filter(files, self.pattern):
+                self.songs.append(Text(400, 270, filename, 20))
+
+        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
+        self.music_bg = Picture(640, 360, "images/backgrounds/window_2.png", 0.6)
+        self.music_close_button = Button(915, 195, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.25)
+        self.music_back_button = Button(420, 230, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.25)
+
+        self.prev_button = Button(440, 475, "images/buttons/prev_button_off.png", "images/buttons/prev_button_on.png", button_sound, 0.25)
+        self.stop_button = Button(540, 475, "images/buttons/stop_button_off.png", "images/buttons/stop_button_on.png", button_sound, 0.25)
+        self.play_button = Button(640, 475, "images/buttons/play_button_off.png", "images/buttons/play_button_on.png", button_sound, 0.25)
+        self.pause_button = Button(740, 475, "images/buttons/pause_button_off1.png", "images/buttons/pause_button_on1.png", button_sound, 0.25)
+        self.next_button = Button(840, 475, "images/buttons/next_button_off.png", "images/buttons/next_button_on.png", button_sound, 0.25)
+
+        self.text_music = Text(640, 195, "MUSIC", 50)
+
+        self.song_number = 0
+        pg.mixer.music.load(self.root + "/" + self.songs[self.song_number].string)
+        pg.mixer.music.set_volume(0.2)
+
+    def display_menu(self):
+        self.game.screen.blit(self.music_bg.image, self.music_bg.rect)
+
+        self.text_music.draw(self.game.screen)
+
+        distance = 0
+        for song in self.songs:
+            song.rect.midleft = (340, 240 + distance)
+            distance += 30
+            if song.draw_as_button(self.game.screen) and self.game.keys["MOUSEBUTTONDOWN"]:
+                pg.mixer.music.load(self.root + "/" + song.string)
+                self.song_number = self.songs.index(song)
+
+        if self.play_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]:
+            pg.mixer.music.play()
+        if self.pause_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]:
+            if pg.mixer.music.get_busy():
+                pg.mixer.music.pause()
+            else:
+                pg.mixer.music.unpause()
+        if self.stop_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]:
+            pg.mixer.music.stop()
+        if self.next_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]:
+            self.song_number -= 1
+            if self.song_number < 0:
+                self.song_number = len(self.songs) - 1
+            pg.mixer.music.load(self.root + "/" + self.songs[self.song_number].string)
+            pg.mixer.music.play()
+        if self.prev_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]:
+            self.song_number += 1
+            if self.song_number == len(self.songs):
+                self.song_number = 0
+            pg.mixer.music.load(self.root + "/" + self.songs[self.song_number].string)
+            pg.mixer.music.play()
+
+        if self.music_close_button.draw(self.game.screen, False) and self.game.keys["MOUSEBUTTONDOWN"]:
+            self.game.menu_state = "MENU"
+
+
 

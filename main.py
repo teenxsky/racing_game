@@ -8,5 +8,5 @@ while g.running:
     g.main_menu.display_menu()
     g.game_loop()
 
-settings.update_all()
+settings.update()
 

@@ -1,13 +1,13 @@
 import json
 #from sprites import*
 
-
+'''
 class MyEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Player):
             return o.image, o.speed
         return o
-
+'''
 
 '''
 d = {'name': 'Roman', 'coins': 100, 'car': 'BMW', 'score': 1000}
@@ -30,11 +30,11 @@ class Settings:
         except json.JSONDecodeError as exc:
             print(f'JSON error. Exception: {exc}')
 
-    def update_all(self):
+    def update(self):
         for user_setting_key in self.user_settings:
             self.user_settings[user_setting_key] = getattr(self, user_setting_key)
         with open('config.json', 'w') as f:
-            json.dump(self.user_settings, f, indent=2, sort_keys=True)
+            json.dump(self.user_settings, f, indent=2)
 
     # def set_default(self):
 
