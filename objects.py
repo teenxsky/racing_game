@@ -1,11 +1,17 @@
+import pygame
 import pygame as pg
 from settings import *
 import random
 import os
+from tkinter import Tk
+from tkinter import filedialog
+
+root = Tk()
+root.withdraw()
 
 
 class Button:
-    def __init__(self, x, y, image_off_name, image_on_name, sound, scale=1):
+    def __init__(self, x, y, image_off_name, image_on_name, sound=None, scale=1):
         self.image_off = pg.image.load(image_off_name).convert_alpha()
         self.image_on = pg.image.load(image_on_name).convert_alpha()
 
@@ -16,39 +22,40 @@ class Button:
         width_off = self.image_off.get_width()
         height_off = self.image_off.get_height()
         self.image_off = pg.transform.scale(self.image_off, (int(width_off * scale), int(height_off * scale)))
-        self.rect_off = self.image_off.get_rect()
-        self.rect_off.center = (x, y)
+        self.rect = self.image_off.get_rect()
+        self.rect.center = (x, y)
 
         # FOR PUSHED BUTTON
 
         width_on = self.image_on.get_width()
         height_on = self.image_on.get_height()
         self.image_on = pg.transform.scale(self.image_on, (int(width_on * scale), int(height_on * scale)))
-        self.rect_on = self.image_on.get_rect()
-        self.rect_on.center = (x, y)
 
         # FOR BUTTON PUSHING
 
         self.on_button = False
 
-    def draw(self, surface, block):  # DRAW AND CHECKING IF MOUSE ON BUTTON
+    def draw(self, surface, block=False, surface_topleft=(0, 0)):
         action = False
-
+        x, y = surface_topleft
         if not block:
             pos = pg.mouse.get_pos()
-            if self.rect_off.collidepoint(pos) or self.rect_on.collidepoint(pos):
+            x_b = (pos[0] >= x) and (pos[0] <= x + surface.get_width())
+            y_b = (pos[1] >= y) and (pos[1] <= y + surface.get_height())
+            if self.rect.collidepoint((pos[0] - x, pos[1] - y)) and x_b and y_b:
                 if not self.on_button:
                     self.on_button = True
-                    self.click_sound.play()
+                    if self.click_sound:
+                        self.click_sound.play()
 
-                surface.blit(self.image_on, (self.rect_on.x, self.rect_on.y))
+                surface.blit(self.image_on, (self.rect.x, self.rect.y))
                 action = True
             else:
                 self.on_button = False
-                surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
+                surface.blit(self.image_off, (self.rect.x, self.rect.y))
 
         else:
-            surface.blit(self.image_off, (self.rect_off.x, self.rect_off.y))
+            surface.blit(self.image_off, (self.rect.x, self.rect.y))
 
         return action
 
@@ -158,7 +165,7 @@ class HUD:
     def get_image(self, sheet, frame, scale=1, colour=(0, 0, 0)):
         width, height = sheet.get_height(), sheet.get_height()
         image = pg.Surface((width, height)).convert_alpha()
-        image.blit(sheet, (0, 0), ((frame * width), 0, width,height))
+        image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
         image = pg.transform.scale(image, (width * scale, height * scale))
         image.set_colorkey(colour)
         return image
@@ -169,7 +176,7 @@ class HUD:
             sheets.append(self.get_image(image, i, 5))
         return sheets
 
-    def draw_coins(self, surface, x, y, time): #Сделать в ХУД класс выведения коин или другого на экран со всеми примочками
+    def draw_coins(self, surface, x, y, time): # Сделать в ХУД класс выведения коин или другого на экран со всеми примочками
         current_time = pg.time.get_ticks()
 
         coin_rect = self.coins_sheets[0].get_rect()
@@ -189,7 +196,7 @@ class HUD:
 
 
 class Text:
-    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255)):
+    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255), set_topleft=False):
         self.center = (x, y)
         self.scale = scale
         self.sound = sound
@@ -199,17 +206,32 @@ class Text:
         self.font = pg.font.Font("fonts/pxl_tactical.ttf", self.scale)
         self.text = self.font.render(self.string, False, self.color).convert_alpha()
         self.rect = self.text.get_rect()
-        self.rect.center = (x, y)
+        if set_topleft:
+            self.rect.topleft = (x, y)
+        else:
+            self.rect.center = (x, y)
 
         self.on_button = False
 
-    def draw(self, surface):
-        surface.blit(self.text, self.rect)
+    def draw(self, surface, mp3_cut=False):
+        if mp3_cut:
+            text = self.font.render(self.string[:-4], False, self.color).convert_alpha()
+            surface.blit(text, self.rect)
+        else:
+            surface.blit(self.text, self.rect)
 
-    def draw_as_button(self, surface, press_color=(255, 255, 200)):
+    def draw_color(self, surface, color=(255, 255, 200), mp3_cut=False):
+        if mp3_cut:
+            text = self.font.render(self.string[:-4], False, color).convert_alpha()
+        else:
+            text = self.font.render(self.string, False, color).convert_alpha()
+        surface.blit(text, self.rect)
+
+    def draw_as_button(self, surface, surface_topleft=(0, 0), press_color=(255, 255, 200)):
         action = False
+        x, y = surface_topleft
         pos = pg.mouse.get_pos()
-        if self.rect.collidepoint(pos):
+        if self.rect.collidepoint((pos[0] - x, pos[1] - y)):
             action = True
             if not self.on_button:
                 self.on_button = True
@@ -266,4 +288,113 @@ class GIF:
         self.gif[self.frame].draw(screen)
 
 
-#for row, line in enumerate(text)
+class MusicPlayer:
+    def __init__(self, path):
+        self.path = path
+        self.playlist = []
+        self.others = []
+        # self.covers
+
+        self.playing = False
+        self.random_play = True
+        self.loop = False
+        self.MUSIC_END = pg.USEREVENT+1
+        pg.mixer.music.set_endevent(self.MUSIC_END)
+
+        self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if os.path.exists(file_path + file))
+        self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if os.path.exists(file_path + file))
+
+    def play(self):
+        if not self.playing:
+            self.playing = True
+            if settings.song_number < len(self.playlist):
+                path = self.playlist[settings.song_number][0]
+                file = self.playlist[settings.song_number][1].string
+            else:
+                path = self.others[settings.song_number % len(self.playlist)][0]
+                file = self.others[settings.song_number % len(self.playlist)][1].string
+            try:
+                pg.mixer.music.load(path + file)
+            except pygame.error:
+                self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if os.path.exists(file_path + file))
+                self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if os.path.exists(file_path + file))
+            pg.mixer.music.play()
+        else:
+            pg.mixer.music.unpause()
+
+    def pause(self):
+        pg.mixer.music.pause()
+
+    def next(self):
+        self.playing = False
+        if self.random_play:
+            settings.song_number = random.randrange(0, len(self.playlist) + len(self.others) - 1)
+        else:
+            settings.song_number += 1
+            if settings.song_number == len(self.playlist) + len(self.others):
+                settings.song_number = 0
+        self.play()
+
+    def prev(self):
+        self.playing = False
+        if self.random_play:
+            settings.song_number = random.randrange(0, len(self.playlist) + len(self.others) - 1)
+        else:
+            settings.song_number -= 1
+            if settings.song_number < 0:
+                settings.song_number = len(self.playlist) + len(self.others) - 1
+        self.play()
+
+    def get_songs(self):
+        return self.playlist
+
+    def get_others(self):
+        return self.others
+
+    def set_volume(self):
+        pg.mixer.music.set_volume(settings.music_volume)
+
+    def choose_dir(self):
+        self.path = filedialog.askdirectory(title="Choosing directory", initialdir="Desktop") + "/"
+        self.refresh()
+
+    def choose_song(self):
+        file = filedialog.askopenfilename(title="Choosing directory")
+        if file:
+            path, name = "/".join(file.split("/")[:-1]) + "/", file.split("/")[-1]
+            self.others.append((path, Text(400, 270, name, 20)))
+
+    def pop_from_playlist(self, song):
+        if self.playlist.index(song) == settings.song_number:
+            self.playlist.remove(song)
+            self.others.append(song)
+            settings.song_number = self.others.index(song) + len(self.playlist)
+        else:
+            self.playlist.remove(song)
+            self.others.append(song)
+
+    def pop_from_others(self, song):
+        if self.others.index(song) + len(self.playlist) == settings.song_number:
+            self.others.remove(song)
+            self.playlist.append(song)
+            settings.song_number = self.playlist.index(song)
+        else:
+            self.others.remove(song)
+            self.playlist.append(song)
+
+    def save_to_settings(self):
+        curr_songs = []
+        for path, file in self.playlist:
+            curr_songs.append((path, file.string))
+        settings.songs = curr_songs
+
+        curr_songs = []
+        for path, file in self.others:
+            curr_songs.append((path, file.string))
+        settings.others = curr_songs
+
+    def refresh(self):
+        self.playlist = list((self.path, Text(400, 270, file, 20)) for file in sorted(os.listdir(self.path)) if ".mp3" in file)
+        settings.song_number = 0
+        self.others = []
+        self.save_to_settings()

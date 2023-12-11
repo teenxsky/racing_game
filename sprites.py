@@ -1,10 +1,7 @@
 import pygame as pg
 import random
 import math
-
-from game import *
 from settings import *
-from objects import Picture
 
 
 class Vehicle(pg.sprite.Sprite):
@@ -16,10 +13,26 @@ class Vehicle(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
 
+
 class PlayerVehicle(Vehicle):
     def __init__(self, x, y, image_in):
         image = image_in
         super().__init__(x, y, image)
+
+
+class Car(pg.sprite.Sprite):
+    def __init__(self, image, x, y):
+        pg.sprite.Sprite.__init__(self)
+        self.image_loaded = pg.image.load(image).convert_alpha()
+
+        image_scale = 45 / self.image_loaded.get_rect().width
+        new_width = self.image_loaded.get_rect().width * image_scale
+        new_height = self.image_loaded.get_rect().height * image_scale
+
+        self.image = pg.transform.scale(self.image_loaded, (new_width, new_height))
+
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
 
 class Enemy:
@@ -38,6 +51,7 @@ class Enemy:
         self.mask = None
 
         self.render = True
+
     def render_enemies(self, state=True):
         if state:
             self.render = True
@@ -77,6 +91,7 @@ class Enemy:
             self.mask = pg.mask.from_surface(self.images[self.frame])
 
             surface.blit(self.images[self.frame], (self.rect.x, self.rect.y))
+
 
 class Player:
     def __init__(self, player):
@@ -346,8 +361,6 @@ class Player:
         self.mask = pg.mask.from_surface(rotated_image)
 
         screen.blit(rotated_image, new_rect)
-
-
 
 
 '''    def move(self, screen):

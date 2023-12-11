@@ -1,6 +1,5 @@
 from game import Game
-from settings import *
-
+from objects import *
 
 g = Game()
 
@@ -9,4 +8,3 @@ while g.running:
     g.game_loop()
 
 settings.update()
-

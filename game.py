@@ -1,8 +1,7 @@
-import sprites
-import datetime
 from menu import *
 from objects import *
 from sprites import *
+import datetime
 
 
 class Game:
@@ -10,6 +9,8 @@ class Game:
         pg.mixer.pre_init(44100, 16, 2, 4096)
         pg.init()
         pg.display.set_caption("00 Racing")
+        icon = pg.image.load("images/icon.png")
+        pg.display.set_icon(icon)
         self.running, self.playing = True, False
         self.SCREEN_WIDTH, self.SCREEN_HEIGHT = 1280, 720
         self.window = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
@@ -24,7 +25,10 @@ class Game:
         self.clicked = False
         self.menu_state = "MENU"
         self.game_state = "GAME"
-        self.keys = {"MOUSEBUTTONDOWN": False, "BACK": False}
+        self.keys = {"MOUSE DOWN": False, "BACK": False, "ENTER": False,
+                     "MOVE UP": False, "MOVE DOWN": False, "MOUSEWHEEL": 0,
+                     "MOVE RIGHT": False, "MOVE LEFT": False
+                     }
 
         # MENU
 
@@ -41,49 +45,67 @@ class Game:
 
         # BACKGROUND
 
-        bg_summer_1 = Background("images/backgrounds/summer_road_1.png")
-        bg_summer_1.resize(1280, 720)
-        bg_summer_2 = Background("images/backgrounds/summer_road_2.png")
-        bg_summer_2.resize(1280, 720)
-        self.bgs = [bg_summer_1, bg_summer_2]
+        self.curr_level = 0
 
         # CARS
 
-        self.player_car = GIF(f'images/cars/player_car_{settings.car}/', scale=1.1).gif
+        # self.player_car = GIF(f'images/cars/player_car_{settings.cars.}/', scale=1.1).gif
         self.opp1 = GIF("images/cars/opp1/", scale=1.15).gif
-        #self.opp2 = GIF("images/cars/opp2/", scale=1.15).gif
+        # self.opp2 = GIF("images/cars/opp2/", scale=1.15).gif
 
         self.crash = pg.image.load('images/crash.png')
         self.crash_rect = self.crash.get_rect()
 
+        # MUSIC
+
+        self.player = MusicPlayer("audio/music/")
+        self.player.set_volume()
+        # self.player.play()
+
     def game_loop(self):
-        def add_sprites(car_imgs, sprite_group, type="Vehicle"):
+
+        def add_sprites(car_imgs, sprite_group, car_type="Vehicle"):
+            car = None
             for frame in range(len(car_imgs)):
-                if type == "Vehicle":
-                    car = sprites.Vehicle(0, 0, car_imgs[frame].image)
-                elif type == "PlayerVehicle":
-                    car = sprites.PlayerVehicle(790, 590, car_imgs[frame].image)
+                if car_type == "Vehicle":
+                    car = Vehicle(0, 0, car_imgs[frame].image)
+                elif car_type == "PlayerVehicle":
+                    car = PlayerVehicle(790, 590, car_imgs[frame].image)
                 sprite_group.add(car)
 
-        self.enemy_speed = 2
-        self.main_speed = 0
-        self.angle_of_main = 0
-        self.lives = 3
+        i = 0
+        player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=1.1).gif
+        while not settings.cars[i]["chosen"]:
+            i += 1
+            player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=1.1).gif
 
-        self.player_group = pg.sprite.Group()
-        self.enemies_group = pg.sprite.Group()
+        enemy_speed = 2
+        main_speed = 0
+        angle_of_main = 0
+        lives = 3
 
-        add_sprites(self.opp1, self.enemies_group)
-        add_sprites(self.player_car, self.player_group, "PlayerVehicle")
+        player_group = pg.sprite.Group()
+        enemies_group = pg.sprite.Group()
 
-        P1 = Player(self.player_group.sprites())
-        E1 = Enemy(self.enemies_group.sprites(), self.enemy_speed, self.main_speed)
+        add_sprites(self.opp1, enemies_group)
+        add_sprites(player_car, player_group, "PlayerVehicle")
 
-        bg_summer_0 = Background("images/backgrounds/summer_road_0.png")
-        bg_summer_0.resize(1280, 720)
-        bg_summer_0.set_bgs(self.bgs, (95, 100), 10)  # SETS FOR RANDOM BG
+        P1 = Player(player_group.sprites())
+        E1 = Enemy(enemies_group.sprites(), enemy_speed, main_speed)
 
         blinks_counter = 0
+
+        first_bg = None
+        bgs = []
+        for file in sorted(os.listdir(f'images/backgrounds/levels/level{settings.levels[self.curr_level]["number"]}/')):
+            if ".png" in file:
+                bg = Background(f'images/backgrounds/levels/level{settings.levels[self.curr_level]["number"]}/' + file)
+                bg.resize(1280, 720)
+                if first_bg:
+                    bgs.append(bg)
+                else:
+                    first_bg = bg
+        first_bg.set_bgs(bgs, (95, 100), 10)
 
         while self.playing:
             self.check_events()
@@ -91,8 +113,8 @@ class Game:
             if self.game_state == "COLLISION":
                 if blinks_counter == 0:
                     P1.collision(True)
-                    self.main_speed = P1.get_const(speed=True)
-                    E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+                    main_speed = P1.get_const(speed=True)
+                    E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)
                     E1.render_enemies(False)
 
                 blinks_counter += 1
@@ -102,9 +124,9 @@ class Game:
 
                 while (b - a).microseconds < 300000:
                     self.blit_screen()
-                    self.main_speed = P1.get_const(speed=True)
-                    E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
-                    bg_summer_0.random_scroll(self.screen, self.main_speed)
+                    main_speed = P1.get_const(speed=True)
+                    E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)
+                    first_bg.random_scroll(self.screen, main_speed)
                     P1.move(self.screen)
                     E1.move(self.screen)
                     b = datetime.datetime.now()
@@ -114,9 +136,9 @@ class Game:
 
                 while (b - a).microseconds < 300000:
                     self.blit_screen()
-                    self.main_speed = P1.get_const(speed=True)
-                    E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
-                    bg_summer_0.random_scroll(self.screen, self.main_speed)
+                    main_speed = P1.get_const(speed=True)
+                    E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)
+                    first_bg.random_scroll(self.screen, main_speed)
                     P1.move(self.screen)
                     E1.move(self.screen)
                     Player.blit_rotate_center(P1, self.screen)
@@ -131,14 +153,14 @@ class Game:
                     P1.move(self.screen)
                     E1.move(self.screen)
 
-                    self.angle_of_main = 0
+                    angle_of_main = 0
 
                     Player.blit_rotate_center(P1, self.screen)
 
             elif self.game_state == "PAUSED":
-                bg_summer_0.random_scroll(self.screen, 0)
+                first_bg.random_scroll(self.screen, 0)
 
-                P1.set_const(speed=0, angle=self.angle_of_main, update_rate=0)
+                P1.set_const(speed=0, angle=angle_of_main, update_rate=0)
                 E1.set_speed(enemy_speed=0, main_speed=0)
 
                 E1.move(self.screen)
@@ -153,20 +175,20 @@ class Game:
 
             else:
                 if P1.get_const(speed=True) == 0:
-                    P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
-                self.main_speed = P1.get_const(speed=True)
-                E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+                    P1.set_const(speed=main_speed, angle=angle_of_main, update_rate=100)
+                main_speed = P1.get_const(speed=True)
+                E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)
 
-                bg_summer_0.random_scroll(self.screen, self.main_speed)
+                first_bg.random_scroll(self.screen, main_speed)
 
                 P1.move(self.screen)
                 E1.move(self.screen)
 
-                self.main_speed = P1.get_const(speed=True)
+                main_speed = P1.get_const(speed=True)
 
                 Player.blit_rotate_center(P1, self.screen)
 
-                self.angle_of_main = P1.get_const(angle=True)
+                angle_of_main = P1.get_const(angle=True)
 
                 player_mask = P1.get_const(mask=True)
                 player_rect_x = P1.get_const(x=True)
@@ -177,8 +199,8 @@ class Game:
                 enemy_rect_y = E1.get_const(y=True)
 
                 if player_mask.overlap(enemy_mask, (enemy_rect_x - player_rect_x, enemy_rect_y - player_rect_y)):
-                    self.lives -= 1
-                    if self.lives == 0:
+                    lives -= 1
+                    if lives == 0:
                         self.game_state = "GAME_OVER"
                         '''self.crash_rect.center = [self.player_group.sprites()[0].rect.center[0],
                                                   self.player_group.sprites()[0].rect.top]'''
@@ -198,22 +220,24 @@ class Game:
             else:
                 self.clicked = False
             if event.type == pg.KEYDOWN:
-                if event.key == settings.KEYS["MOVE BACK"]:
+                if event.key == settings.KEYS["BACK"]:
+                    self.keys["BACK"] = True
                     if self.game_state == "PAUSED":
                         self.game_state = "GAME"
                     else:
                         self.game_state = "PAUSED"
+                if event.key == settings.KEYS["ENTER"]:
+                    self.keys["ENTER"] = True
+            if event.type == self.player.MUSIC_END:
+                self.player.playing = False
+                if self.player.loop:
+                    self.player.play()
+                else:
+                    self.player.next()
 
     def blit_screen(self):
         for button in self.keys.keys():
-            self.keys[button] = False
+            self.keys[button] = 0
         self.window.blit(self.screen, (0, 0))
         pg.display.update()
         self.frame_per_second.tick(self.FPS)
-
-    def draw_text(self, x, y, text, size=30):
-        font = pg.font.Font(self.font_name, size)
-        text_surface = font.render(text, False, (255, 255, 255))
-        text_rect = text_surface.get_rect()
-        text_rect.center = (x, y)
-        self.screen.blit(text_surface, text_rect)
