@@ -6,9 +6,9 @@
     "MOVE RIGHT": 1073741903,
     "MOVE DOWN": 1073741905
   },
-  "car": 3,
+  "car": 1,
   "coins": 178,
   "games": 24,
-  "name": "Roman",
+  "name": "Rusik",
   "score": 0
 }

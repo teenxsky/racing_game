@@ -1,5 +1,4 @@
 import json
-#from sprites import*
 
 '''
 class MyEncoder(json.JSONEncoder):

@@ -1,3 +1,5 @@
+import sprites
+import datetime
 from menu import *
 from objects import *
 from sprites import *
@@ -47,44 +49,141 @@ class Game:
 
         # CARS
 
-        self.player_car_1 = Picture(750, 450, f'images/cars/opp{settings.car}.png', 1.1)
-        self.enemy_car_1 = Picture(430, 100, "images/cars/opp1.png", 1.1)
+        self.player_car = GIF(f'images/cars/player_car_{settings.car}/', scale=1.1).gif
+        self.opp1 = GIF("images/cars/opp1/", scale=1.15).gif
+        #self.opp2 = GIF("images/cars/opp2/", scale=1.15).gif
 
-        self.speed = 15
+        self.crash = pg.image.load('images/crash.png')
+        self.crash_rect = self.crash.get_rect()
 
     def game_loop(self):
+        def add_sprites(car_imgs, sprite_group, type="Vehicle"):
+            for frame in range(len(car_imgs)):
+                if type == "Vehicle":
+                    car = sprites.Vehicle(0, 0, car_imgs[frame].image)
+                elif type == "PlayerVehicle":
+                    car = sprites.PlayerVehicle(790, 590, car_imgs[frame].image)
+                sprite_group.add(car)
 
-        P1 = Player(f'images/cars/opp{settings.car}.png', 750, 500)
-        E1 = Enemy("images/cars/opp1.png")
+        self.enemy_speed = 2
+        self.main_speed = 0
+        self.angle_of_main = 0
+        self.lives = 3
+
+        self.player_group = pg.sprite.Group()
+        self.enemies_group = pg.sprite.Group()
+
+        add_sprites(self.opp1, self.enemies_group)
+        add_sprites(self.player_car, self.player_group, "PlayerVehicle")
+
+        P1 = Player(self.player_group.sprites())
+        E1 = Enemy(self.enemies_group.sprites(), self.enemy_speed, self.main_speed)
 
         bg_summer_0 = Background("images/backgrounds/summer_road_0.png")
         bg_summer_0.resize(1280, 720)
         bg_summer_0.set_bgs(self.bgs, (95, 100), 10)  # SETS FOR RANDOM BG
 
+        blinks_counter = 0
+
         while self.playing:
             self.check_events()
 
-            if self.game_state == "PAUSED":
+            if self.game_state == "COLLISION":
+                if blinks_counter == 0:
+                    P1.collision(True)
+                    self.main_speed = P1.get_const(speed=True)
+                    E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+                    E1.render_enemies(False)
+
+                blinks_counter += 1
+
+                a = datetime.datetime.now()
+                b = datetime.datetime.now()
+
+                while (b - a).microseconds < 300000:
+                    self.blit_screen()
+                    self.main_speed = P1.get_const(speed=True)
+                    E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+                    bg_summer_0.random_scroll(self.screen, self.main_speed)
+                    P1.move(self.screen)
+                    E1.move(self.screen)
+                    b = datetime.datetime.now()
+
+                a = datetime.datetime.now()
+                b = datetime.datetime.now()
+
+                while (b - a).microseconds < 300000:
+                    self.blit_screen()
+                    self.main_speed = P1.get_const(speed=True)
+                    E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+                    bg_summer_0.random_scroll(self.screen, self.main_speed)
+                    P1.move(self.screen)
+                    E1.move(self.screen)
+                    Player.blit_rotate_center(P1, self.screen)
+                    b = datetime.datetime.now()
+
+                if blinks_counter == 6:
+                    blinks_counter = 0
+                    self.game_state = "GAME"
+
+                    P1.collision(False)
+                    E1.render_enemies(True)
+                    P1.move(self.screen)
+                    E1.move(self.screen)
+
+                    self.angle_of_main = 0
+
+                    Player.blit_rotate_center(P1, self.screen)
+
+            elif self.game_state == "PAUSED":
                 bg_summer_0.random_scroll(self.screen, 0)
 
-                P1.set_speed(0)
-                E1.set_speed(0)
-                P1.move(self.screen)
+                P1.set_const(speed=0, angle=self.angle_of_main, update_rate=0)
+                E1.set_speed(enemy_speed=0, main_speed=0)
+
                 E1.move(self.screen)
+
+                Player.blit_rotate_center(P1, self.screen)
 
                 if self.close_button_game.draw(self.screen, False) and self.clicked:
                     self.playing = False
                     self.game_state = "GAME"
                 if self.back_button.draw(self.screen, False) and self.clicked:
                     self.game_state = "GAME"
+
             else:
-                bg_summer_0.random_scroll(self.screen, self.speed)
+                if P1.get_const(speed=True) == 0:
+                    P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
+                self.main_speed = P1.get_const(speed=True)
+                E1.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+
+                bg_summer_0.random_scroll(self.screen, self.main_speed)
 
                 P1.move(self.screen)
                 E1.move(self.screen)
 
+                self.main_speed = P1.get_const(speed=True)
+
                 Player.blit_rotate_center(P1, self.screen)
-                self.speed = int(P1.get_speed())
+
+                self.angle_of_main = P1.get_const(angle=True)
+
+                player_mask = P1.get_const(mask=True)
+                player_rect_x = P1.get_const(x=True)
+                player_rect_y = P1.get_const(y=True)
+
+                enemy_mask = E1.get_const(mask=True)
+                enemy_rect_x = E1.get_const(x=True)
+                enemy_rect_y = E1.get_const(y=True)
+
+                if player_mask.overlap(enemy_mask, (enemy_rect_x - player_rect_x, enemy_rect_y - player_rect_y)):
+                    self.lives -= 1
+                    if self.lives == 0:
+                        self.game_state = "GAME_OVER"
+                        '''self.crash_rect.center = [self.player_group.sprites()[0].rect.center[0],
+                                                  self.player_group.sprites()[0].rect.top]'''
+                    else:
+                        self.game_state = "COLLISION"
 
             self.blit_screen()
 

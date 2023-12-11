@@ -2,6 +2,7 @@ from objects import *
 from settings import *
 import os
 import fnmatch
+import game
 
 
 class Menu:

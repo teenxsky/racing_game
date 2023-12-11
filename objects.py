@@ -238,12 +238,12 @@ class Text:
 
 
 class GIF:
-    def __init__(self, path):
+    def __init__(self, path, scale=1):
         self.path = path
         self.gif = []
 
         for file in sorted(os.listdir(self.path)):
-            self.gif.append(Picture(640, 360, self.path + file))
+            self.gif.append(Picture(640, 360, self.path + file, scale=scale))
 
         self.last_update = pg.time.get_ticks()
         self.frame = 0
@@ -259,11 +259,11 @@ class GIF:
     def draw(self, screen, speed=20):
         current_time = pg.time.get_ticks()
         if current_time - self.last_update >= speed:
-            self.gif[self.frame].draw(screen)
             self.last_update = current_time
             self.frame += 1
             if self.frame == len(self.gif):
                 self.frame = 0
+        self.gif[self.frame].draw(screen)
 
 
 #for row, line in enumerate(text)
