@@ -25,14 +25,17 @@ class car_conroller:
 oalQuit()
 '''
 
-from pydub import AudioSegment
+'''from pydub import AudioSegment
 from pydub.playback import play
+from pydub.utils import make_chunks
 
-sound = AudioSegment.from_file('/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon.mp3', format="mp3")
-octaves = 1
+sound = AudioSegment.from_file('/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionidle_1.mp3', format="mp3")
+
+octaves = -5
+
 # shift the pitch up by half an octave (speed will increase proportionally)
 while octaves != 2:
-    octaves += 0.001
+    octaves += 1
 
     new_sample_rate = int(sound.frame_rate * (2.0 ** octaves))
 
@@ -50,4 +53,32 @@ while octaves != 2:
     print(octaves)
 
 #export / save pitch changed sound
-#hipitch_sound.export("/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon_out.mp3", format="mp3")
+#hipitch_sound.export("/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon_out.mp3", format="mp3")'''
+
+
+'''from pydub import AudioSegment
+from pydub.effects import pitch_shift
+
+# Load the audio file
+audio = AudioSegment.from_file("input.wav", format="wav")
+
+# Shift the pitch by 2 semitones higher
+shifted_audio = pitch_shift(audio, n=2)'''
+
+from pydub import AudioSegment
+from pydub.utils import make_chunks
+
+audio = AudioSegment.from_file("/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionidle_1.mp3")
+
+# Define the loop start and end points in milliseconds
+loop_start = 0
+loop_end = 500
+
+# Create a Loop object
+loop = AudioSegment.from_mono_audiosegments(make_chunks(audio[loop_start:loop_end], len(audio)))
+
+# Apply the loop to the audio file
+looped_audio = audio.apply_loop(loop)
+
+# Export the looped audio to a new file
+looped_audio.export("looped_audio.wav", format="wav")

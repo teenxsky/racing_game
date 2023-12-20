@@ -62,36 +62,6 @@
   "music_volume": 0.1125,
   "sounds_volume": 0.0825,
   "song_number": 0,
-  "songs": [
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Avril Lavigne - Girlfriend.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "GunsNRoses - Paradise City.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Kavinsky - Nightcall.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "RADIOTAPOK - Monster.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "The Doors - Riders on the Storm.mp3"
-    ]
-  ],
-  "others": [
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "N.E.R.D. - Rockstar.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Motley Crue - Girls.mp3"
-    ]
-  ]
+  "songs": [],
+  "others": []
 }

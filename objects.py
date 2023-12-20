@@ -156,8 +156,8 @@ class Background(Picture):
 
 class HUD:
     def __init__(self, coins_size=1):
-        coins_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
-        self.coins_sheets = self.get_sheets(coins_image)
+        gold_coin_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
+        self.coins_sheets = self.get_sheets(gold_coin_image)
         self.frame = 0
 
         self.last_update = pg.time.get_ticks()
@@ -193,7 +193,6 @@ class HUD:
             self.last_update = current_time
             if self.frame == len(self.coins_sheets):
                 self.frame = 0
-
 
 class Text:
     def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255), set_topleft=False):
