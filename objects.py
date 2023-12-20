@@ -5,13 +5,31 @@ import random
 import os
 from tkinter import Tk
 from tkinter import filedialog
+import eyed3
+import eyed3.id3
+import eyed3.id3.frames
 
 root = Tk()
 root.withdraw()
 
 
+# FUNCTIONS
+
+def get_sheets(image, frames, scale=1):
+    width, height = image.get_width(), image.get_height()
+    sheets = []
+    for frame in range(frames):
+        image_area = pg.Surface(((width // frames), height)).convert_alpha()
+        image_area.blit(image, (0, 0), ((frame * (width // frames)), 0, (width // frames), height))
+        image_area = pg.transform.scale(image_area, ((width // frames) * scale, height * scale))
+        image_area.set_colorkey((0, 0, 0))
+        sheets.append(image_area)
+    return sheets
+
+
 class Button:
-    def __init__(self, x, y, image_off_name, image_on_name, sound=None, scale=1):
+    def __init__(self, x, y, image_off_name, image_on_name, sound=None, scale=1, set_topleft=False, set_midleft=False,
+                 set_midright=False, set_midbottom=False):
         self.image_off = pg.image.load(image_off_name).convert_alpha()
         self.image_on = pg.image.load(image_on_name).convert_alpha()
 
@@ -23,7 +41,17 @@ class Button:
         height_off = self.image_off.get_height()
         self.image_off = pg.transform.scale(self.image_off, (int(width_off * scale), int(height_off * scale)))
         self.rect = self.image_off.get_rect()
-        self.rect.center = (x, y)
+
+        if set_topleft:
+            self.rect.topleft = (x, y)
+        elif set_midleft:
+            self.rect.midleft = (x, y)
+        elif set_midright:
+            self.rect.midright = (x, y)
+        elif set_midbottom:
+            self.rect.midbottom = (x, y)
+        else:
+            self.rect.center = (x, y)
 
         # FOR PUSHED BUTTON
 
@@ -61,7 +89,7 @@ class Button:
 
 
 class Picture:
-    def __init__(self, x, y, image_name, scale=1):
+    def __init__(self, x, y, image_name, scale=1.0):
         image = pg.image.load(image_name).convert_alpha()
         width = image.get_width()
         height = image.get_height()
@@ -92,9 +120,8 @@ class Picture:
         surface.blit(self.image, self.rect)
         return action
 
-    def draw_with_pulse(self, surface, size=20, time=15):  # FOR JUMPING GAME TITLE
+    def draw_with_pulse(self, surface, size=20, time=15):
         current_time = pg.time.get_ticks()
-
         if current_time - self.last_update >= time:
             if self.pulse:
                 self.current_size += 1
@@ -154,49 +181,9 @@ class Background(Picture):
             self.scrolls += 1
 
 
-class HUD:
-    def __init__(self, coins_size=1):
-        coins_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
-        self.coins_sheets = self.get_sheets(coins_image)
-        self.frame = 0
-
-        self.last_update = pg.time.get_ticks()
-
-    def get_image(self, sheet, frame, scale=1, colour=(0, 0, 0)):
-        width, height = sheet.get_height(), sheet.get_height()
-        image = pg.Surface((width, height)).convert_alpha()
-        image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
-        image = pg.transform.scale(image, (width * scale, height * scale))
-        image.set_colorkey(colour)
-        return image
-
-    def get_sheets(self, image):
-        sheets = []
-        for i in range(image.get_width() // image.get_height()):
-            sheets.append(self.get_image(image, i, 5))
-        return sheets
-
-    def draw_coins(self, surface, x, y, time): # Сделать в ХУД класс выведения коин или другого на экран со всеми примочками
-        current_time = pg.time.get_ticks()
-
-        coin_rect = self.coins_sheets[0].get_rect()
-        coin_rect.center = (x, y)
-
-        coin_val = Text(x + 70, y, str(settings.coins), 50)
-        coin_val.rect.midleft = (coin_rect.midright[0] + 5, coin_rect.midright[1])
-
-        surface.blit(self.coins_sheets[self.frame], coin_rect)
-        surface.blit(coin_val.text, coin_val.rect)
-
-        if current_time - self.last_update >= time:
-            self.frame += 1
-            self.last_update = current_time
-            if self.frame == len(self.coins_sheets):
-                self.frame = 0
-
-
 class Text:
-    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255), set_topleft=False):
+    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255),
+                 set_topleft=False, set_midleft=False, set_midright=False, set_bottomleft=False, set_midbottom=False, set_bottomright=False):
         self.center = (x, y)
         self.scale = scale
         self.sound = sound
@@ -206,41 +193,57 @@ class Text:
         self.font = pg.font.Font("fonts/pxl_tactical.ttf", self.scale)
         self.text = self.font.render(self.string, False, self.color).convert_alpha()
         self.rect = self.text.get_rect()
+
         if set_topleft:
             self.rect.topleft = (x, y)
+        elif set_midleft:
+            self.rect.midleft = (x, y)
+        elif set_midright:
+            self.rect.midright = (x, y)
+        elif set_bottomleft:
+            self.rect.bottomleft = (x, y)
+        elif set_midbottom:
+            self.rect.midbottom = (x, y)
+        elif set_bottomright:
+            self.rect.bottomright = (x, y)
         else:
             self.rect.center = (x, y)
 
         self.on_button = False
 
-    def draw(self, surface, mp3_cut=False):
-        if mp3_cut:
-            text = self.font.render(self.string[:-4], False, self.color).convert_alpha()
+    def draw(self, surface, mp3_cut=False, color=None):
+        if color:
+            if mp3_cut:
+                text = self.font.render(self.string[:-4], False, color).convert_alpha()
+            else:
+                text = self.font.render(self.string, False, color).convert_alpha()
             surface.blit(text, self.rect)
         else:
-            surface.blit(self.text, self.rect)
+            if mp3_cut:
+                text = self.font.render(self.string[:-4], False, self.color).convert_alpha()
+                surface.blit(text, self.rect)
+            else:
+                surface.blit(self.text, self.rect)
 
-    def draw_color(self, surface, color=(255, 255, 200), mp3_cut=False):
-        if mp3_cut:
-            text = self.font.render(self.string[:-4], False, color).convert_alpha()
-        else:
-            text = self.font.render(self.string, False, color).convert_alpha()
-        surface.blit(text, self.rect)
-
-    def draw_as_button(self, surface, surface_topleft=(0, 0), press_color=(255, 255, 200)):
+    def draw_as_button(self, surface, block=False, surface_topleft=(0, 0), press_color=(255, 255, 200)):
         action = False
         x, y = surface_topleft
-        pos = pg.mouse.get_pos()
-        if self.rect.collidepoint((pos[0] - x, pos[1] - y)):
-            action = True
-            if not self.on_button:
-                self.on_button = True
-                if self.sound:
-                    self.sound.play()
-            press_text = self.font.render(self.string, False, press_color).convert_alpha()
-            surface.blit(press_text, self.rect)
+        if not block:
+            pos = pg.mouse.get_pos()
+            x_b = (pos[0] >= x) and (pos[0] <= x + surface.get_width())
+            y_b = (pos[1] >= y) and (pos[1] <= y + surface.get_height())
+            if self.rect.collidepoint((pos[0] - x, pos[1] - y)) and x_b and y_b:
+                action = True
+                if not self.on_button:
+                    self.on_button = True
+                    if self.sound:
+                        self.sound.play()
+                press_text = self.font.render(self.string, False, press_color).convert_alpha()
+                surface.blit(press_text, self.rect)
+            else:
+                self.on_button = False
+                surface.blit(self.text, self.rect)
         else:
-            self.on_button = False
             surface.blit(self.text, self.rect)
 
         return action
@@ -274,18 +277,63 @@ class GIF:
         for frame in self.gif:
             frame.resize(width, height)
 
-    def move(self, x, y):
-        for frame in self.gif:
-            frame.rect.center = (x, y)
-
-    def draw(self, screen, speed=20):
+    def draw(self, screen, speed=20, coordinates=(640, 360), set_topleft=False):
         current_time = pg.time.get_ticks()
         if current_time - self.last_update >= speed:
             self.last_update = current_time
             self.frame += 1
             if self.frame == len(self.gif):
                 self.frame = 0
+
+        if set_topleft:
+            self.gif[self.frame].rect.topleft = coordinates
+        else:
+            self.gif[self.frame].rect.center = coordinates
+
         self.gif[self.frame].draw(screen)
+
+    '''
+    def fade(self, screen, speed, start_fade_time, time_to_fade=15):
+        current_time = pg.time.get_ticks()
+        if current_time - self.last_update >= speed:
+            self.last_update = current_time
+            self.frame += 1
+            if self.frame == len(self.gif):
+                self.frame = 0
+
+        if int((pg.time.get_ticks() - start_fade_time) // time_to_fade) <= 255:
+            faded_frame = self.gif[self.frame]
+            faded_frame.image.set_alpha((int((pg.time.get_ticks() - start_fade_time) // time_to_fade)))
+            faded_frame.draw(screen)
+        else:
+            self.fading = False
+    '''
+
+
+class Sheet:
+    def __init__(self, image, scale=1):
+        image = pg.image.load(image).convert_alpha()
+        self.sheets = get_sheets(image, 3, scale)
+
+        self.last_update = pg.time.get_ticks()
+        self.frame = 0
+
+    def draw(self, surface, coordinates=(640, 360), speed=100, set_topleft=False):
+        current_time = pg.time.get_ticks()
+        if current_time - self.last_update >= speed:
+            self.last_update = current_time
+            self.frame += 1
+            if self.frame == len(self.sheets):
+                self.frame = 0
+
+        sheet_rect = self.sheets[self.frame].get_rect()
+
+        if set_topleft:
+            sheet_rect.topleft = coordinates
+        else:
+            sheet_rect.center = coordinates
+
+        surface.blit(self.sheets[self.frame], sheet_rect)
 
 
 class MusicPlayer:
@@ -293,32 +341,47 @@ class MusicPlayer:
         self.path = path
         self.playlist = []
         self.others = []
-        # self.covers
 
         self.playing = False
         self.random_play = True
         self.loop = False
-        self.MUSIC_END = pg.USEREVENT+1
+        self.MUSIC_END = pg.USEREVENT + 1
         pg.mixer.music.set_endevent(self.MUSIC_END)
 
-        self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if os.path.exists(file_path + file))
-        self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if os.path.exists(file_path + file))
+        self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if
+                             os.path.exists(file_path + file))
+
+        self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if
+                           os.path.exists(file_path + file))
+
+        self.covers = []
+        self.load_covers()
+
+        self.current_cover = None
+        if self.playlist or self.others:
+            self.change_cover()
+
+        self.running_string_x = 0
+        self.running_update = pg.time.get_ticks()
 
     def play(self):
-        if not self.playing:
+        if not (self.playing or self.playlist and self.others):
             self.playing = True
             if settings.song_number < len(self.playlist):
                 path = self.playlist[settings.song_number][0]
                 file = self.playlist[settings.song_number][1].string
             else:
-                path = self.others[settings.song_number % len(self.playlist)][0]
-                file = self.others[settings.song_number % len(self.playlist)][1].string
+                path = self.others[settings.song_number - len(self.playlist)][0]
+                file = self.others[settings.song_number - len(self.playlist)][1].string
             try:
                 pg.mixer.music.load(path + file)
             except pygame.error:
-                self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if os.path.exists(file_path + file))
-                self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if os.path.exists(file_path + file))
+                self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if
+                                     os.path.exists(file_path + file))
+                self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if
+                                   os.path.exists(file_path + file))
             pg.mixer.music.play()
+            self.change_cover()
         else:
             pg.mixer.music.unpause()
 
@@ -328,21 +391,23 @@ class MusicPlayer:
     def next(self):
         self.playing = False
         if self.random_play:
-            settings.song_number = random.randrange(0, len(self.playlist) + len(self.others) - 1)
+            settings.song_number = random.randrange(0, len(self.playlist) - 1)
         else:
             settings.song_number += 1
-            if settings.song_number == len(self.playlist) + len(self.others):
+            if settings.song_number == len(self.playlist) + len(self.others) or settings.song_number >= len(self.playlist):
                 settings.song_number = 0
         self.play()
 
     def prev(self):
         self.playing = False
         if self.random_play:
-            settings.song_number = random.randrange(0, len(self.playlist) + len(self.others) - 1)
+            settings.song_number = random.randrange(0, len(self.playlist) - 1)
         else:
             settings.song_number -= 1
             if settings.song_number < 0:
                 settings.song_number = len(self.playlist) + len(self.others) - 1
+            elif settings.song_number >= len(self.playlist):
+                settings.song_number = 0
         self.play()
 
     def get_songs(self):
@@ -355,8 +420,13 @@ class MusicPlayer:
         pg.mixer.music.set_volume(settings.music_volume)
 
     def choose_dir(self):
-        self.path = filedialog.askdirectory(title="Choosing directory", initialdir="Desktop") + "/"
-        self.refresh()
+        path = filedialog.askdirectory(title="Choosing directory", initialdir="Desktop")
+        if path:
+            self.path = path + '/'
+            self.refresh()
+            self.clean_covers()
+            self.load_covers()
+            settings.song_number = 0
 
     def choose_song(self):
         file = filedialog.askopenfilename(title="Choosing directory")
@@ -366,21 +436,19 @@ class MusicPlayer:
 
     def pop_from_playlist(self, song):
         if self.playlist.index(song) == settings.song_number:
-            self.playlist.remove(song)
-            self.others.append(song)
-            settings.song_number = self.others.index(song) + len(self.playlist)
-        else:
-            self.playlist.remove(song)
-            self.others.append(song)
+            settings.song_number = len(self.others) + len(self.playlist) - 1
+        elif self.playlist.index(song) < settings.song_number:
+            settings.song_number -= 1
+        self.playlist.remove(song)
+        self.others.append(song)
 
     def pop_from_others(self, song):
         if self.others.index(song) + len(self.playlist) == settings.song_number:
-            self.others.remove(song)
-            self.playlist.append(song)
-            settings.song_number = self.playlist.index(song)
-        else:
-            self.others.remove(song)
-            self.playlist.append(song)
+            settings.song_number = len(self.playlist)
+        elif self.others.index(song) + len(self.playlist) > settings.song_number:
+            settings.song_number += 1 * (len(self.playlist) <= settings.song_number)
+        self.others.remove(song)
+        self.playlist.append(song)
 
     def save_to_settings(self):
         curr_songs = []
@@ -394,7 +462,178 @@ class MusicPlayer:
         settings.others = curr_songs
 
     def refresh(self):
-        self.playlist = list((self.path, Text(400, 270, file, 20)) for file in sorted(os.listdir(self.path)) if ".mp3" in file)
+        self.playlist = list(
+            (self.path, Text(400, 270, file, 20)) for file in sorted(os.listdir(self.path)) if ".mp3" in file)
         settings.song_number = 0
         self.others = []
         self.save_to_settings()
+
+    def draw_current_song(self, surface, coordinates, scale=0.5, set_topleft=False, set_bottomleft=False):
+        if self.playing and self.playlist or self.others:
+            song_name, cover = self.current_cover
+
+            if set_topleft:
+                cover.rect.topleft = coordinates
+            elif set_bottomleft:
+                cover.rect.bottomleft = coordinates
+            else:
+                cover.rect.center = coordinates
+
+            song_names = [Text(5, cover.rect.bottomright[1], song_name, int(scale * 40), set_bottomleft=True),
+                          Text(0, 0, song_name, int(scale * 40)),
+                          Text(0, 0, song_name, int(scale * 40))
+                          ]
+
+            bar = pg.Surface((200, song_names[0].rect.height), pg.SRCALPHA).convert_alpha()
+            bar.fill((0, 0, 0, 0))
+            bar_rect = bar.get_rect()
+            bar_rect.bottomleft = cover.rect.bottomright[0] + 10, cover.rect.bottomright[1]
+
+            song_names[0].rect.midright = self.running_string_x, bar_rect.height // 2
+            song_names[1].rect.midright = self.running_string_x - song_names[0].rect.width - 10, bar_rect.height // 2
+            song_names[2].rect.midright = self.running_string_x - song_names[1].rect.width - 10, bar_rect.height // 2
+
+            if pg.time.get_ticks() - self.running_update >= 100:
+                self.running_string_x += 5
+                self.running_update = pg.time.get_ticks()
+
+            if song_names[2].rect.midleft[0] >= bar_rect.width:
+                self.running_string_x = 0
+
+            for song in song_names:
+                bar.blit(song.text, song. rect)
+            cover.draw(surface)
+            surface.blit(bar, bar_rect)
+
+    def change_cover(self, scale=0.1):
+        tracks = self.playlist + self.others
+        song_name = tracks[settings.song_number][1].string[:-4]
+        for cover in self.covers:
+            if song_name in cover[0].string:
+                cover_img = Picture(0, 0, cover[1])
+                cover_img.resize(80, 80)
+                self.current_cover = (song_name, cover_img)
+                break
+
+    def clean_covers(self):
+        for cover in sorted(os.listdir("audio/music/covers/")):
+            if cover[-4:] == ".png" and cover != "default.png":
+                os.remove("audio/music/covers/" + cover)
+
+    def load_covers(self):
+        for path, song in self.playlist + self.others:
+            audiofile = eyed3.load(path + song.string)
+            for image in audiofile.tag.images:
+                if image:
+                    with open('audio/music/covers/' + song.string[:-4] + '.png', 'wb+') as f:
+                        f.write(image.image_data)
+                    self.covers.append((song, 'audio/music/covers/' + song.string[:-4] + '.png'))
+            self.covers.append((song, 'audio/music/covers/' + 'default.png'))
+
+
+class PlayerStats:
+    def __init__(self, coins_scale=4):
+
+        self.coins_scale = coins_scale
+        self.coins_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
+        self.coins_sheets = get_sheets(self.coins_image, 5, self.coins_scale)
+        self.frame = 0
+
+        self.level_bar = []
+        for file in sorted(os.listdir("images/HUD/level/")):
+            if file[-4:] == ".png":
+                self.level_bar.append(Picture(640, 360, "images/HUD/level/" + file, scale=2))
+        self.start_level = 1000
+        self.delta_level = 100
+
+        self.last_update_time_in_game = 0
+
+        self.last_update = pg.time.get_ticks()
+
+    def draw_coins(self, surface, coordinates, time=250, set_topleft=False, set_midright=False):
+        current_time = pg.time.get_ticks()
+        if current_time - self.last_update >= time:
+            self.frame += 1
+            self.last_update = current_time
+            if self.frame == len(self.coins_sheets):
+                self.frame = 0
+
+        coin_rect = self.coins_sheets[self.frame].get_rect()
+
+        if set_topleft:
+            coin_rect.topleft = coordinates
+        else:
+            coin_rect.center = coordinates
+
+        coin_val = Text(coin_rect.midright[0] + 5, coin_rect.midright[1], str(settings.player_stats["coins"]),
+                        self.coins_scale * 10, set_midleft=True)
+
+        if set_midright:
+            coin_rect.midright = coin_rect.midright[0] + (coordinates[0] - coin_val.rect.midright[0]), coordinates[1]
+            coin_val = Text(coin_rect.midright[0] + 5, coin_rect.midright[1], str(settings.player_stats["coins"]),
+                            self.coins_scale * 10, set_midleft=True)
+
+        surface.blit(self.coins_sheets[self.frame], coin_rect)
+        surface.blit(coin_val.text, coin_val.rect)
+
+    def draw_level(self, surface, coordinates, set_topleft=False, set_midright=False, set_topright=False):
+        start_level = self.start_level
+        delta_level = self.delta_level
+
+        max_score = start_level + delta_level * settings.player_stats["level"]
+
+        curr_score = settings.player_stats["score"] - (
+                (start_level + (start_level + delta_level * (settings.player_stats["level"] - 1))) *
+                settings.player_stats["level"]) // 2
+
+        score = Text(0, 0, "LVL: " + str(settings.player_stats["level"]) + " - " + str(curr_score) + "/" + str(max_score), 20)
+
+        curr_level = 0
+        for i in range(len(self.level_bar)):
+            if (curr_score / max_score) * 10 >= curr_level:
+                curr_level += 1
+
+        if set_topleft:
+            self.level_bar[curr_level].rect.topleft = coordinates
+        elif set_midright:
+            self.level_bar[curr_level].rect.midright = coordinates
+        elif set_topright:
+            self.level_bar[curr_level].rect.topright = coordinates
+        else:
+            self.level_bar[curr_level].rect.center = coordinates
+
+        score.rect.midtop = self.level_bar[curr_level].rect.midbottom[0], self.level_bar[curr_level].rect.midbottom[
+            1] + 10
+
+        self.level_bar[curr_level].draw(surface)
+        score.draw(surface)
+
+    def increase_score(self, value):
+        start_level = self.start_level
+        delta_level = self.delta_level
+        max_score = ((start_level + (start_level + delta_level * settings.player_stats["level"])) *
+                     (settings.player_stats["level"] + 1)) // 2
+        settings.player_stats["score"] += value
+        curr_score = settings.player_stats["score"]
+        if curr_score >= max_score:
+            settings.player_stats["level"] += 1
+            return self.increase_score(0)
+        return 0
+
+    def increase_coins(self, value):
+        settings.player_stats["coins"] += value
+
+    def decrease_coins(self, value):
+        if settings.player_stats["coins"] - value >= 0:
+            settings.player_stats["coins"] -= value
+            return 1
+        return 0
+
+    def update_time_in_game(self):
+        settings.player_stats["time_in_game"] += pg.time.get_ticks() - self.last_update_time_in_game
+        self.last_update_time_in_game = pg.time.get_ticks()
+
+    def get_time_in_game(self):
+        self.update_time_in_game()
+        time = settings.player_stats["time_in_game"]
+        return f'{(time // 86400000):03}' + ":" + f'{((time % 86400000) // 36000000):02}' + ":" + f'{((time % 36000000) // 60000):02}'

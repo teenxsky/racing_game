@@ -1,20 +1,31 @@
+import pygame.camera
+
+import settings
 from objects import *
 from settings import *
 import webbrowser
 import getpass
+import cv2
+import numpy
+from PIL import Image
+
+pygame.camera.init()
 
 BLUE = (147, 179, 242)
+YELLOW = (255, 255, 200)
+BROWN = (162, 48, 42)
 
 
 class Menu:
     def __init__(self, game):
         self.game = game
-        self.hud = HUD()
 
     def check_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.game.running, self.game.playing = False, False
+                self.game.garage_menu.player_stats.update_time_in_game()
+                self.game.player.clean_covers()
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.game.keys["MOUSE DOWN"] = True
@@ -44,18 +55,38 @@ class MainMenu(Menu):
         self.title_picture = Picture(640, 150, "images/title_name.png", 1)
 
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
-        self.start_button = Button(500, 277, "images/buttons/start_button_off.png", "images/buttons/start_button_on.png", button_sound, 0.3)
-        self.garage_button = Button(780, 277, "images/buttons/garage_button_off.png", "images/buttons/garage_button_on.png", button_sound, 0.3)
-        self.music_button = Button(500, 397, "images/buttons/music_button_off.png", "images/buttons/music_button_on.png", button_sound, 0.3)
-        self.sets_button = Button(780, 397, "images/buttons/settings_button_off.png", "images/buttons/settings_button_on.png", button_sound, 0.3)
-        self.quit_button = Button(640, 517, "images/buttons/quit_button_off.png", "images/buttons/quit_button_on.png", button_sound, 0.3)
+        self.start_button = Button(500, 277, "images/buttons/start_button_off.png",
+                                   "images/buttons/start_button_on.png", button_sound, 0.3)
+        self.garage_button = Button(780, 277, "images/buttons/garage_button_off.png",
+                                    "images/buttons/garage_button_on.png", button_sound, 0.3)
+        self.music_button = Button(500, 397, "images/buttons/music_button_off.png",
+                                   "images/buttons/music_button_on.png", button_sound, 0.3)
+        self.sets_button = Button(780, 397, "images/buttons/settings_button_off.png",
+                                  "images/buttons/settings_button_on.png", button_sound, 0.3)
+        self.quit_button = Button(640, 517, "images/buttons/quit_button_off.png", "images/buttons/quit_button_on.png",
+                                  button_sound, 0.3)
 
-        self.levels_close_button = Button(40, 40, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.15)
-        self.levels_start_button = Button(640, 580, "images/buttons/start_button_off.png", "images/buttons/start_button_on.png", button_sound, 0.2)
-        self.levels_back_button = Button(290, 360, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.15)
-        self.levels_forward_button = Button(990, 360, "images/buttons/forward_button_off.png", "images/buttons/forward_button_on.png", button_sound, 0.15)
+        self.levels_close_button = Button(40, 40, "images/buttons/close_button_off.png",
+                                          "images/buttons/close_button_on.png", button_sound, 0.15)
+        self.levels_start_button = Button(640, 580, "images/buttons/start_button_off.png",
+                                          "images/buttons/start_button_on.png", button_sound, 0.2)
+        self.levels_back_button = Button(290, 360, "images/buttons/back_button_off.png",
+                                         "images/buttons/back_button_on.png", button_sound, 0.15)
+        self.levels_forward_button = Button(990, 360, "images/buttons/forward_button_off.png",
+                                            "images/buttons/forward_button_on.png", button_sound, 0.15)
 
         self.github_icon = Picture(1240, 680, "images/github.png", 0.02)
+
+        self.authors_button = Button(1155, self.github_icon.rect.bottomleft[1], "images/buttons/authors_button_off.png",
+                                     "images/buttons/authors_button_on.png", button_sound, 0.1, set_midbottom=True)
+
+        if settings.player_stats["name"]:
+            self.user_name = Text(640, self.github_icon.rect.centery, f'Hello, {settings.player_stats["name"]}!', 40)
+        else:
+            settings.player_stats["name"] = getpass.getuser()
+            self.user_name = Text(640, self.github_icon.rect.centery, f'Hello, {getpass.getuser()}!', 40)
+
+        settings.song_number = 0
 
         self.block = False
 
@@ -73,11 +104,6 @@ class MainMenu(Menu):
             menu_bg.draw(self.game.screen, menu_bg_speed)
             self.title_picture.draw_with_pulse(self.game.screen)
 
-            user_name = Text(640, 650, f'Hello, {getpass.getuser()}!', 40)
-            user_name.draw(self.game.screen)
-
-            self.hud.draw_coins(self.game.screen, 100, 400, 250)
-
             if self.start_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
                 self.game.menu_state = "LEVELS"
             if self.garage_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
@@ -86,9 +112,16 @@ class MainMenu(Menu):
                 self.game.menu_state = "MUSIC"
             if self.sets_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
                 self.game.menu_state = "SETS"
+            if self.authors_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
+                self.game.menu_state = "AUTHORS"
             if self.quit_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
                 self.game.running, self.game.playing = False, False
+                self.game.garage_menu.player_stats.update_time_in_game()
+                self.game.player.clean_covers()
 
+            self.game.player.draw_current_song(self.game.screen, (20, self.github_icon.rect.bottomleft[1]), set_bottomleft=True)
+
+            self.user_name.draw(self.game.screen)
             if self.github_icon.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
                 webbrowser.open("https://github.com/teenxsky/racing_game", new=0, autoraise=True)
 
@@ -106,7 +139,7 @@ class MainMenu(Menu):
         levels_gui_1 = Picture(640, 360, "images/backgrounds/levels_gui.png")
         levels_gui_1.resize(1280, 720)
         levels_gui_2 = Picture(640, 358, "images/backgrounds/window_trans.png")
-        levels_gui_2.resize(595, 355)
+        levels_gui_2.resize(615, 355)
         levels_text = Text(640, 40, "LEVELS", 40)
 
         levels = []
@@ -153,11 +186,13 @@ class MainMenu(Menu):
             self.game.curr_level = abs(curr_lvl_x + distance - 640) // 700
 
             if curr_lvl_x + 700 <= 640:
-                if (self.levels_back_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (self.game.keys["MOVE LEFT"]):
+                if (self.levels_back_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (
+                        self.game.keys["MOVE LEFT"]):
                     curr_lvl_x += 700
 
             if curr_lvl_x + distance - 700 >= 640:
-                if (self.levels_forward_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (self.game.keys["MOVE RIGHT"]):
+                if (self.levels_forward_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (
+                        self.game.keys["MOVE RIGHT"]):
                     curr_lvl_x -= 700
 
             if self.levels_close_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
@@ -166,8 +201,8 @@ class MainMenu(Menu):
             self.game.blit_screen()
 
     def check_input(self):
-        self.block = self.game.menu_state == "MUSIC"\
-                     or self.game.menu_state == "SETS"
+        self.block = self.game.menu_state == "MUSIC" \
+                     or self.game.menu_state == "SETS" or self.game.menu_state == "AUTHORS"
 
         if self.game.menu_state == "LEVELS":
             self.display_levels()
@@ -185,6 +220,9 @@ class MainMenu(Menu):
         if self.game.menu_state == "SETS":
             self.game.sets_menu.display_menu()
 
+        if self.game.menu_state == "AUTHORS":
+            self.game.authors_menu.display_menu()
+
 
 class SetsMenu(Menu):
     def __init__(self, game):
@@ -192,15 +230,19 @@ class SetsMenu(Menu):
 
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
         self.sets_bg = Picture(640, 360, "images/backgrounds/window.png", 0.5)
-        self.sets_close_button = Button(865, 225, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.2)
-        self.sets_back_button = Button(415, 225, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.2)
+        self.sets_close_button = Button(865, 225, "images/buttons/close_button_off.png",
+                                        "images/buttons/close_button_on.png", button_sound, 0.15)
+        self.sets_back_button = Button(415, 225, "images/buttons/back_button_off.png",
+                                       "images/buttons/back_button_on.png", button_sound, 0.15)
 
         self.text_settings = Text(640, 225, "SETTNGS", 45, button_sound)
         self.text_volume = Text(640, 225, "VOLUME", 45, button_sound)
         self.text_controls = Text(640, 225, "CONTROLS", 45, button_sound)
 
-        self.sets_volume_button = Button(408, 467, "images/buttons/volume_button_off.png", "images/buttons/volume_button_on.png", button_sound, 0.15)
-        self.sets_controls_button = Button(468, 467, "images/buttons/controls_button_off.png", "images/buttons/controls_button_on.png", button_sound, 0.15)
+        self.sets_volume_button = Button(415, 460, "images/buttons/volume_button_off.png",
+                                         "images/buttons/volume_button_on.png", button_sound, 0.15)
+        self.sets_controls_button = Button(475, 460, "images/buttons/controls_button_off.png",
+                                           "images/buttons/controls_button_on.png", button_sound, 0.15)
         self.sets_text = [Text(5, 5, "VOLUME", 32, set_topleft=True, color=BLUE),
                           Text(5, 5, "CONTROLS", 32, set_topleft=True, color=BLUE)
                           ]
@@ -234,15 +276,13 @@ class SetsMenu(Menu):
     def display_sets(self):
         self.text_settings.draw(self.game.screen)
 
-        if self.sets_controls_button.draw(self.game.screen):
-            if self.game.keys["MOUSE DOWN"]:
-                self.sub_state = "CONTROLS"
-        if self.sets_volume_button.draw(self.game.screen):
-            if self.game.keys["MOUSE DOWN"]:
-                self.sub_state = "VOLUME"
+        if self.sets_controls_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
+            self.sub_state = "CONTROLS"
+        if self.sets_volume_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
+            self.sub_state = "VOLUME"
 
         bar = pg.surface.Surface((510, 170))
-        bar.fill((162, 48, 42))
+        bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (640, 350)
 
@@ -268,7 +308,7 @@ class SetsMenu(Menu):
         self.text_controls.draw(self.game.screen)
 
         bar = pg.surface.Surface((510, 190))
-        bar.fill((162, 48, 42))
+        bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (640, 360)
 
@@ -284,14 +324,15 @@ class SetsMenu(Menu):
             self.scroll_y += self.game.keys["MOUSEWHEEL"] * 10
 
         self.game.screen.blit(bar, bar_rect)
-        if self.game.keys["BACK"] or (self.sets_back_button.draw(self.game.screen, False) and self.game.keys["MOUSE DOWN"]):
+        if self.game.keys["BACK"] or (
+                self.sets_back_button.draw(self.game.screen, False) and self.game.keys["MOUSE DOWN"]):
             self.sub_state = "SETS"
             self.scroll_y = 0
 
     def key_choosing(self, key, key_name, surface):
         chosen = False
-        curr_key = Text(*key.rect.midright, pg.key.name(settings.KEYS[key_name]), key.scale)
-        curr_key.rect.x += curr_key.rect.width / 2 + 15
+        curr_key = Text(key.rect.midright[0] + 15, key.rect.midright[1],
+                        pg.key.name(settings.KEYS[key_name]), key.scale, set_midleft=True)
         curr_key.draw(surface)
 
         if self.game.keys["MOUSE DOWN"]:
@@ -309,7 +350,7 @@ class SetsMenu(Menu):
     def display_volume(self):
         self.text_volume.draw(self.game.screen)
         bar = pg.surface.Surface((510, 170))
-        bar.fill((162, 48, 42))
+        bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (640, 350)
         level, level_rect = None, None
@@ -328,7 +369,7 @@ class SetsMenu(Menu):
             if pg.mouse.get_pressed()[0] and level_rect.collidepoint(pos) and pos[0] <= 400:
                 setattr(settings, '_'.join(text.string.lower().split()), pos[0] / 400)
                 self.game.player.set_volume()
-            bar.blit(level,  level_rect)
+            bar.blit(level, level_rect)
             distance += 70
 
         if self.volume_text[0].rect.y + (self.game.keys["MOUSEWHEEL"] * 10) <= 0 \
@@ -345,11 +386,29 @@ class GarageMenu(Menu):
     def __init__(self, game):
         super().__init__(game)
 
-        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
-        self.garage_close_button = Button(50, 50, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.15)
+        self.player_stats = PlayerStats()
 
-        self.garage_back_button = Button(290, 360, "images/buttons/back_button_off.png", "images/buttons/back_button_on.png", button_sound, 0.15)
-        self.garage_forward_button = Button(990, 360, "images/buttons/forward_button_off.png", "images/buttons/forward_button_on.png", button_sound, 0.15)
+        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
+        self.garage_close_button = Button(50, 50, "images/buttons/close_button_off.png",
+                                          "images/buttons/close_button_on.png", button_sound, 0.15)
+
+        self.garage_back_button = Button(290, 360, "images/buttons/back_button_off.png",
+                                         "images/buttons/back_button_on.png", button_sound, 0.15)
+        self.garage_forward_button = Button(990, 360, "images/buttons/forward_button_off.png",
+                                            "images/buttons/forward_button_on.png", button_sound, 0.15)
+
+        self.character = Picture(850, 475, "images/HUD/seller.png", 0.8)
+
+        self.license_icon = Button(1170, 80, "images/user_photo/license_icon_off.png",
+                                   "images/user_photo/license_icon_on.png", button_sound, 0.13)
+        self.license_img = Picture(340, 360, "images/user_photo/license.png", 0.5)
+        self.photo_button = Button(50, 50, "images/buttons/photo_button_off.png",
+                                   "images/buttons/photo_button_on.png", button_sound, 0.15)
+
+        self.license = False
+
+        self.sub_state = "GARAGE"
+        self.block = False
 
     def display_menu(self):
         path = f'images/backgrounds/bgs/{settings.bg["garage_bg"]}/'
@@ -367,8 +426,16 @@ class GarageMenu(Menu):
 
             garage_bg.draw(self.game.screen, garage_bg_speed)
 
-            # text_curr_car = Text(640, 100, f'Your car: {settings.car}', 20)
-            # text_curr_car.draw(self.game.screen)
+            if self.license_icon.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
+                settings.player_stats["coins"] += 1
+                self.sub_state = "LICENSE"
+
+            self.player_stats.draw_coins(self.game.screen, (self.license_icon.rect.midleft[0] - 25,
+                                                            self.license_icon.rect.midleft[1]), set_midright=True)
+
+            self.player_stats.draw_level(self.game.screen, (self.license_icon.rect.bottomright[0],
+                                                            self.license_icon.rect.bottomright[1] + 15),
+                                         set_topright=True)
 
             distance = 0
             for car in cars:
@@ -380,17 +447,25 @@ class GarageMenu(Menu):
                 distance += 700
             distance -= 700
 
+            self.character.draw(self.game.screen)
+
+            if self.game.keys["ENTER"]:
+                self.player_stats.increase_score(100)
+
             if curr_lvl_x + 700 <= 640:
-                if (self.garage_back_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (self.game.keys["MOVE LEFT"]):
+                if (self.garage_back_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]) or (
+                        self.game.keys["MOVE LEFT"]):
                     curr_lvl_x += 700
 
             if curr_lvl_x + distance - 700 >= 640:
-                if (self.garage_forward_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (self.game.keys["MOVE RIGHT"]):
+                if (self.garage_forward_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]) or (
+                        self.game.keys["MOVE RIGHT"]):
                     curr_lvl_x -= 700
 
-            if self.garage_close_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
+            if self.garage_close_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
                 self.game.menu_state = "MENU"
 
+            self.check_input()
             self.game.blit_screen()
 
         pg.time.delay(500)
@@ -411,6 +486,71 @@ class GarageMenu(Menu):
 
         surface.blit(bar, (x, y))
 
+    def display_license(self):
+        bar = pg.surface.Surface((1280, 720), pg.SRCALPHA).convert_alpha()
+        bar.fill((0, 0, 0, 150))
+        self.game.screen.blit(bar, (0, 0))
+
+        text_player_statistics = Text(660, 130, "PLAYER STATISTICS", 45, set_midleft=True)
+        text_player_statistics.draw(self.game.screen)
+        distance = 80
+        for key in settings.player_stats.keys():
+            if key == "time_in_game":
+                text = self.player_stats.get_time_in_game()
+            else:
+                text = settings.player_stats[key]
+
+            curr_text = Text(text_player_statistics.rect.midleft[0], text_player_statistics.rect.midleft[1] + distance, f'{" ".join(key.split("_"))}: {text}', 30, set_midleft=True)
+            curr_text.draw(self.game.screen)
+            distance += 40
+
+        license_img = self.license_img
+        license_img.draw(self.game.screen)
+
+        if self.photo_button.draw(self.game.screen):
+            pass
+
+        self.check_events()
+        if self.game.keys["BACK"]:
+            self.sub_state = "GARAGE"
+
+    def make_photo(self):
+        bar = pg.surface.Surface((470, 220), pg.SRCALPHA)
+        bar = bar.convert_alpha()
+        bar.fill((0, 0, 0, 200))
+
+        camera_on = True
+        cam = cv2.VideoCapture(0)
+        cam.set(cv2.CAP_PROP_FPS, 60)
+
+        success, frame = cam.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = numpy.fliplr(frame)
+        # frame = numpy.rot90(frame)
+
+        if self.game.keys["BACK"]:
+            img_name = "images/user_photo/opencv_frame.png"
+            cv2.imwrite(img_name, frame)
+
+            image1 = Image.open("images/user_photo/license.png")
+            image2 = Image.open("images/user_photo/opencv_frame.png")
+            # image3 = Image.open("images/user_photo/team_logo.png")
+            image2.crop((500, 200, 600, 300))
+            image2 = image2.resize((300, 300))
+            image1.paste(image2, (800, 300))
+            # image3.resize((100, 100))
+            # image1.paste(image3, (850, 200))
+            image1.save("images/user_photo/merged_image.png", "PNG")
+
+        frame = pg.surfarray.make_surface(frame)
+        bar.blit(frame, (-500, 0))
+
+    def check_input(self):
+        self.block = self.sub_state == "LICENSE"
+
+        if self.sub_state == "LICENSE":
+            self.display_license()
+
 
 class MusicMenu(Menu):
     def __init__(self, game):
@@ -419,27 +559,42 @@ class MusicMenu(Menu):
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
         self.music_bg = Picture(640, 360, "images/backgrounds/window.png", 0.6)
 
-        self.music_close_button = Button(915, 190, "images/buttons/close_button_off.png", "images/buttons/close_button_on.png", button_sound, 0.2)
-        self.random_button_off = Button(450, 485, "images/buttons/random_button_off.png", "images/buttons/random_button_on.png", button_sound, 0.15)
-        self.random_button_on = Button(450, 485, "images/buttons/random_button_off1.png", "images/buttons/random_button_on1.png", button_sound, 0.15)
-        self.prev_button = Button(540, 485, "images/buttons/prev_button_off.png", "images/buttons/prev_button_on.png", button_sound, 0.2)
-        self.play_button = Button(640, 485, "images/buttons/play_button_off.png", "images/buttons/play_button_on.png", button_sound, 0.2)
-        self.pause_button = Button(640, 485, "images/buttons/pause_button_off1.png", "images/buttons/pause_button_on1.png", button_sound, 0.2)
-        self.next_button = Button(740, 485, "images/buttons/next_button_off.png", "images/buttons/next_button_on.png", button_sound, 0.2)
-        self.loop_button_off = Button(830, 485, "images/buttons/loop_button_off.png", "images/buttons/loop_button_on.png", button_sound, 0.15)
-        self.loop_button_on = Button(830, 485, "images/buttons/loop_button_off1.png", "images/buttons/loop_button_on1.png", button_sound, 0.15)
-        self.song_button = Button(915, 270, "images/buttons/song_button_off.png", "images/buttons/song_button_on.png", button_sound, 0.2)
-        self.folder_button = Button(915, 420, "images/buttons/folder_button_off.png", "images/buttons/folder_button_on.png", button_sound, 0.15)
-        self.refresh_button = Button(915, 350, "images/buttons/refresh_button_off.png", "images/buttons/refresh_button_on.png", button_sound, 0.2)
+        self.music_close_button = Button(915, 190, "images/buttons/close_button_off.png",
+                                         "images/buttons/close_button_on.png", button_sound, 0.15)
+        self.random_button_off = Button(450, 485, "images/buttons/random_button_off.png",
+                                        "images/buttons/random_button_on.png", button_sound, 0.15)
+        self.random_button_on = Button(450, 485, "images/buttons/random_button_off1.png",
+                                       "images/buttons/random_button_on1.png", button_sound, 0.15)
+        self.prev_button = Button(540, 483, "images/buttons/prev_button_off.png", "images/buttons/prev_button_on.png",
+                                  button_sound, 0.2)
+        self.play_button = Button(640, 483, "images/buttons/play_button_off.png", "images/buttons/play_button_on.png",
+                                  button_sound, 0.2)
+        self.pause_button = Button(640, 483, "images/buttons/pause_button_off1.png",
+                                   "images/buttons/pause_button_on1.png", button_sound, 0.2)
+        self.next_button = Button(740, 483, "images/buttons/next_button_off.png", "images/buttons/next_button_on.png",
+                                  button_sound, 0.2)
+        self.loop_button_off = Button(830, 485, "images/buttons/loop_button_off.png",
+                                      "images/buttons/loop_button_on.png", button_sound, 0.15)
+        self.loop_button_on = Button(830, 485, "images/buttons/loop_button_off1.png",
+                                     "images/buttons/loop_button_on1.png", button_sound, 0.15)
+        self.song_button = Button(915, 260, "images/buttons/song_button_off.png", "images/buttons/song_button_on.png",
+                                  button_sound, 0.15)
+        self.folder_button = Button(915, 400, "images/buttons/folder_button_off.png",
+                                    "images/buttons/folder_button_on.png", button_sound, 0.15)
+        self.refresh_button = Button(915, 330, "images/buttons/refresh_button_off.png",
+                                     "images/buttons/refresh_button_on.png", button_sound, 0.16)
 
-        self.plus_button = Button(0, 0, "images/buttons/plus_button_off.png", "images/buttons/plus_button_on.png", None, 0.08)
-        self.minus_button = Button(0, 0, "images/buttons/minus_button_off.png", "images/buttons/minus_button_on.png", None, 0.08)
-        self.pause_mini_button = Button(0, 0, "images/buttons/pause_button_off.png", "images/buttons/pause_button_on.png", None, 0.08)
-        self.play_mini_button = Button(0, 0, "images/buttons/play_button_off.png", "images/buttons/play_button_on.png", None, 0.08)
+        self.plus_button = Button(0, 0, "images/buttons/plus_button_off.png", "images/buttons/plus_button_on.png", None,
+                                  0.08)
+        self.minus_button = Button(0, 0, "images/buttons/minus_button_off.png", "images/buttons/minus_button_on.png",
+                                   None, 0.08)
+        self.pause_mini_button = Button(0, 0, "images/buttons/pause_button_off.png",
+                                        "images/buttons/pause_button_on.png", None, 0.08)
+        self.play_mini_button = Button(0, 0, "images/buttons/play_button_off.png", "images/buttons/play_button_on.png",
+                                       None, 0.08)
 
-        self.text_music = Text(640, 195, "MUSIC", 50)
-        self.text_playlist = Text(640, 195, "PLAYLIST", 30, None, BLUE)
-        self.text_playlist.rect.topleft = (10, 0)
+        self.text_music = Text(640, 190, "MUSIC", 50)
+        self.text_playlist = Text(10, 0, "PLAYLIST", 30, None, BLUE, set_topleft=True)
         self.text_others = Text(640, 195, "OTHERS", 30, None, BLUE)
 
     def display_menu(self):
@@ -491,9 +646,9 @@ class MusicMenu(Menu):
 
     def playlist(self, surface):
         bar = pg.surface.Surface((538, 220))
-        bar.fill((162, 48, 42))
+        bar.fill(BROWN)
         bar_rect = bar.get_rect()
-        bar_rect.center = (604, 330)
+        bar_rect.center = (604, 328)
 
         self.text_playlist.draw(bar)
         self.text_others.draw(bar)
@@ -502,42 +657,59 @@ class MusicMenu(Menu):
         distance = 10
         for song in songs:
             song[1].rect.topleft = (self.text_playlist.rect.x + 32, self.text_playlist.rect.bottomleft[1] + distance)
-            if songs.index(song) == settings.song_number and pg.mixer.music.get_busy():
-                self.pause_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
-                if self.pause_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
-                    self.game.player.pause()
-                song[1].draw_color(bar, mp3_cut=True)
+            if settings.song_number == songs.index(song):
+                if pg.mixer.music.get_busy():
+                    song[1].draw(bar, mp3_cut=True, color=YELLOW)
+                    self.pause_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
+                    if self.pause_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
+                        "MOUSE DOWN"]:
+                        self.game.player.pause()
+                else:
+                    self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
+                    song[1].draw(bar, mp3_cut=True)
+                    if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
+                        "MOUSE DOWN"]:
+                        self.game.player.play()
             else:
+                song[1].draw(bar, mp3_cut=True)
                 self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                 if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                     settings.song_number = songs.index(song)
                     self.game.player.playing = False
                     self.game.player.play()
-                song[1].draw(bar, mp3_cut=True)
-            pg.draw.rect(bar, (162, 48, 42), (bar_rect.width - 45, song[1].rect.y, 40, 40))
+            pg.draw.rect(bar, BROWN, (bar_rect.width - 45, song[1].rect.y, 40, 40))
             self.minus_button.rect.midright = (bar_rect.width - 7, song[1].rect.midleft[1])
             if self.minus_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                 self.game.player.pop_from_playlist(song)
             distance += 30
 
-        self.text_others.rect.topleft = (self.text_playlist.rect.x, self.text_playlist.rect.bottomleft[1] + 10 + distance)
+        self.text_others.rect.topleft = (
+            self.text_playlist.rect.x, self.text_playlist.rect.bottomleft[1] + 10 + distance)
         distance += 50
         others = self.game.player.get_others()
         for song in others:
             song[1].rect.topleft = (self.text_playlist.rect.x + 32, self.text_playlist.rect.bottomleft[1] + distance)
-            if others.index(song) + len(songs) == settings.song_number and pg.mixer.music.get_busy():
-                self.pause_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
-                if self.pause_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
-                    self.game.player.pause()
-                song[1].draw_color(bar, mp3_cut=True)
+            if settings.song_number == others.index(song) + len(songs):
+                if pg.mixer.music.get_busy():
+                    song[1].draw(bar, mp3_cut=True, color=YELLOW)
+                    self.pause_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
+                    if self.pause_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
+                        "MOUSE DOWN"]:
+                        self.game.player.pause()
+                else:
+                    self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
+                    song[1].draw(bar, mp3_cut=True)
+                    if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
+                        "MOUSE DOWN"]:
+                        self.game.player.play()
             else:
+                song[1].draw(bar, mp3_cut=True)
                 self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                 if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                     settings.song_number = others.index(song) + len(songs)
                     self.game.player.playing = False
                     self.game.player.play()
-                song[1].draw(bar, mp3_cut=True)
-            pg.draw.rect(bar, (162, 48, 42), (bar_rect.width - 45, song[1].rect.y, 40, 40))
+            pg.draw.rect(bar, BROWN, (bar_rect.width - 45, song[1].rect.y, 40, 40))
             self.plus_button.rect.midright = (bar_rect.width - 7, song[1].rect.midleft[1])
             if self.plus_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                 self.game.player.pop_from_others(song)
@@ -552,4 +724,36 @@ class MusicMenu(Menu):
             self.text_playlist.rect.y += self.game.keys["MOUSEWHEEL"] * 10
 
         surface.blit(bar, bar_rect)
-        pg.draw.rect(self.game.screen, 'white', (bar_rect.x, bar_rect.y, 538, 220), 1)
+        pg.draw.rect(self.game.screen, 'white', (bar_rect.x, bar_rect.y, 538, 220), 1)  # WHITE BORDER
+
+
+class Authors(Menu):
+    def __init__(self, game):
+        super().__init__(game)
+
+        self.authors_bg = Picture(640, 360, "images/backgrounds/window.png", 0.5)
+
+        button_sound = pg.mixer.Sound("audio/button_sound.mp3")
+        self.authors_close_button = Button(865, 225, "images/buttons/close_button_off.png",
+                                           "images/buttons/close_button_on.png", button_sound, 0.15)
+
+        x, y = self.authors_bg.rect.topleft
+
+        self.text_authors = [Text(640, 225, "AUTHORS", 45),
+                             Text(640, y + 110, "ROMAN SOKOLOVSKII", 17, color=BLUE),
+                             Text(640, y + 140, "RUSLAN KUTORGIN", 17, color=BLUE),
+                             Text(640, y + 170, "PAVEL SHAHMATOV", 17, color=BLUE),
+                             Text(640, 480, "00TEAM", 12)
+                             ]
+
+        self.girl = Sheet("images/HUD/Sheets/girl.png", scale=2.8)
+
+    def display_menu(self):
+        self.game.screen.blit(self.authors_bg.image, self.authors_bg.rect)
+
+        for text in self.text_authors:
+            text.draw(self.game.screen)
+
+        self.girl.draw(self.game.screen, (825, 375), speed=200)
+        if self.authors_close_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
+            self.game.menu_state = "MENU"

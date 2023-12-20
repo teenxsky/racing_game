@@ -20,18 +20,14 @@ class Settings:
         with open('config.json', 'w') as f:
             json.dump(self.user_settings, f, indent=2)
 
-    # def set_default(self):
+    def set_default(self):  # Doesn't work
+        with open('config.json', 'w') as f:
+            with open('default.json', 'r') as data:
+                data_default = json.load(data)
+                json.dump(data_default, f, indent=2)
 
 
 settings = Settings()
-
-'''
-class MyEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, Player):
-            return o.image, o.speed
-        return o
-'''
 
 '''
 d = {'name': 'Roman', 'coins': 100, 'car': 'BMW', 'score': 1000}

@@ -28,8 +28,18 @@
       "size": 0.3
     }
   ],
-  "coins": 178,
-  "score": 0,
+  "player_stats": {
+    "name": "roman",
+    "level": 32,
+    "coins": 261,
+    "score": 81900,
+    "car_own": 1,
+    "wins": 0,
+    "defeats": 0,
+    "distance_travelled": 0,
+    "crashed": 0,
+    "time_in_game": 4721065
+  },
   "bg": {
     "menu_bg": "menu_bg2",
     "garage_bg": "garage_bg1",
@@ -39,6 +49,7 @@
     "menu_bg1": 20,
     "menu_bg2": 150,
     "garage_bg1": 100,
+    "garage_bg2": 100,
     "levels_bg1": 150
   },
   "levels": [
@@ -58,40 +69,75 @@
       "difficulty": "HARD"
     }
   ],
-  "general_volume": 0.235,
-  "music_volume": 0.1125,
-  "sounds_volume": 0.0825,
-  "song_number": 0,
+  "general_volume": 0.2475,
+  "music_volume": 0.5,
+  "sounds_volume": 0.5,
+  "song_number": 14,
   "songs": [
     [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Avril Lavigne - Girlfriend.mp3"
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "01-The-Weeknd-Dawn-FM-(HiphopMood.com).mp3"
     ],
     [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "GunsNRoses - Paradise City.mp3"
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "02-The-Weeknd-Gasoline-(HiphopMood.com).mp3"
     ],
     [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Kavinsky - Nightcall.mp3"
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "03-The-Weeknd-How-Do-I-Make-You-Love-Me-(HiphopMood.com).mp3"
     ],
     [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "RADIOTAPOK - Monster.mp3"
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "04-The-Weeknd-Take-My-Breath-(HiphopMood.com).mp3"
     ],
     [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "The Doors - Riders on the Storm.mp3"
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "05-The-Weeknd-Sacrifice-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "06-The-Weeknd-A-Tale-By-Quincy-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "07-The-Weeknd-Out-of-Time-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "08-The-Weeknd-Here-We-Go-Again-Ft-Tyler-The-Creator-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "09-The-Weeknd-Best-Friends-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "10-The-Weeknd-Is-There-Someone-Else-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "11-The-Weeknd-Starry-Eyes-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "12-The-Weeknd-Every-Angel-is-Terrifying-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "13-The-Weeknd-Don-t-Break-My-Heart-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "14-The-Weeknd-I-Heard-You-re-Married-Ft-Lil-Wayne-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "15-The-Weeknd-Less-Than-Zero-(HiphopMood.com).mp3"
+    ],
+    [
+      "/Users/roman/Desktop/Dawn FM Album/",
+      "16-The-Weeknd-Phantom-Regret-by-Jim-(HiphopMood.com).mp3"
     ]
   ],
-  "others": [
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "N.E.R.D. - Rockstar.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Motley Crue - Girls.mp3"
-    ]
-  ]
+  "others": []
 }
