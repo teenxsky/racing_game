@@ -157,9 +157,9 @@ class Background(Picture):
         if self.bg_y == 720:
             self.bg_y = 0
 
-    def set_bgs(self, bgs, cum_weight, k=10):
-        self.bgs = random.choices(bgs, cum_weights=cum_weight, k=k)
-        self.bgs_origin, self.cum_w, self.k = bgs, cum_weight, k
+    def set_bgs(self, bgs, weight, k=10):
+        self.bgs = random.choices(bgs, weights=weight, k=k)
+        self.bgs_origin, self.cum_w, self.k = bgs, weight, k
 
     def random_scroll(self, surface, speed):
         self.bg_y += speed
@@ -182,15 +182,16 @@ class Background(Picture):
 
 
 class Text:
-    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255),
+    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255), font="fonts/pxl_tactical.ttf",
                  set_topleft=False, set_midleft=False, set_midright=False, set_bottomleft=False, set_midbottom=False, set_bottomright=False):
         self.center = (x, y)
         self.scale = scale
         self.sound = sound
         self.color = color
         self.string = text
+        self.font_path = font
 
-        self.font = pg.font.Font("fonts/pxl_tactical.ttf", self.scale)
+        self.font = pg.font.Font(self.font_path, self.scale)
         self.text = self.font.render(self.string, False, self.color).convert_alpha()
         self.rect = self.text.get_rect()
 
@@ -343,6 +344,7 @@ class MusicPlayer:
         self.others = []
 
         self.playing = False
+        self.paused = False
         self.random_play = True
         self.loop = False
         self.MUSIC_END = pg.USEREVENT + 1
@@ -365,7 +367,7 @@ class MusicPlayer:
         self.running_update = pg.time.get_ticks()
 
     def play(self):
-        if not (self.playing or self.playlist and self.others):
+        if not self.playing and not self.paused and (self.playlist or self.others):
             self.playing = True
             if settings.song_number < len(self.playlist):
                 path = self.playlist[settings.song_number][0]
@@ -382,7 +384,11 @@ class MusicPlayer:
                                    os.path.exists(file_path + file))
             pg.mixer.music.play()
             self.change_cover()
-        else:
+        elif not self.paused and (self.playlist or self.others):
+            self.paused = True
+            pg.mixer.music.pause()
+        elif self.paused and (self.playlist or self.others):
+            self.paused = False
             pg.mixer.music.unpause()
 
     def pause(self):
@@ -636,4 +642,4 @@ class PlayerStats:
     def get_time_in_game(self):
         self.update_time_in_game()
         time = settings.player_stats["time_in_game"]
-        return f'{(time // 86400000):03}' + ":" + f'{((time % 86400000) // 36000000):02}' + ":" + f'{((time % 36000000) // 60000):02}'
+        return f'{(time // 86400000):03}' + ":" + f'{((time % 86400000) // 3600000):02}' + ":" + f'{((time % 3600000) // 60000):02}'

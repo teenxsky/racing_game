@@ -57,14 +57,14 @@ class Game:
 
         # CARS
 
-        self.opp1 = GIF("images/cars/opp1/", scale=1.1).gif
+        self.opp1 = GIF("images/cars/opp1/", scale=0.7).gif
         # self.opp2 = GIF("images/cars/opp2/", scale=1.15).gif
 
         gold_coin_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
-        self.gold_coin_images = get_sheets(gold_coin_image, 5, 5)
+        self.gold_coin_images = get_sheets(gold_coin_image, 5, 3)
 
         rubin_coin_image = pg.image.load("images/HUD/coins/spr_coin_roj.png").convert_alpha()
-        self.rubin_coin_images = get_sheets(rubin_coin_image, 4, 5)
+        self.rubin_coin_images = get_sheets(rubin_coin_image, 4, 3)
 
         self.oil_stain_image = Picture(0, 0, "images/HUD/oil_stain.png")
 
@@ -92,10 +92,10 @@ class Game:
 
         def chose_car():
             i = 0
-            player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=1).gif
+            player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=0.7).gif
             while not settings.cars[i]["chosen"]:
                 i += 1
-                player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=1.1).gif
+                player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=0.7).gif
             return player_car
 
         lives = 3
@@ -135,6 +135,7 @@ class Game:
 
         first_bg = None
         bgs = []
+        print(self.curr_level)
         for file in sorted(os.listdir(f'images/backgrounds/levels/level{settings.levels[self.curr_level]["number"]}/')):
             if ".png" in file:
                 bg = Background(f'images/backgrounds/levels/level{settings.levels[self.curr_level]["number"]}/' + file)
@@ -143,7 +144,7 @@ class Game:
                     bgs.append(bg)
                 else:
                     first_bg = bg
-        first_bg.set_bgs(bgs, (95, 100), 10)
+        first_bg.set_bgs(bgs, (60, 5, 20, 30, 5), 10)
 
         time = pg.time.get_ticks()
 
@@ -356,15 +357,17 @@ class Game:
                         Ruby_Co = CoinsMechanics(ruby_group.sprites(), coins_speed * 2, "ruby")
                         self.coins += 10
 
+                if all(not i for i in pg.key.get_pressed()):
+                    if pg.time.get_ticks() - time > 5000:
+                        self.show_hints()
+                else:
+                    time = pg.time.get_ticks()
+
             self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)
             P1.rotate_arrow_of_speedometer(self.screen, "images/HUD/speedometer/arrow.png",
                                            self.speedometer_base.center, 1.35)
 
-            if all(not i for i in pg.key.get_pressed()):
-                if pg.time.get_ticks() - time > 5000:
-                    self.show_hints()
-            else:
-                time = pg.time.get_ticks()
+            self.player.draw_current_song(self.screen, (10, 710), set_bottomleft=True)
 
             self.blit_screen()
 
@@ -411,6 +414,10 @@ class Game:
                         self.game_state = "PAUSED"
                 if event.key == settings.KEYS["ENTER"]:
                     self.keys["ENTER"] = True
+                if event.key == settings.KEYS["PLAY MUSIC"]:
+                    self.player.play()
+                if event.key == settings.KEYS["CHANGE MUSIC"]:
+                    self.player.next()
             if event.type == self.player.MUSIC_END:
                 self.player.playing = False
                 if self.player.loop:

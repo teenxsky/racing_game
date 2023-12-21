@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+beta1 (+new menu features +basic gameplay)">
+    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+beta2 (big upgrade)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/down_path.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/backgrounds/window_trans.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/backgrounds/window_trans.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level0/summer_road_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level0/summer_road_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level0/summer_road_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level1/summer_road_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level1/summer_road_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level1/summer_road_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level3/summer_road_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level3/summer_road_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/backgrounds/levels/level3/summer_road_2.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/sprites.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,9 +57,10 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/images" />
+      <recent name="$PROJECT_DIR$/images/HUD" />
       <recent name="$PROJECT_DIR$/images/backgrounds" />
       <recent name="$PROJECT_DIR$/images/cars" />
-      <recent name="$PROJECT_DIR$/images" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
@@ -413,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1702264619904</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="#+beta2 (big upgrade)">
+      <created>1703048415709</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1703048415709</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -438,7 +451,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ya pidor" />
     <MESSAGE value="#Creat a window" />
     <MESSAGE value="#+Background and Start Button" />
     <MESSAGE value="#+motor sound" />
@@ -463,6 +475,7 @@
     <MESSAGE value="#+menu upgrade +new background +movement" />
     <MESSAGE value="#+animated background +music menu" />
     <MESSAGE value="#+beta1 (+new menu features +basic gameplay)" />
-    <option name="LAST_COMMIT_MESSAGE" value="#+beta1 (+new menu features +basic gameplay)" />
+    <MESSAGE value="#+beta2 (big upgrade)" />
+    <option name="LAST_COMMIT_MESSAGE" value="#+beta2 (big upgrade)" />
   </component>
 </project>
