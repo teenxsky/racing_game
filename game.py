@@ -135,7 +135,6 @@ class Game:
 
         first_bg = None
         bgs = []
-        print(self.curr_level)
         for file in sorted(os.listdir(f'images/backgrounds/levels/level{settings.levels[self.curr_level]["number"]}/')):
             if ".png" in file:
                 bg = Background(f'images/backgrounds/levels/level{settings.levels[self.curr_level]["number"]}/' + file)

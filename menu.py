@@ -33,12 +33,17 @@ class Menu:
             if event.type == pg.KEYDOWN:
                 if event.key == settings.KEYS["BACK"]:
                     self.game.keys["BACK"] = True
+                    settings.set_default()
                 if event.key == settings.KEYS["ENTER"]:
                     self.game.keys["ENTER"] = True
                 if event.key == settings.KEYS["MOVE LEFT"]:
                     self.game.keys["MOVE LEFT"] = True
                 if event.key == settings.KEYS["MOVE RIGHT"]:
                     self.game.keys["MOVE RIGHT"] = True
+                if event.key == settings.KEYS["PLAY MUSIC"]:
+                    self.game.player.play()
+                if event.key == settings.KEYS["CHANGE MUSIC"]:
+                    self.game.player.next()
             if event.type == pg.MOUSEWHEEL:
                 self.game.keys["MOUSEWHEEL"] = event.y
             if event.type == self.game.player.MUSIC_END:
@@ -167,9 +172,7 @@ class MainMenu(Menu):
 
             distance = 0
             for level in levels:
-                center = (curr_lvl_x + distance, 360)
-                level.rect.center = center
-                levels_gui_2.rect.center = center
+                level.rect.center = levels_gui_2.rect.center = (curr_lvl_x + distance, 360)
                 level.draw(self.game.screen)
                 if settings.levels[levels.index(level)]["access"]:
                     if level.rect.center == (640, 360):
@@ -182,12 +185,10 @@ class MainMenu(Menu):
                     block.fill((0, 0, 0, 200))
                     self.game.screen.blit(block, level.rect)
                 levels_gui_2.draw(self.game.screen)
-                c_1 = Text(center[0], 690, f'DIFFICULTY: {settings.levels[levels.index(level)]["difficulty"]}', 30)
+                c_1 = Text(curr_lvl_x + distance, 690, f'DIFFICULTY: {settings.levels[levels.index(level)]["difficulty"]}', 30)
                 c_1.draw(self.game.screen)
                 distance += 700
             distance -= 700
-
-            self.game.curr_level = abs(curr_lvl_x + distance - 640) // 700
 
             if curr_lvl_x + 700 <= 640:
                 if (self.levels_back_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]) or (
@@ -510,10 +511,10 @@ class GarageMenu(Menu):
             i = 1
             license_name = Text(94, 443, settings.player_stats["name"].upper(), 21, font="fonts/pixelscript.ttf", color=BLACK, set_midleft=True)
             while license_name.rect.midright[0] >= 355:
-                license_name = Text(94, 443, settings.player_stats["name"].upper(), 21-i, font="fonts/pixelscript.ttf", color=BLACK, set_midleft=True)
+                license_name = Text(94, 442, settings.player_stats["name"].upper(), 21-i, font="fonts/pixelscript.ttf", color=BLACK, set_midleft=True)
                 i += 1
 
-            license_level = Text(94, 330, str(settings.player_stats["level"]), 21, font="fonts/pixelscript.ttf", set_midleft=True)
+            license_level = Text(94, 323, str(settings.player_stats["level"]), 21, font="fonts/pixelscript.ttf", set_midleft=True)
 
             license_name_mini = Text(200, 295, "NAME: " + str(settings.player_stats["name"]), 23, set_midleft=True)
 

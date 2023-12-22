@@ -212,6 +212,8 @@ class Text:
 
         self.on_button = False
 
+        self.temporary_string = None
+
     def draw(self, surface, mp3_cut=False, color=None):
         if color:
             if mp3_cut:
@@ -249,18 +251,29 @@ class Text:
 
         return action
 
-    def typing(self, surface):
-        for event in pg.event.get():
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_DELETE and len(self.string) > 0:
-                    self.string = self.string[:-1]
-                else:
-                    self.string += event.unicode
+    def typing(self, surface, width=200, set_left=False, set_right=False):
+        screen = pg.Surface((1280, 720)).convert_alpha()
+        screen.blit(self.game.screen, (0, 0))
 
-        self.text = self.font.render(self.string, False, self.color).convert_alpha()
-        self.rect = self.text.get_rect()
-        self.rect.center = self.center
-        self.draw(surface)
+        typing = True
+        while typing:
+            if self.rect.width >= width:
+                bar = pg.Surface((width, self.rect.height), pg.SRCALPHA).convert_alpha()
+            else:
+                bar = pg.Surface((self.rect.width, self.rect.height), pg.SRCALPHA).convert_alpha()
+            bar.fill((0, 0, 0, 255))
+
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_DELETE and len(self.temporary_string) > 0:
+                        self.temporary_string = self.temporary_string[:-1]
+                    elif event.key == pg.K_ESCAPE:
+                        self.string += event.unicode
+
+            self.text = self.font.render(self.string, False, self.color).convert_alpha()
+            self.rect = self.text.get_rect()
+            self.rect.center = self.center
+            self.draw(surface)
 
 
 class GIF:
@@ -345,7 +358,7 @@ class MusicPlayer:
 
         self.playing = False
         self.paused = False
-        self.random_play = True
+        self.random_play = False
         self.loop = False
         self.MUSIC_END = pg.USEREVENT + 1
         pg.mixer.music.set_endevent(self.MUSIC_END)
@@ -549,6 +562,7 @@ class PlayerStats:
         for file in sorted(os.listdir("images/HUD/level/")):
             if file[-4:] == ".png":
                 self.level_bar.append(Picture(640, 360, "images/HUD/level/" + file, scale=2))
+
         self.start_level = 1000
         self.delta_level = 100
 
@@ -595,9 +609,8 @@ class PlayerStats:
         score = Text(0, 0, "LVL: " + str(settings.player_stats["level"]) + " - " + str(curr_score) + "/" + str(max_score), 20)
 
         curr_level = 0
-        for i in range(len(self.level_bar)):
-            if (curr_score / max_score) * 10 >= curr_level:
-                curr_level += 1
+        while curr_level * (max_score / len(self.level_bar)) < curr_score:
+            curr_level += 1
 
         if set_topleft:
             self.level_bar[curr_level].rect.topleft = coordinates
@@ -608,8 +621,7 @@ class PlayerStats:
         else:
             self.level_bar[curr_level].rect.center = coordinates
 
-        score.rect.midtop = self.level_bar[curr_level].rect.midbottom[0], self.level_bar[curr_level].rect.midbottom[
-            1] + 10
+        score.rect.topright = self.level_bar[curr_level].rect.bottomright[0], self.level_bar[curr_level].rect.bottomright[1] + 10
 
         self.level_bar[curr_level].draw(surface)
         score.draw(surface)

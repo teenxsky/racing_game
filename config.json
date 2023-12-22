@@ -32,15 +32,15 @@
   ],
   "player_stats": {
     "name": "roman",
-    "level": 33,
-    "coins": 283,
-    "score": 86100,
+    "level": 3,
+    "coins": 302,
+    "score": 4200,
     "car_own": 1,
     "wins": 0,
     "defeats": 0,
     "distance_travelled": 0,
     "crashed": 0,
-    "time_in_game": 9064497
+    "time_in_game": 10959075
   },
   "bg": {
     "menu_bg": "menu_bg2",
@@ -62,7 +62,7 @@
     },
     {
       "number": "2",
-      "access": true,
+      "access": false,
       "difficulty": "MIDDLE"
     },
     {
@@ -75,35 +75,6 @@
   "music_volume": 0.4,
   "sounds_volume": 0.5,
   "song_number": 0,
-  "songs": [
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Avril Lavigne - Girlfriend.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "GunsNRoses - Paradise City.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Kavinsky - Nightcall.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Motley Crue - Girls.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "N.E.R.D. - Rockstar.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "RADIOTAPOK - Monster.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "The Doors - Riders on the Storm.mp3"
-    ]
-  ],
+  "songs": [],
   "others": []
 }

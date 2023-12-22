@@ -1,11 +1,13 @@
 {
   "KEYS": {
-    "MOVE UP": 119,
+    "MOVE UP": 1073741906,
     "BACK": 27,
     "MOVE LEFT": 1073741904,
     "MOVE RIGHT": 1073741903,
     "MOVE DOWN": 1073741905,
     "ENTER": 13,
+    "PLAY MUSIC": 112,
+    "CHANGE MUSIC": 91,
     "NITRO": 1073742049
   },
   "cars": [
@@ -28,8 +30,18 @@
       "size": 0.3
     }
   ],
-  "coins": 178,
-  "score": 0,
+  "player_stats": {
+    "name": "roman",
+    "level": 3,
+    "coins": 302,
+    "score": 4200,
+    "car_own": 1,
+    "wins": 0,
+    "defeats": 0,
+    "distance_travelled": 0,
+    "crashed": 0,
+    "time_in_game": 10956167
+  },
   "bg": {
     "menu_bg": "menu_bg2",
     "garage_bg": "garage_bg1",
@@ -39,6 +51,7 @@
     "menu_bg1": 20,
     "menu_bg2": 150,
     "garage_bg1": 100,
+    "garage_bg2": 100,
     "levels_bg1": 150
   },
   "levels": [
@@ -58,24 +71,14 @@
       "difficulty": "HARD"
     }
   ],
-  "general_volume": 0.5,
-  "music_volume": 0.5,
+  "general_volume": 0.2475,
+  "music_volume": 0.4,
   "sounds_volume": 0.5,
   "song_number": 0,
   "songs": [
-    [
-      "audio/music/",
-      "Avril Lavigne - Girlfriend.mp3"
-    ],
-    [
-      "audio/music/",
-      "GunsNRoses - Paradise City.mp3"
-    ],
-    [
-      "audio/music/",
-      "Kavinsky - Nightcall.mp3"
-    ]
+
   ],
   "others": [
+
   ]
 }

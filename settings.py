@@ -20,7 +20,7 @@ class Settings:
         with open('config.json', 'w') as f:
             json.dump(self.user_settings, f, indent=2)
 
-    def set_default(self):  # Doesn't work
+    def set_default(self):
         with open('config.json', 'w') as f:
             with open('default.json', 'r') as data:
                 data_default = json.load(data)
