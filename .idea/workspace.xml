@@ -1,36 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+beta2.1 (+new map)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/default.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fonts/pixelscript.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/fonts/pixelscript.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fonts/pxl_tactical.otf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_11.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_12.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_13.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_14.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_15.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_17.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_18.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_19.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_20.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_5.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_6.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_7.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_8.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/HUD/level/health_9.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/HUD/oil_stain.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/HUD/oil_stain.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/chevrolet_camaro.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/chevrolet_camaro_topdown/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper_topdown.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper_topdown/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper_topdown/2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper_topdown/3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper_topdown/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/dodge_srt_viper_topdown/5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/non_animated_cars/opp1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/non_animated_cars/opp2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/non_animated_cars/opp3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/non_animated_cars/opp4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/non_animated_cars/player_car_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp1/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp1/2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp1/3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp1/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp1/5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp2/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp2/2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp2/3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp2/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/opp2/5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/player_car_1/1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/player_car_1/2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/player_car_1/3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/player_car_1/4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/cars/player_car_1/5.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/sprites.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

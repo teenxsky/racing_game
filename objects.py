@@ -282,7 +282,8 @@ class GIF:
         self.gif = []
 
         for file in sorted(os.listdir(self.path)):
-            self.gif.append(Picture(640, 360, self.path + file, scale=scale))
+            if file != ".DS_Store":
+                self.gif.append(Picture(640, 360, self.path + file, scale=scale))
 
         self.last_update = pg.time.get_ticks()
         self.frame = 0

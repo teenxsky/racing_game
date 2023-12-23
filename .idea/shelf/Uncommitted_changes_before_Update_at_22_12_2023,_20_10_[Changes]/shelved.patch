@@ -1,0 +1,731 @@
+Index: engine_audio.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>'''from openal import *\nfrom time import sleep\n\nrunning_max_volume = float()\nrunning_max_pitch = float()\nidle_max_volume = float()\nidle_max_pitch = float()\nclass car_conroller:\n    def __init__(self, speed, max_speed):\n        self.speed = speed\n        self.max_speed = max_speed\n        self.pitch = 0\n\n        self.source = oalOpen(\"/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon.wav\")\n        self.source.play()\n        self.source.set_looping(True)\n\n    def change_pitch(self):\n        while self.source.get_state() == AL_PLAYING:\n            self.pitch += 0.001\n            self.source.set_pitch(self.pitch)\n            self.source.update()\n            sleep(0.01)\n\noalQuit()\n'''\n\n'''from pydub import AudioSegment\nfrom pydub.playback import play\nfrom pydub.utils import make_chunks\n\nsound = AudioSegment.from_file('/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionidle_1.mp3', format=\"mp3\")\n\noctaves = -5\n\n# shift the pitch up by half an octave (speed will increase proportionally)\nwhile octaves != 2:\n    octaves += 1\n\n    new_sample_rate = int(sound.frame_rate * (2.0 ** octaves))\n\n    # keep the same samples but tell the computer they ought to be played at the\n    # new, higher sample rate. This file sounds like a chipmunk but has a weird sample rate.\n    hipitch_sound = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})\n\n    # now we just convert it to a common sample rate (44.1k - standard audio CD) to\n    # make sure it works in regular audio players. Other than potentially losing audio quality (if\n    # you set it too low - 44.1k is plenty) this should now noticeable change how the audio sounds.\n    hipitch_sound = hipitch_sound.set_frame_rate(44100)\n\n    #Play pitch changed sound\n    play(hipitch_sound)\n    print(octaves)\n\n#export / save pitch changed sound\n#hipitch_sound.export(\"/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon_out.mp3\", format=\"mp3\")'''\n\n\n'''from pydub import AudioSegment\nfrom pydub.effects import pitch_shift\n\n# Load the audio file\naudio = AudioSegment.from_file(\"input.wav\", format=\"wav\")\n\n# Shift the pitch by 2 semitones higher\nshifted_audio = pitch_shift(audio, n=2)'''\n\nfrom pydub import AudioSegment\nfrom pydub.utils import make_chunks\n\naudio = AudioSegment.from_file(\"/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionidle_1.mp3\")\n\n# Define the loop start and end points in milliseconds\nloop_start = 0\nloop_end = 500\n\n# Create a Loop object\nloop = AudioSegment.from_mono_audiosegments(make_chunks(audio[loop_start:loop_end], len(audio)))\n\n# Apply the loop to the audio file\nlooped_audio = audio.apply_loop(loop)\n\n# Export the looped audio to a new file\nlooped_audio.export(\"looped_audio.wav\", format=\"wav\")
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/engine_audio.py b/engine_audio.py
+--- a/engine_audio.py	(revision c1db4000b034c5f03443ca6d182580a813102be7)
++++ b/engine_audio.py	(date 1703239792207)
+@@ -1,84 +1,156 @@
+-'''from openal import *
+-from time import sleep
+-
+-running_max_volume = float()
+-running_max_pitch = float()
+-idle_max_volume = float()
+-idle_max_pitch = float()
+-class car_conroller:
+-    def __init__(self, speed, max_speed):
+-        self.speed = speed
+-        self.max_speed = max_speed
+-        self.pitch = 0
+-
+-        self.source = oalOpen("/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon.wav")
+-        self.source.play()
+-        self.source.set_looping(True)
+-
+-    def change_pitch(self):
+-        while self.source.get_state() == AL_PLAYING:
+-            self.pitch += 0.001
+-            self.source.set_pitch(self.pitch)
+-            self.source.update()
+-            sleep(0.01)
+-
+-oalQuit()
+-'''
+-
+-'''from pydub import AudioSegment
+-from pydub.playback import play
+-from pydub.utils import make_chunks
+-
+-sound = AudioSegment.from_file('/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionidle_1.mp3', format="mp3")
+-
+-octaves = -5
+-
+-# shift the pitch up by half an octave (speed will increase proportionally)
+-while octaves != 2:
+-    octaves += 1
+-
+-    new_sample_rate = int(sound.frame_rate * (2.0 ** octaves))
+-
+-    # keep the same samples but tell the computer they ought to be played at the
+-    # new, higher sample rate. This file sounds like a chipmunk but has a weird sample rate.
+-    hipitch_sound = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})
+-
+-    # now we just convert it to a common sample rate (44.1k - standard audio CD) to
+-    # make sure it works in regular audio players. Other than potentially losing audio quality (if
+-    # you set it too low - 44.1k is plenty) this should now noticeable change how the audio sounds.
+-    hipitch_sound = hipitch_sound.set_frame_rate(44100)
+-
+-    #Play pitch changed sound
+-    play(hipitch_sound)
+-    print(octaves)
+-
+-#export / save pitch changed sound
+-#hipitch_sound.export("/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionon_out.mp3", format="mp3")'''
+-
+-
+-'''from pydub import AudioSegment
+-from pydub.effects import pitch_shift
+-
+-# Load the audio file
+-audio = AudioSegment.from_file("input.wav", format="wav")
+-
+-# Shift the pitch by 2 semitones higher
+-shifted_audio = pitch_shift(audio, n=2)'''
++import pygame as pg
+ 
+ from pydub import AudioSegment
+ from pydub.utils import make_chunks
++from pydub.playback import play, _play_with_simpleaudio
++import os
++import threading
++
++
++from playsound import *
++
++from simpleaudio import *
++
++from settings import *
++
++'''pg.mixer.pre_init(44100, -16, 1, 512)
++pg.mixer.init()
++
++class EngineSound:
++    def __init__(self):
++        self.car_sounds = dict()
++        self.set_sounds()
++        self.is_pause = False
++
++    def play_sound(self, type_of_sound=None, start_time=None):
++        if self.is_pause:
++            self.is_pause = False
++            for i in range(1, 6):
++                pg.mixer.Channel(i).unpause()
++
++        if type_of_sound == "back_sound":
++            if not self.car_sounds[type_of_sound][1]:
++                self.car_sounds[type_of_sound][1] = True
++                pg.mixer.Channel(1).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=0, maxtime=0, fade_ms=0)
++                a = pg.time.get_ticks()
++                b = pg.time.get_ticks()
++                while b - a < start_time:
++                    pg.mixer.Channel(1).set_volume(0)
++                    b = pg.time.get_ticks()
++                pg.mixer.Channel(1).set_volume(1)
++
++        if type_of_sound == "idle_sound":
++            if not self.car_sounds[type_of_sound][1]:
++                self.car_sounds[type_of_sound][1] = True
++                pg.mixer.Channel(2).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=-1, maxtime=0, fade_ms=0)
++
++        if type_of_sound == "max_speed_sound":
++            pg.mixer.Channel(3).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=-1, maxtime=0, fade_ms=0)
++
++        if type_of_sound == "soft_back_sound":
++            pg.mixer.Channel(4).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=0, maxtime=0, fade_ms=0)
++
++        if type_of_sound == "up_sound":
++            pg.mixer.Channel(5).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=0, maxtime=0, fade_ms=0)
++
++    def set_sounds(self):
++        for i in range(3):
++            car = settings.cars[i]
++            if car["chosen"]:
++                self.car_sounds["back_sound"] = [f'audio/car_sound/{car["name"]}/back_sound.mp3', False]
++                pg.mixer.Channel(1)
++                self.car_sounds["idle_sound"] = [f'audio/car_sound/{car["name"]}/idle_sound.mp3', False]
++                pg.mixer.Channel(2)
++                self.car_sounds["max_speed_sound"] = [f'audio/car_sound/{car["name"]}/max_speed_sound.mp3', False]
++                pg.mixer.Channel(3)
++                self.car_sounds["soft_back_sound"] = [f'audio/car_sound/{car["name"]}/soft_back_sound.mp3', False]
++                pg.mixer.Channel(4)
++                self.car_sounds["up_sound"] = [f'audio/car_sound/{car["name"]}/up_sound.mp3', False]
++                pg.mixer.Channel(5)
++
++    def get_len(self, type_of_sound=None):
++        return pg.mixer.Sound(self.car_sounds[type_of_sound][0]).get_length()
++
++    def pause(self):
++        self.is_pause = True
++        for i in range(1, 6):
++            pg.mixer.Channel(i).pause()
++
++    def exit(self):
++        for i in range(1, 6):
++            pg.mixer.Channel(i).stop()'''
++
++class EngineSound:
++    def __init__(self):
++        self.car_sounds = dict()
++        self.chosen_car = None
++        self.set_sounds()
++        self.is_pause = False
++        self.time = 0
++
++    def play_sound(self, type_of_sound=None, start_time=None):
++        if self.is_pause:
++            self.is_pause = False
++            '''for i in range(1, 6):
++                pg.mixer.Channel(i).unpause()'''
++
++        if type_of_sound == "back_sound":
++            if not self.car_sounds[type_of_sound][1]:
++                self.car_sounds[type_of_sound][1] = True
++                '''pg.mixer.Channel(1).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=0, maxtime=0, fade_ms=0)
++                a = pg.time.get_ticks()
++                b = pg.time.get_ticks()
++                while b - a < start_time:
++                    pg.mixer.Channel(1).set_volume(0)
++                    b = pg.time.get_ticks()
++                pg.mixer.Channel(1).set_volume(1)'''
++
++                sound = AudioSegment.from_mp3(self.car_sounds[type_of_sound][0])
++
++                # play the file
++                play(sound)
++
++        if type_of_sound == "idle_sound":
++            if not self.car_sounds[type_of_sound][1]:
++                self.car_sounds[type_of_sound][1] = True
++                pg.mixer.Channel(2).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=-1, maxtime=0, fade_ms=0)
+ 
+-audio = AudioSegment.from_file("/Users/ruslankutorgin/Desktop/cars/chevrolet_camaro/stallionidle_1.mp3")
++        if type_of_sound == "max_speed_sound":
++            pg.mixer.Channel(3).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=-1, maxtime=0, fade_ms=0)
+ 
+-# Define the loop start and end points in milliseconds
+-loop_start = 0
+-loop_end = 500
++        if type_of_sound == "soft_back_sound":
++            pg.mixer.Channel(4).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=0, maxtime=0, fade_ms=0)
+ 
+-# Create a Loop object
+-loop = AudioSegment.from_mono_audiosegments(make_chunks(audio[loop_start:loop_end], len(audio)))
++        if type_of_sound == "up_sound":
++            if not self.car_sounds[type_of_sound][1]:
++                self.car_sounds[type_of_sound][1] = True
++                #print("here")
++                pg.mixer.Channel(5).play(pg.mixer.Sound(self.car_sounds[type_of_sound][0]), loops=1, maxtime=0, fade_ms=0)
+ 
+-# Apply the loop to the audio file
+-looped_audio = audio.apply_loop(loop)
++    def set_sounds(self):
++        for i in range(3):
++            car = settings.cars[i]
++            if car["chosen"]:
++                self.chosen_car = f'{car["name"]}'
++                self.car_sounds["back_sound"] = [f'audio/car_sound/{car["name"]}/back_sound.mp3', False, 0]
++                pg.mixer.Channel(1)
++                self.car_sounds["idle_sound"] = [f'audio/car_sound/{car["name"]}/idle_sound.mp3', False, 0]
++                pg.mixer.Channel(2)
++                self.car_sounds["max_speed_sound"] = [f'audio/car_sound/{car["name"]}/max_speed_sound.mp3', False, 0]
++                pg.mixer.Channel(3)
++                self.car_sounds["soft_back_sound"] = [f'audio/car_sound/{car["name"]}/soft_back_sound.mp3', False, 0]
++                pg.mixer.Channel(4)
++                self.car_sounds["up_sound"] = [f'audio/car_sound/{car["name"]}/up_sound.mp3', False, 0]
++                pg.mixer.Channel(5)
+ 
+-# Export the looped audio to a new file
+-looped_audio.export("looped_audio.wav", format="wav")
+\ No newline at end of file
++    def get_len(self, type_of_sound=None):
++        return pg.mixer.Sound(self.car_sounds[type_of_sound][0]).get_length()
++
++    def pause(self):
++        self.is_pause = True
++        for i in range(1, 6):
++            pg.mixer.Channel(i).pause()
++
++    def exit(self):
++        for i in range(1, 6):
++            pg.mixer.Channel(i).stop()
+\ No newline at end of file
+Index: objects.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame\nimport pygame as pg\nfrom settings import *\nimport random\nimport os\nfrom tkinter import Tk\nfrom tkinter import filedialog\n\nroot = Tk()\nroot.withdraw()\n\n\nclass Button:\n    def __init__(self, x, y, image_off_name, image_on_name, sound=None, scale=1):\n        self.image_off = pg.image.load(image_off_name).convert_alpha()\n        self.image_on = pg.image.load(image_on_name).convert_alpha()\n\n        self.click_sound = sound\n\n        # FOR NON-PUSHED BUTTON\n\n        width_off = self.image_off.get_width()\n        height_off = self.image_off.get_height()\n        self.image_off = pg.transform.scale(self.image_off, (int(width_off * scale), int(height_off * scale)))\n        self.rect = self.image_off.get_rect()\n        self.rect.center = (x, y)\n\n        # FOR PUSHED BUTTON\n\n        width_on = self.image_on.get_width()\n        height_on = self.image_on.get_height()\n        self.image_on = pg.transform.scale(self.image_on, (int(width_on * scale), int(height_on * scale)))\n\n        # FOR BUTTON PUSHING\n\n        self.on_button = False\n\n    def draw(self, surface, block=False, surface_topleft=(0, 0)):\n        action = False\n        x, y = surface_topleft\n        if not block:\n            pos = pg.mouse.get_pos()\n            x_b = (pos[0] >= x) and (pos[0] <= x + surface.get_width())\n            y_b = (pos[1] >= y) and (pos[1] <= y + surface.get_height())\n            if self.rect.collidepoint((pos[0] - x, pos[1] - y)) and x_b and y_b:\n                if not self.on_button:\n                    self.on_button = True\n                    if self.click_sound:\n                        self.click_sound.play()\n\n                surface.blit(self.image_on, (self.rect.x, self.rect.y))\n                action = True\n            else:\n                self.on_button = False\n                surface.blit(self.image_off, (self.rect.x, self.rect.y))\n\n        else:\n            surface.blit(self.image_off, (self.rect.x, self.rect.y))\n\n        return action\n\n\nclass Picture:\n    def __init__(self, x, y, image_name, scale=1):\n        image = pg.image.load(image_name).convert_alpha()\n        width = image.get_width()\n        height = image.get_height()\n\n        self.image = pg.transform.scale(image, (width * scale, height * scale))\n        self.width = self.image.get_width()\n        self.height = self.image.get_height()\n\n        self.center = (x, y)\n        self.rect = self.image.get_rect()\n        self.rect.center = self.center\n\n        self.current_size = 0\n        self.pulse = True\n\n        self.last_update = pg.time.get_ticks()\n\n    def resize(self, width, height):\n        self.image = pg.transform.scale(self.image, (width, height))\n        self.rect = self.image.get_rect()\n        self.rect.center = self.center\n\n    def draw(self, surface):\n        action = False\n        pos = pg.mouse.get_pos()\n        if self.rect.collidepoint(pos):\n            action = True\n        surface.blit(self.image, self.rect)\n        return action\n\n    def draw_with_pulse(self, surface, size=20, time=15):  # FOR JUMPING GAME TITLE\n        current_time = pg.time.get_ticks()\n\n        if current_time - self.last_update >= time:\n            if self.pulse:\n                self.current_size += 1\n                if self.current_size == size:\n                    self.pulse = False\n            else:\n                self.current_size -= 1\n                if self.current_size == 0:\n                    self.pulse = True\n            self.last_update = current_time\n\n        new = self.width + self.current_size, self.height + self.current_size\n        current_image = pg.transform.scale(self.image, new)\n        current_rect = current_image.get_rect(center=self.rect.center)\n        surface.blit(current_image, current_rect)\n\n\nclass Background(Picture):\n    def __init__(self, image_name, scale=1):\n        super().__init__(0, 0, image_name, scale)\n\n        self.bg_y = 0\n\n        self.bgs = []\n        self.bgs_origin, self.cum_w, self.k = [], 0, 0\n        self.scrolls = 0\n        self.last_bg = self\n\n    def scroll(self, surface, speed):\n        self.bg_y += speed\n        surface.blit(self.image, (0, self.bg_y))\n        surface.blit(self.image, (0, self.bg_y - 720))\n        if self.bg_y == 720:\n            self.bg_y = 0\n\n    def set_bgs(self, bgs, cum_weight, k=10):\n        self.bgs = random.choices(bgs, cum_weights=cum_weight, k=k)\n        self.bgs_origin, self.cum_w, self.k = bgs, cum_weight, k\n\n    def random_scroll(self, surface, speed):\n        self.bg_y += speed\n\n        if self.scrolls == 0:\n            surface.blit(self.last_bg.image, (0, self.bg_y))\n            surface.blit(self.bgs[self.scrolls].image, (0, self.bg_y - 720))\n        else:\n            surface.blit(self.bgs[self.scrolls - 1].image, (0, self.bg_y))\n            surface.blit(self.bgs[self.scrolls].image, (0, self.bg_y - 720))\n\n        if (self.scrolls == len(self.bgs) - 1) and (self.bg_y >= 720):\n            self.last_bg = self.bgs[self.scrolls]\n            self.set_bgs(self.bgs_origin, self.cum_w, self.k)\n            self.scrolls = -1\n\n        if self.bg_y >= 720:\n            self.bg_y = 0\n            self.scrolls += 1\n\n\nclass HUD:\n    def __init__(self, coins_size=1):\n        gold_coin_image = pg.image.load(\"images/HUD/coins/MonedaD.png\").convert_alpha()\n        self.coins_sheets = self.get_sheets(gold_coin_image)\n        self.frame = 0\n\n        self.last_update = pg.time.get_ticks()\n\n    def get_image(self, sheet, frame, scale=1, colour=(0, 0, 0)):\n        width, height = sheet.get_height(), sheet.get_height()\n        image = pg.Surface((width, height)).convert_alpha()\n        image.blit(sheet, (0, 0), ((frame * width), 0, width, height))\n        image = pg.transform.scale(image, (width * scale, height * scale))\n        image.set_colorkey(colour)\n        return image\n\n    def get_sheets(self, image):\n        sheets = []\n        for i in range(image.get_width() // image.get_height()):\n            sheets.append(self.get_image(image, i, 5))\n        return sheets\n\n    def draw_coins(self, surface, x, y, time): # Сделать в ХУД класс выведения коин или другого на экран со всеми примочками\n        current_time = pg.time.get_ticks()\n\n        coin_rect = self.coins_sheets[0].get_rect()\n        coin_rect.center = (x, y)\n\n        coin_val = Text(x + 70, y, str(settings.coins), 50)\n        coin_val.rect.midleft = (coin_rect.midright[0] + 5, coin_rect.midright[1])\n\n        surface.blit(self.coins_sheets[self.frame], coin_rect)\n        surface.blit(coin_val.text, coin_val.rect)\n\n        if current_time - self.last_update >= time:\n            self.frame += 1\n            self.last_update = current_time\n            if self.frame == len(self.coins_sheets):\n                self.frame = 0\n\nclass Text:\n    def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255), set_topleft=False):\n        self.center = (x, y)\n        self.scale = scale\n        self.sound = sound\n        self.color = color\n        self.string = text\n\n        self.font = pg.font.Font(\"fonts/pxl_tactical.ttf\", self.scale)\n        self.text = self.font.render(self.string, False, self.color).convert_alpha()\n        self.rect = self.text.get_rect()\n        if set_topleft:\n            self.rect.topleft = (x, y)\n        else:\n            self.rect.center = (x, y)\n\n        self.on_button = False\n\n    def draw(self, surface, mp3_cut=False):\n        if mp3_cut:\n            text = self.font.render(self.string[:-4], False, self.color).convert_alpha()\n            surface.blit(text, self.rect)\n        else:\n            surface.blit(self.text, self.rect)\n\n    def draw_color(self, surface, color=(255, 255, 200), mp3_cut=False):\n        if mp3_cut:\n            text = self.font.render(self.string[:-4], False, color).convert_alpha()\n        else:\n            text = self.font.render(self.string, False, color).convert_alpha()\n        surface.blit(text, self.rect)\n\n    def draw_as_button(self, surface, surface_topleft=(0, 0), press_color=(255, 255, 200)):\n        action = False\n        x, y = surface_topleft\n        pos = pg.mouse.get_pos()\n        if self.rect.collidepoint((pos[0] - x, pos[1] - y)):\n            action = True\n            if not self.on_button:\n                self.on_button = True\n                if self.sound:\n                    self.sound.play()\n            press_text = self.font.render(self.string, False, press_color).convert_alpha()\n            surface.blit(press_text, self.rect)\n        else:\n            self.on_button = False\n            surface.blit(self.text, self.rect)\n\n        return action\n\n    def typing(self, surface):\n        for event in pg.event.get():\n            if event.type == pg.KEYDOWN:\n                if event.key == pg.K_DELETE and len(self.string) > 0:\n                    self.string = self.string[:-1]\n                else:\n                    self.string += event.unicode\n\n        self.text = self.font.render(self.string, False, self.color).convert_alpha()\n        self.rect = self.text.get_rect()\n        self.rect.center = self.center\n        self.draw(surface)\n\n\nclass GIF:\n    def __init__(self, path, scale=1):\n        self.path = path\n        self.gif = []\n\n        for file in sorted(os.listdir(self.path)):\n            self.gif.append(Picture(640, 360, self.path + file, scale=scale))\n\n        self.last_update = pg.time.get_ticks()\n        self.frame = 0\n\n    def resize(self, width, height):\n        for frame in self.gif:\n            frame.resize(width, height)\n\n    def move(self, x, y):\n        for frame in self.gif:\n            frame.rect.center = (x, y)\n\n    def draw(self, screen, speed=20):\n        current_time = pg.time.get_ticks()\n        if current_time - self.last_update >= speed:\n            self.last_update = current_time\n            self.frame += 1\n            if self.frame == len(self.gif):\n                self.frame = 0\n        self.gif[self.frame].draw(screen)\n\n\nclass MusicPlayer:\n    def __init__(self, path):\n        self.path = path\n        self.playlist = []\n        self.others = []\n        # self.covers\n\n        self.playing = False\n        self.random_play = True\n        self.loop = False\n        self.MUSIC_END = pg.USEREVENT+1\n        pg.mixer.music.set_endevent(self.MUSIC_END)\n\n        self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if os.path.exists(file_path + file))\n        self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if os.path.exists(file_path + file))\n\n    def play(self):\n        if not self.playing:\n            self.playing = True\n            if settings.song_number < len(self.playlist):\n                path = self.playlist[settings.song_number][0]\n                file = self.playlist[settings.song_number][1].string\n            else:\n                path = self.others[settings.song_number % len(self.playlist)][0]\n                file = self.others[settings.song_number % len(self.playlist)][1].string\n            try:\n                pg.mixer.music.load(path + file)\n            except pygame.error:\n                self.playlist = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.songs if os.path.exists(file_path + file))\n                self.others = list((file_path, Text(400, 270, file, 20)) for file_path, file in settings.others if os.path.exists(file_path + file))\n            pg.mixer.music.play()\n        else:\n            pg.mixer.music.unpause()\n\n    def pause(self):\n        pg.mixer.music.pause()\n\n    def next(self):\n        self.playing = False\n        if self.random_play:\n            settings.song_number = random.randrange(0, len(self.playlist) + len(self.others) - 1)\n        else:\n            settings.song_number += 1\n            if settings.song_number == len(self.playlist) + len(self.others):\n                settings.song_number = 0\n        self.play()\n\n    def prev(self):\n        self.playing = False\n        if self.random_play:\n            settings.song_number = random.randrange(0, len(self.playlist) + len(self.others) - 1)\n        else:\n            settings.song_number -= 1\n            if settings.song_number < 0:\n                settings.song_number = len(self.playlist) + len(self.others) - 1\n        self.play()\n\n    def get_songs(self):\n        return self.playlist\n\n    def get_others(self):\n        return self.others\n\n    def set_volume(self):\n        pg.mixer.music.set_volume(settings.music_volume)\n\n    def choose_dir(self):\n        self.path = filedialog.askdirectory(title=\"Choosing directory\", initialdir=\"Desktop\") + \"/\"\n        self.refresh()\n\n    def choose_song(self):\n        file = filedialog.askopenfilename(title=\"Choosing directory\")\n        if file:\n            path, name = \"/\".join(file.split(\"/\")[:-1]) + \"/\", file.split(\"/\")[-1]\n            self.others.append((path, Text(400, 270, name, 20)))\n\n    def pop_from_playlist(self, song):\n        if self.playlist.index(song) == settings.song_number:\n            self.playlist.remove(song)\n            self.others.append(song)\n            settings.song_number = self.others.index(song) + len(self.playlist)\n        else:\n            self.playlist.remove(song)\n            self.others.append(song)\n\n    def pop_from_others(self, song):\n        if self.others.index(song) + len(self.playlist) == settings.song_number:\n            self.others.remove(song)\n            self.playlist.append(song)\n            settings.song_number = self.playlist.index(song)\n        else:\n            self.others.remove(song)\n            self.playlist.append(song)\n\n    def save_to_settings(self):\n        curr_songs = []\n        for path, file in self.playlist:\n            curr_songs.append((path, file.string))\n        settings.songs = curr_songs\n\n        curr_songs = []\n        for path, file in self.others:\n            curr_songs.append((path, file.string))\n        settings.others = curr_songs\n\n    def refresh(self):\n        self.playlist = list((self.path, Text(400, 270, file, 20)) for file in sorted(os.listdir(self.path)) if \".mp3\" in file)\n        settings.song_number = 0\n        self.others = []\n        self.save_to_settings()\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/objects.py b/objects.py
+--- a/objects.py	(revision c1db4000b034c5f03443ca6d182580a813102be7)
++++ b/objects.py	(date 1703147826472)
+@@ -155,7 +155,8 @@
+ 
+ 
+ class HUD:
+-    def __init__(self, coins_size=1):
++    def __init__(self, scale=1):
++        self.scale = scale
+         gold_coin_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
+         self.coins_sheets = self.get_sheets(gold_coin_image)
+         self.frame = 0
+@@ -173,7 +174,7 @@
+     def get_sheets(self, image):
+         sheets = []
+         for i in range(image.get_width() // image.get_height()):
+-            sheets.append(self.get_image(image, i, 5))
++            sheets.append(self.get_image(image, i, scale=self.scale))
+         return sheets
+ 
+     def draw_coins(self, surface, x, y, time): # Сделать в ХУД класс выведения коин или другого на экран со всеми примочками
+Index: config.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"KEYS\": {\n    \"MOVE UP\": 1073741906,\n    \"BACK\": 27,\n    \"MOVE LEFT\": 1073741904,\n    \"MOVE RIGHT\": 1073741903,\n    \"MOVE DOWN\": 1073741905,\n    \"ENTER\": 13,\n    \"NITRO\": 1073742049\n  },\n  \"cars\": [\n    {\n      \"chosen\": false,\n      \"name\": \"chevrolet_camaro\",\n      \"specs\": {\n        \"speed\": 10,\n        \"endurance\": 10\n      },\n      \"size\": 1.5\n    },\n    {\n      \"chosen\": true,\n      \"name\": \"dodge_srt_viper\",\n      \"specs\": {\n        \"speed\": 15,\n        \"endurance\": 15\n      },\n      \"size\": 0.3\n    }\n  ],\n  \"coins\": 178,\n  \"score\": 0,\n  \"bg\": {\n    \"menu_bg\": \"menu_bg2\",\n    \"garage_bg\": \"garage_bg1\",\n    \"levels_bg\": \"levels_bg1\"\n  },\n  \"bg_speed\": {\n    \"menu_bg1\": 20,\n    \"menu_bg2\": 150,\n    \"garage_bg1\": 100,\n    \"levels_bg1\": 150\n  },\n  \"levels\": [\n    {\n      \"number\": \"1\",\n      \"access\": true,\n      \"difficulty\": \"EASY\"\n    },\n    {\n      \"number\": \"2\",\n      \"access\": false,\n      \"difficulty\": \"MIDDLE\"\n    },\n    {\n      \"number\": \"3\",\n      \"access\": false,\n      \"difficulty\": \"HARD\"\n    }\n  ],\n  \"general_volume\": 0.235,\n  \"music_volume\": 0.1125,\n  \"sounds_volume\": 0.0825,\n  \"song_number\": 0,\n  \"songs\": [],\n  \"others\": []\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/config.json b/config.json
+--- a/config.json	(revision c1db4000b034c5f03443ca6d182580a813102be7)
++++ b/config.json	(date 1703239809709)
+@@ -10,7 +10,7 @@
+   },
+   "cars": [
+     {
+-      "chosen": false,
++      "chosen": true,
+       "name": "chevrolet_camaro",
+       "specs": {
+         "speed": 10,
+@@ -19,13 +19,22 @@
+       "size": 1.5
+     },
+     {
+-      "chosen": true,
++      "chosen": false,
+       "name": "dodge_srt_viper",
+       "specs": {
+         "speed": 15,
+         "endurance": 15
+       },
+       "size": 0.3
++    },
++    {
++      "chosen": false,
++      "name": "bugatti_chiron",
++      "specs": {
++        "speed": 15,
++        "endurance": 15
++      },
++      "size": 0.3
+     }
+   ],
+   "coins": 178,
+@@ -59,9 +68,38 @@
+     }
+   ],
+   "general_volume": 0.235,
+-  "music_volume": 0.1125,
++  "music_volume": 0.0925,
+   "sounds_volume": 0.0825,
+-  "song_number": 0,
+-  "songs": [],
++  "song_number": 1,
++  "songs": [
++    [
++      "audio/music/",
++      "Avril Lavigne - Girlfriend.mp3"
++    ],
++    [
++      "audio/music/",
++      "GunsNRoses - Paradise City.mp3"
++    ],
++    [
++      "audio/music/",
++      "Kavinsky - Nightcall.mp3"
++    ],
++    [
++      "audio/music/",
++      "Motley Crue - Girls.mp3"
++    ],
++    [
++      "audio/music/",
++      "N.E.R.D. - Rockstar.mp3"
++    ],
++    [
++      "audio/music/",
++      "RADIOTAPOK - Monster.mp3"
++    ],
++    [
++      "audio/music/",
++      "The Doors - Riders on the Storm.mp3"
++    ]
++  ],
+   "others": []
+ }
+\ No newline at end of file
+Index: game.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from menu import *\nfrom objects import *\nfrom sprites import *\nimport datetime\n\nclass Game:\n    def __init__(self):\n        pg.mixer.pre_init(44100, 16, 2, 4096)\n        pg.init()\n        pg.display.set_caption(\"00 Racing\")\n        icon = pg.image.load(\"images/icon.png\")\n        pg.display.set_icon(icon)\n        self.running, self.playing = True, False\n        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = 1280, 720\n        self.window = pg.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))\n        self.screen = pg.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))\n        self.FPS = 60\n        self.font_name = \"fonts/pxl_tactical.ttf\"\n        self.frame_per_second = pg.time.Clock()\n        pg.mouse.set_cursor(pg.cursors.Cursor(pg.SYSTEM_CURSOR_HAND))\n\n        # HANDLE_EVENTS\n\n        self.clicked = False\n        self.menu_state = \"MENU\"\n        self.game_state = \"GAME\"\n        self.keys = {\"MOUSE DOWN\": False, \"BACK\": False, \"ENTER\": False,\n                     \"MOVE UP\": False, \"MOVE DOWN\": False, \"MOUSEWHEEL\": 0,\n                     \"MOVE RIGHT\": False, \"MOVE LEFT\": False\n                     }\n\n        # MENU\n\n        self.main_menu = MainMenu(self)\n        self.sets_menu = SetsMenu(self)\n        self.garage_menu = GarageMenu(self)\n        self.music_menu = MusicMenu(self)\n\n        # BUTTONS GAME\n\n        button_sound = pg.mixer.Sound(\"audio/button_sound.mp3\")\n        self.close_button_game = Button(580, 360, \"images/buttons/close_button_off.png\", \"images/buttons/close_button_on.png\", button_sound, 0.25)\n        self.back_button = Button(700, 360, \"images/buttons/back_button_off.png\", \"images/buttons/back_button_on.png\", button_sound, 0.25)\n\n        # BACKGROUND\n\n        self.curr_level = 0\n\n        # GAME\n\n        self.opp1 = GIF(\"images/cars/opp1/\", scale=1.1).gif\n        # self.opp2 = GIF(\"images/cars/opp2/\", scale=1.15).gif\n\n        gold_coin_image = pg.image.load(\"images/HUD/coins/MonedaD.png\").convert_alpha()\n        self.gold_coin_images = HUD(1.5).get_sheets(gold_coin_image)\n\n        rubin_coin_image = pg.image.load(\"images/HUD/coins/spr_coin_roj.png\").convert_alpha()\n        self.rubin_coin_images = HUD(2).get_sheets(rubin_coin_image)\n\n        self.oil_stain_image = Picture(0, 0, \"images/HUD/oil_stain.png\")\n\n        self.speedometer_base = Picture(1090, 530, \"images/HUD/speedometer/base.png\", 1.35)\n\n        # MUSIC\n\n        self.player = MusicPlayer(\"audio/music/\")\n        self.player.set_volume()\n        # self.player.play()\n\n    def game_loop(self):\n        def add_sprites(imgs, sprite_group, type=None):\n            obj = None\n            for frame in range(len(imgs)):\n                if type == \"Vehicle\":\n                    obj = OppVehicle(0, 0, imgs[frame].image)\n                if type == \"PlayerVehicle\":\n                    obj = PlayerVehicle(790, 590, imgs[frame].image)\n                if type == \"Elements\":\n                    obj = Elements(0, 0, imgs[frame])\n\n                sprite_group.add(obj)\n        def chose_car():\n            i = 0\n            player_car = GIF(f'images/cars/{settings.cars[i][\"name\"]}_topdown/', scale=1).gif\n            while not settings.cars[i][\"chosen\"]:\n                i += 1\n                player_car = GIF(f'images/cars/{settings.cars[i][\"name\"]}_topdown/', scale=1.1).gif\n            return player_car\n\n        lives = 3\n        self.blinks_counter = 0\n        self.coins = 0\n        self.score = 0\n\n        main_speed = 0\n        max_player_speed = 12\n        player_acceleration = 0.1\n        change_moving_lr_vel = 0.5\n\n        enemy_speed = 2\n        angle_of_main = 0\n        coins_speed = 5\n\n        player_group = pg.sprite.Group()\n        enemies_group = pg.sprite.Group()\n        coins_group = pg.sprite.Group()\n        ruby_group = pg.sprite.Group()\n        oil_group = pg.sprite.Group()\n        explosion_group = pg.sprite.Group()\n\n        add_sprites(chose_car(), player_group, \"PlayerVehicle\")\n        add_sprites(self.opp1, enemies_group, \"Vehicle\")\n        add_sprites(self.gold_coin_images, coins_group, \"Elements\")\n        add_sprites(self.rubin_coin_images, ruby_group, \"Elements\")\n        add_sprites([self.oil_stain_image.image], oil_group, \"Elements\")\n\n        P1 = Player(player_group.sprites(), max_player_speed, player_acceleration, change_moving_lr_vel)\n        '''P1.set_const(speed=max_player_speed, y=49, vel_of_forward=10)'''\n\n        E1 = Enemy(enemies_group.sprites(), enemy_speed, main_speed)\n        Gold_Co = CoinsMechanics(coins_group.sprites(), coins_speed, \"gold\")\n        Ruby_Co = CoinsMechanics(ruby_group.sprites(), coins_speed * 2, \"ruby\")\n        Oil = OilMechanics(oil_group.sprites(), main_speed)\n\n        first_bg = None\n        bgs = []\n        for file in sorted(os.listdir(f'images/backgrounds/levels/level{settings.levels[self.curr_level][\"number\"]}/')):\n            if \".png\" in file:\n                bg = Background(f'images/backgrounds/levels/level{settings.levels[self.curr_level][\"number\"]}/' + file)\n                bg.resize(1280, 720)\n                if first_bg:\n                    bgs.append(bg)\n                else:\n                    first_bg = bg\n        first_bg.set_bgs(bgs, (95, 100), 10)\n\n        while self.playing:\n            self.check_events()\n\n            if self.game_state == \"GAME_OVER\": #сделал временную копию условия паузы, для геймовера, переделай потом под экран геймовера\n                lives = 3\n                first_bg.random_scroll(self.screen, 0)\n\n                P1.set_const(speed=0, angle=angle_of_main, update_rate=0)\n                E1.set_speed(enemy_speed=0, main_speed=0)\n                E1.move(self.screen)\n\n                Gold_Co.set_const(speed=0)\n                Gold_Co.move(self.screen)\n                Ruby_Co.set_const(speed=0)\n                Ruby_Co.move(self.screen)\n                Oil.set_const(speed=0)\n                Oil.move(self.screen)\n\n                Player.blit_rotate_center(P1, self.screen)\n\n                self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)\n                P1.rotate_arrow_of_speedometer(self.screen, \"images/HUD/speedometer/arrow.png\",\n                                               self.speedometer_base.center, 1.35)\n\n                if self.close_button_game.draw(self.screen, False) and self.clicked:\n                    self.playing = False\n                    self.game_state = \"GAME\"\n                if self.back_button.draw(self.screen, False) and self.clicked:\n                    self.game_state = \"GAME\"\n\n                explosion_group.draw(self.screen)\n                explosion_group.update()\n\n            elif self.game_state == \"PAUSED\":\n                first_bg.random_scroll(self.screen, 0)\n\n                P1.set_const(speed=0, angle=angle_of_main, update_rate=0)\n                E1.set_speed(enemy_speed=0, main_speed=0)\n                E1.move(self.screen)\n\n                Gold_Co.set_const(speed=0)\n                Gold_Co.move(self.screen)\n                Ruby_Co.set_const(speed=0)\n                Ruby_Co.move(self.screen)\n                Oil.set_const(speed=0)\n                Oil.move(self.screen)\n\n                Player.blit_rotate_center(P1, self.screen)\n\n                self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)\n                P1.rotate_arrow_of_speedometer(self.screen, \"images/HUD/speedometer/arrow.png\",\n                                               self.speedometer_base.center, 1.35)\n\n                if self.close_button_game.draw(self.screen, False) and self.clicked:\n                    self.playing = False\n                    if self.blinks_counter != 0:\n                        self.game_state = \"COLLISION\"\n                    else:\n                        self.game_state = \"GAME\"\n                if self.back_button.draw(self.screen, False) and self.clicked:\n                    if self.blinks_counter != 0:\n                        self.game_state = \"COLLISION\"\n                    else:\n                        self.game_state = \"GAME\"\n\n            elif self.game_state == \"COLLISION\":\n                if self.blinks_counter == 0:\n                    P1.collision(True)\n                    E1.set_speed(enemy_speed=enemy_speed, main_speed=0)\n                    E1.render(False)\n                    Gold_Co.render(False)\n                    Ruby_Co.render(False)\n                    Oil.render(False)\n\n                self.blinks_counter += 1\n\n                P1.set_const(speed=main_speed)\n\n                a = datetime.datetime.now()\n                b = datetime.datetime.now()\n\n                while (b - a).microseconds < 300000:\n                    self.blit_screen()\n                    main_speed = P1.get_const(speed=True)\n                    E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)\n                    first_bg.random_scroll(self.screen, main_speed)\n                    P1.move(self.screen)\n                    E1.move(self.screen)\n                    b = datetime.datetime.now()\n                    self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)\n                    P1.rotate_arrow_of_speedometer(self.screen, \"images/HUD/speedometer/arrow.png\",\n                                                   self.speedometer_base.center, 1.35)\n\n                a = datetime.datetime.now()\n                b = datetime.datetime.now()\n\n                while (b - a).microseconds < 300000:\n                    self.blit_screen()\n                    main_speed = P1.get_const(speed=True)\n                    E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)\n                    first_bg.random_scroll(self.screen, main_speed)\n                    P1.move(self.screen)\n                    E1.move(self.screen)\n                    Player.blit_rotate_center(P1, self.screen)\n                    b = datetime.datetime.now()\n                    self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)\n                    P1.rotate_arrow_of_speedometer(self.screen, \"images/HUD/speedometer/arrow.png\",\n                                                   self.speedometer_base.center, 1.35)\n\n                if self.blinks_counter == 3:\n                    self.blinks_counter = 0\n                    self.game_state = \"GAME\"\n\n                    P1.collision(False)\n                    E1.render(True)\n                    Gold_Co.render(True)\n                    Ruby_Co.render(True)\n                    Oil.render(True)\n                    P1.move(self.screen)\n                    E1.move(self.screen)\n\n                    angle_of_main = 0\n\n                    Player.blit_rotate_center(P1, self.screen)\n\n            elif self.game_state == \"GAME\":\n                if P1.get_const(speed=True) == 0:\n                    P1.set_const(speed=main_speed, angle=angle_of_main, update_rate=100)\n                main_speed = P1.get_const(speed=True)\n                E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)\n                Gold_Co.set_const(speed=coins_speed)\n                Ruby_Co.set_const(speed=coins_speed)\n                Oil.set_const(speed=main_speed)\n\n                first_bg.random_scroll(self.screen, main_speed)\n\n                Oil.move(self.screen)\n\n                oil_mask = Oil.get_const(mask=True)\n                oil_rect_x = Oil.get_const(x=True)\n                oil_rect_y = Oil.get_const(y=True)\n\n                P1.move(self.screen)\n                E1.move(self.screen)\n\n                main_speed = P1.get_const(speed=True)\n                Player.blit_rotate_center(P1, self.screen)\n                angle_of_main = P1.get_const(angle=True)\n\n                player_mask = P1.get_const(mask=True)\n                player_rect_x = P1.get_const(x=True)\n                player_rect_y = P1.get_const(y=True)\n\n                enemy_mask = E1.get_const(mask=True)\n                enemy_rect_x = E1.get_const(x=True)\n                enemy_rect_y = E1.get_const(y=True)\n\n                Gold_Co.move(self.screen)\n\n                gold_coin_mask = Gold_Co.get_const(mask=True)\n                gold_coin_rect_x = Gold_Co.get_const(x=True)\n                gold_coin_rect_y = Gold_Co.get_const(y=True)\n\n                Ruby_Co.move(self.screen)\n\n                rubin_coin_mask = Ruby_Co.get_const(mask=True)\n                rubin_coin_rect_x = Ruby_Co.get_const(x=True)\n                rubin_coin_rect_y = Ruby_Co.get_const(y=True)\n\n                if enemy_rect_y == -300:\n                    self.score += 1\n\n                if oil_mask is not None:\n                    if player_mask.overlap(oil_mask, (oil_rect_x - player_rect_x, oil_rect_y - player_rect_y)):\n                        if P1.get_const(vel_of_forward=True) != -1:\n                            P1.collision(True)\n                        else:\n                            P1.collision(False)\n\n                        if main_speed > 5:\n                            main_speed /= 1.05\n\n                        P1.set_const(speed=main_speed, angle=angle_of_main, update_rate=100)\n                        E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)\n\n                if player_mask.overlap(enemy_mask, (enemy_rect_x - player_rect_x, enemy_rect_y - player_rect_y)):\n                    lives -= 1\n                    if lives == 0:\n                        self.game_state = \"GAME_OVER\"\n\n                        pos = [player_group.sprites()[0].rect.center[0], player_group.sprites()[0].rect.top]\n                        explosion = Explosion(pos[0], pos[1])\n                        explosion_group.add(explosion)\n\n                    else:\n                        self.game_state = \"COLLISION\"\n\n                if player_mask.overlap(gold_coin_mask, (gold_coin_rect_x - player_rect_x, gold_coin_rect_y - player_rect_y)):\n                    Gold_Co = CoinsMechanics(coins_group.sprites(), coins_speed, \"gold\")\n                    self.coins += 1\n\n                if rubin_coin_mask is not None:\n                    if player_mask.overlap(rubin_coin_mask, (rubin_coin_rect_x - player_rect_x, rubin_coin_rect_y - player_rect_y)):\n                        Ruby_Co = CoinsMechanics(ruby_group.sprites(), coins_speed * 2, \"ruby\")\n                        self.coins += 10\n\n            self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)\n            P1.rotate_arrow_of_speedometer(self.screen, \"images/HUD/speedometer/arrow.png\", self.speedometer_base.center, 1.35)\n\n            self.blit_screen()\n            print(self.get_const(score=True))\n        pg.time.delay(500)\n\n    def get_const(self, coins=False, score=False, state=False): #функция для вывода собранных монет, за игровую сессию\n        if coins:\n            return self.coins\n        if state: #если game_state == \"GAME_OVER\", то изменяй колличество накопленных монет, с помощью этой же функции, только через атрибут coins=True\n            return self.game_state\n        if score: #то же что описано в state делай и со score\n            return self.score\n\n\n    def check_events(self):\n        for event in pg.event.get():\n            if event.type == pg.QUIT:\n                self.running, self.playing = False, False\n            if event.type == pg.MOUSEBUTTONDOWN:\n                self.clicked = True\n            else:\n                self.clicked = False\n            if event.type == pg.KEYDOWN:\n                if event.key == settings.KEYS[\"BACK\"]:\n                    self.keys[\"BACK\"] = True\n                    if self.game_state == \"PAUSED\":\n                        if self.blinks_counter != 0:\n                            self.game_state = \"COLLISION\"\n                        else:\n                            self.game_state = \"GAME\"\n                    else:\n                        self.game_state = \"PAUSED\"\n                if event.key == settings.KEYS[\"ENTER\"]:\n                    self.keys[\"ENTER\"] = True\n            if event.type == self.player.MUSIC_END:\n                self.player.playing = False\n                if self.player.loop:\n                    self.player.play()\n                else:\n                    self.player.next()\n\n    def blit_screen(self):\n        for button in self.keys.keys():\n            self.keys[button] = 0\n        self.window.blit(self.screen, (0, 0))\n        pg.display.update()\n        self.frame_per_second.tick(self.FPS)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/game.py b/game.py
+--- a/game.py	(revision c1db4000b034c5f03443ca6d182580a813102be7)
++++ b/game.py	(date 1703239760025)
+@@ -1,8 +1,10 @@
+ from menu import *
+ from objects import *
+ from sprites import *
++from engine_audio import *
+ import datetime
+ 
++
+ class Game:
+     def __init__(self):
+         pg.mixer.pre_init(44100, 16, 2, 4096)
+@@ -48,16 +50,16 @@
+ 
+         # GAME
+ 
+-        self.opp1 = GIF("images/cars/opp1/", scale=1.1).gif
++        self.opp1 = GIF("images/cars/opp1/", scale=0.7).gif
+         # self.opp2 = GIF("images/cars/opp2/", scale=1.15).gif
+ 
+         gold_coin_image = pg.image.load("images/HUD/coins/MonedaD.png").convert_alpha()
+-        self.gold_coin_images = HUD(1.5).get_sheets(gold_coin_image)
++        self.gold_coin_images = HUD(scale=3.1).get_sheets(gold_coin_image)
+ 
+         rubin_coin_image = pg.image.load("images/HUD/coins/spr_coin_roj.png").convert_alpha()
+-        self.rubin_coin_images = HUD(2).get_sheets(rubin_coin_image)
++        self.rubin_coin_images = HUD(scale=3.3).get_sheets(rubin_coin_image)
+ 
+-        self.oil_stain_image = Picture(0, 0, "images/HUD/oil_stain.png")
++        self.oil_stain_image = Picture(0, 0, "images/HUD/oil_stain.png", 0.8)
+ 
+         self.speedometer_base = Picture(1090, 530, "images/HUD/speedometer/base.png", 1.35)
+ 
+@@ -79,12 +81,12 @@
+                     obj = Elements(0, 0, imgs[frame])
+ 
+                 sprite_group.add(obj)
+-        def chose_car():
++        def choose_car():
+             i = 0
+-            player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=1).gif
++            player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=0.7).gif
+             while not settings.cars[i]["chosen"]:
+                 i += 1
+-                player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=1.1).gif
++                player_car = GIF(f'images/cars/{settings.cars[i]["name"]}_topdown/', scale=0.7).gif
+             return player_car
+ 
+         lives = 3
+@@ -108,7 +110,7 @@
+         oil_group = pg.sprite.Group()
+         explosion_group = pg.sprite.Group()
+ 
+-        add_sprites(chose_car(), player_group, "PlayerVehicle")
++        add_sprites(choose_car(), player_group, "PlayerVehicle")
+         add_sprites(self.opp1, enemies_group, "Vehicle")
+         add_sprites(self.gold_coin_images, coins_group, "Elements")
+         add_sprites(self.rubin_coin_images, ruby_group, "Elements")
+@@ -121,6 +123,7 @@
+         Gold_Co = CoinsMechanics(coins_group.sprites(), coins_speed, "gold")
+         Ruby_Co = CoinsMechanics(ruby_group.sprites(), coins_speed * 2, "ruby")
+         Oil = OilMechanics(oil_group.sprites(), main_speed)
++        self.So = EngineSound()
+ 
+         first_bg = None
+         bgs = []
+@@ -168,6 +171,8 @@
+                 explosion_group.update()
+ 
+             elif self.game_state == "PAUSED":
++                self.So.pause()
++
+                 first_bg.random_scroll(self.screen, 0)
+ 
+                 P1.set_const(speed=0, angle=angle_of_main, update_rate=0)
+@@ -188,60 +193,66 @@
+                                                self.speedometer_base.center, 1.35)
+ 
+                 if self.close_button_game.draw(self.screen, False) and self.clicked:
+-                    self.playing = False
+                     if self.blinks_counter != 0:
+                         self.game_state = "COLLISION"
+                     else:
+                         self.game_state = "GAME"
++                    self.playing = False
++                    self.So.exit()
++
+                 if self.back_button.draw(self.screen, False) and self.clicked:
+                     if self.blinks_counter != 0:
+                         self.game_state = "COLLISION"
++                        self.So.play_sound()
+                     else:
+                         self.game_state = "GAME"
++                        self.So.play_sound()
+ 
+             elif self.game_state == "COLLISION":
+                 if self.blinks_counter == 0:
+                     P1.collision(True)
+                     E1.set_speed(enemy_speed=enemy_speed, main_speed=0)
+                     E1.render(False)
+-                    Gold_Co.render(False)
++                    '''Gold_Co.render(False)
+                     Ruby_Co.render(False)
+-                    Oil.render(False)
++                    Oil.render(False)'''
++                    main_speed /= 2
+ 
+                 self.blinks_counter += 1
+ 
+                 P1.set_const(speed=main_speed)
++                P1.move(self.screen)
+ 
+                 a = datetime.datetime.now()
+                 b = datetime.datetime.now()
+ 
+-                while (b - a).microseconds < 300000:
+-                    self.blit_screen()
++                while (b - a).microseconds < 200000:
+                     main_speed = P1.get_const(speed=True)
+                     E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)
+-                    first_bg.random_scroll(self.screen, main_speed)
+                     P1.move(self.screen)
+                     E1.move(self.screen)
+-                    b = datetime.datetime.now()
++                    first_bg.random_scroll(self.screen, main_speed)
+                     self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)
+                     P1.rotate_arrow_of_speedometer(self.screen, "images/HUD/speedometer/arrow.png",
+                                                    self.speedometer_base.center, 1.35)
++                    self.blit_screen()
++                    b = datetime.datetime.now()
+ 
+                 a = datetime.datetime.now()
+                 b = datetime.datetime.now()
+ 
+-                while (b - a).microseconds < 300000:
+-                    self.blit_screen()
++                while (b - a).microseconds < 200000:
++                    first_bg.random_scroll(self.screen, main_speed)
+                     main_speed = P1.get_const(speed=True)
+                     E1.set_speed(enemy_speed=enemy_speed, main_speed=main_speed)
+-                    first_bg.random_scroll(self.screen, main_speed)
+                     P1.move(self.screen)
+                     E1.move(self.screen)
+                     Player.blit_rotate_center(P1, self.screen)
+-                    b = datetime.datetime.now()
+                     self.screen.blit(self.speedometer_base.image, self.speedometer_base.center)
+                     P1.rotate_arrow_of_speedometer(self.screen, "images/HUD/speedometer/arrow.png",
+                                                    self.speedometer_base.center, 1.35)
++                    self.blit_screen()
++                    b = datetime.datetime.now()
+ 
+                 if self.blinks_counter == 3:
+                     self.blinks_counter = 0
+@@ -260,6 +271,8 @@
+                     Player.blit_rotate_center(P1, self.screen)
+ 
+             elif self.game_state == "GAME":
++                self.So.play_sound("idle_sound")
++
+                 if P1.get_const(speed=True) == 0:
+                     P1.set_const(speed=main_speed, angle=angle_of_main, update_rate=100)
+                 main_speed = P1.get_const(speed=True)
+@@ -277,6 +290,10 @@
+                 oil_rect_y = Oil.get_const(y=True)
+ 
+                 P1.move(self.screen)
++                '''print(P1.get_const(engine_music_state=True))
++                self.So.play_sound(type_of_sound=P1.get_const(engine_music_state=True))
++                P1.set_const(engine_music_state="nothing")'''
++                #print(P1.get_const(engine_music_state=True))
+                 E1.move(self.screen)
+ 
+                 main_speed = P1.get_const(speed=True)
+@@ -344,7 +361,7 @@
+             P1.rotate_arrow_of_speedometer(self.screen, "images/HUD/speedometer/arrow.png", self.speedometer_base.center, 1.35)
+ 
+             self.blit_screen()
+-            print(self.get_const(score=True))
++            #print(self.get_const(score=True))
+         pg.time.delay(500)
+ 
+     def get_const(self, coins=False, score=False, state=False): #функция для вывода собранных монет, за игровую сессию
+@@ -370,8 +387,10 @@
+                     if self.game_state == "PAUSED":
+                         if self.blinks_counter != 0:
+                             self.game_state = "COLLISION"
++                            self.So.play_sound()
+                         else:
+                             self.game_state = "GAME"
++                            self.So.play_sound()
+                     else:
+                         self.game_state = "PAUSED"
+                 if event.key == settings.KEYS["ENTER"]:
+Index: sprites.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame as pg\nimport random\nimport math\nfrom sprites import *\nfrom game import *\nfrom settings import *\nimport datetime\n\nclass Sprites(pg.sprite.Sprite):\n    def __init__(self, x, y, image):\n        pg.sprite.Sprite.__init__(self)\n\n        self.image = image\n\n        self.rect = self.image.get_rect()\n        self.rect.center = [x, y]\n\nclass PlayerVehicle(Sprites):\n    def __init__(self, x, y, image_in):\n        super().__init__(x, y, image_in)\n\nclass OppVehicle(Sprites):\n    def __init__(self, x, y, image_in):\n        super().__init__(x, y, image_in)\n\nclass Elements(Sprites):\n    def __init__(self, x, y, image_in):\n        super().__init__(x, y, image_in)\n\nclass Explosion(pg.sprite.Sprite):\n    def __init__(self, x, y):\n        pg.sprite.Sprite.__init__(self)\n        self.images = []\n        for num in range(1, 6):\n            img = pg.image.load(f\"images/explosion/exp{num}.png\").convert_alpha()\n            img = pg.transform.scale(img, (500, 500))\n            self.images.append(img)\n        self.index = 0\n        self.image = self.images[self.index]\n        self.rect = self.image.get_rect()\n        self.rect.center = [x, y]\n        self.counter = 0\n\n    def update(self):\n        explosion_speed = 5\n        # update explosion animation\n        self.counter += 1\n\n        if self.counter >= explosion_speed and self.index < len(self.images) - 1:\n            self.counter = 0\n            self.index += 1\n            self.image = self.images[self.index]\n\n        # if the animation is complete, reset animation index\n        if self.index >= len(self.images) - 1 and self.counter >= explosion_speed:\n            self.kill()\n\nclass CoinsMechanics:\n    def __init__(self, coins, coins_speed, type=None):\n        self.type = type\n\n        self.coins_images = [coins[i].image for i in range(len(coins))]\n        self.rect = coins[0].rect\n        self.rect.x = random.randrange(250, 950)\n        self.rect.y = -300\n\n        self.coins_speed = coins_speed\n\n        self.time = pg.time.get_ticks()\n        self.last_update = pg.time.get_ticks()\n        self.frame = 0\n\n        self.coins_mask = None\n\n        self.coins_render = True\n\n    def render(self, state=True):\n        if state:\n            self.coins_render = True\n        else:\n            self.coins_render = False\n\n    def set_const(self, speed=None):\n        if speed is not None:\n            self.coins_speed = speed\n\n    def get_const(self, x=False, y=False, mask=False):\n        if x:\n            return self.rect.x\n        if y:\n            return self.rect.y\n        if mask:\n            return self.coins_mask\n\n    def move(self, screen):\n        if not self.coins_render and self.rect.y == -300:\n            pass\n        else:\n            current_time = pg.time.get_ticks()\n\n            if self.type == \"gold\" or (self.type == \"ruby\" and current_time - self.time > 10000):\n                if (self.type == \"ruby\" and current_time - self.time > 10000) and self.rect.y == -300:\n                    self.time = pg.time.get_ticks()\n\n                self.rect.move_ip(0, self.coins_speed)\n                if self.rect.y > 720 and self.rect.topright[1] > 720:\n                    self.rect.x = random.randrange(250, 950)\n                    self.rect.y = -300\n\n                current_time = pg.time.get_ticks()\n                if current_time - self.last_update >= 100 and self.coins_speed != 0:\n                    self.last_update = current_time\n                    self.frame += 1\n                    if self.frame == len(self.coins_images):\n                        self.frame = 0\n\n                self.coins_mask = pg.mask.from_surface(self.coins_images[self.frame])\n\n                screen.blit(self.coins_images[self.frame], (self.rect.x, self.rect.y))\n\nclass OilMechanics:\n    def __init__(self, oil, oil_speed):\n        self.type = type\n\n        self.oil_image = oil[0].image\n        self.rect = oil[0].rect\n        self.rect.x = random.randrange(500, 700)\n        self.rect.y = -300\n\n        self.oil_speed = oil_speed\n\n        self.time = pg.time.get_ticks()\n\n        self.oil_mask = None\n\n        self.oil_render = True\n\n    def render(self, state=True):\n        if state:\n            self.oil_render = True\n        else:\n            self.oil_render = False\n\n    def set_const(self, speed=None):\n        if speed is not None:\n            self.oil_speed = speed\n\n    def get_const(self, x=False, y=False, mask=False):\n        if x:\n            return self.rect.x\n        if y:\n            return self.rect.y\n        if mask:\n            return self.oil_mask\n\n    def move(self, screen):\n        if not self.oil_render and self.rect.y == -300:\n            pass\n        else:\n            current_time = pg.time.get_ticks()\n\n            if current_time - self.time > 30000:\n                if current_time - self.time > 30000 and self.rect.y == -300:\n                    self.time = pg.time.get_ticks()\n\n                self.rect.move_ip(0, self.oil_speed)\n                if self.rect.y > 720 and self.rect.topright[1] > 720:\n                    self.rect.x = random.randrange(250, 950)\n                    self.rect.y = -300\n\n                self.oil_mask = pg.mask.from_surface(self.oil_image)\n\n                screen.blit(self.oil_image, (self.rect.x, self.rect.y))\n\nclass Enemy:\n    def __init__(self, enemies, enemy_speed, main_speed):\n        self.images = [sprite.image for sprite in enemies]\n        self.rect = enemies[0].rect\n        self.rect.x = random.randrange(250, 950)\n        self.rect.y = -300\n\n        self.enemy_speed = enemy_speed\n        self.main_speed = main_speed\n\n        self.last_update = pg.time.get_ticks()\n        self.frame = 0\n\n        self.mask = None\n\n        self.render_enemy = True\n\n    def render(self, state=True):\n        if state:\n            self.render_enemy = True\n        else:\n            self.render_enemy = False\n\n    def set_speed(self, enemy_speed=None, main_speed=None):\n        if enemy_speed is not None:\n            self.enemy_speed = enemy_speed\n        if main_speed is not None:\n            self.main_speed = main_speed\n\n    def get_const(self, x=False, y=False, mask=False):\n        if x:\n            return self.rect.x\n        if y:\n            return self.rect.y\n        if mask:\n            return self.mask\n\n    def move(self, screen):\n\n        if not self.render_enemy and self.rect.y == -300:\n            pass\n        else:\n            self.rect.move_ip(0, self.enemy_speed + self.main_speed)\n            if self.rect.y > 720 and self.rect.topright[1] > 720:\n                self.rect.x = random.randrange(250, 950)\n                self.rect.y = -300\n\n            current_time = pg.time.get_ticks()\n            if current_time - self.last_update >= 100 and self.enemy_speed != 0:\n                self.last_update = current_time\n                self.frame += 1\n                if self.frame == len(self.images):\n                    self.frame = 0\n\n            self.mask = pg.mask.from_surface(self.images[self.frame])\n\n            screen.blit(self.images[self.frame], (self.rect.x, self.rect.y))\n\nclass Player:\n    def __init__(self, player, max_speed, acceleration, change_moving_lr_vel):\n        self.images = [sprite.image for sprite in player]\n        self.mask = None\n        self.rect = player[0].rect\n        self.min_y = self.rect.y\n\n        self.speed = 0\n        self.max_speed = max_speed\n        self.acceleration = acceleration\n        self.change_moving_lr_vel = change_moving_lr_vel\n\n        self.rotation_vel = 0.3\n        self.angle = 0\n        self.arrow_angle = -15\n\n        self.moving_lr_vel = 0\n        self.speed_is_max = False\n        self.vel_of_forward = -1\n\n        self.press_left = 0\n        self.press_right = 0\n        self.press_up = 0\n        self.press_down = 0\n        self.count_soft_back = 0\n\n        self.screen = None\n        self.frame = 0\n        self.last_update = pg.time.get_ticks()\n        self.update_rate = 100\n\n        self.state_collision = False\n\n\n    def collision(self, state=False):\n        if state:\n            self.state_collision = True\n        else:\n            self.state_collision = False\n            self.angle = 0\n\n    def set_const(self, speed=None, angle=None, update_rate=None, y=None, vel_of_forward=None):\n        if speed is not None:\n            self.speed = speed\n        if angle is not None:\n            self.angle = angle\n        if update_rate is not None:\n            self.update_rate = update_rate\n        if y is not None:\n            self.rect.y = y\n        if vel_of_forward is not None:\n            self.vel_of_forward = vel_of_forward\n\n    def get_const(self, speed=False, angle=False, x=False, y=False, mask=False, vel_of_forward=False):\n        if speed:\n            return self.speed\n        if angle:\n            return self.angle\n        if x:\n            return self.rect.x\n        if y:\n            return self.rect.y\n        if mask:\n            return self.mask\n        if vel_of_forward:\n            return self.vel_of_forward\n\n    def move(self, screen):\n        keys = pg.key.get_pressed()\n        self.screen = screen\n\n        def left_reverse_animation():\n            if self.angle > 0:\n                self.angle -= self.rotation_vel\n                if math.radians(self.angle) > 0.2:\n                    self.rotation_vel *= 1.2\n                else:\n                    self.rotation_vel /= 1.001\n\n            if -1 <= self.angle <= 1:\n                self.angle = 0\n                self.rotation_vel = 0.3\n                self.moving_lr_vel = 0\n            elif self.moving_lr_vel - 0.3 > 0:\n                self.moving_lr_vel -= 0.3\n\n            self.mathematical_calculations(Left=True)\n\n        def right_reverse_animation():\n            if self.angle < 0:\n                self.angle += self.rotation_vel\n                if math.radians(self.angle) < -0.2:\n                    self.rotation_vel *= 1.2\n                else:\n                    self.rotation_vel /= 1.001\n\n            if -1 <= self.angle <= 1:\n                self.angle = 0\n                self.rotation_vel = 0.3\n                self.moving_lr_vel = 0\n            elif self.moving_lr_vel - 0.3 > 0:\n                self.moving_lr_vel -= 0.3\n\n            self.mathematical_calculations(Right=True)\n\n        def return_side_move():\n            if self.angle != 0 and not keys[settings.KEYS[\"MOVE LEFT\"]] and not keys[settings.KEYS[\"MOVE LEFT\"]]:\n                self.rotation_vel = 0.6\n                self.press_left = 0\n                self.press_right = 0\n\n                if self.angle > 0:\n                    left_reverse_animation()\n                else:\n                    right_reverse_animation()\n\n        def left_animation():\n            if 250 < self.rect.x <= 940:\n                if self.speed != 0:\n                    self.press_left += 1\n                    if self.press_left == 1:\n                        self.moving_lr_vel = 0\n                        self.rotation_vel = 0.5\n\n                    if math.radians(self.angle + self.rotation_vel) < 0.4:\n                        self.angle += self.rotation_vel\n                        if math.radians(self.angle) < 0.2:\n                            self.rotation_vel *= 1.2\n                        else:\n                            self.rotation_vel /= 1.2\n                    self.moving_lr_vel += self.change_moving_lr_vel\n                    self.mathematical_calculations(Left=True)\n\n        def right_animation():\n            if 250 <= self.rect.x < 940:\n                if self.speed != 0:\n                    self.press_right += 1\n                    if self.press_right == 1:\n                        self.moving_lr_vel = 0\n                        self.rotation_vel = 0.5\n\n                    if math.radians(self.angle + self.rotation_vel) > -0.4:\n                        self.angle -= self.rotation_vel\n                        if math.radians(self.angle) > -0.2:\n                            self.rotation_vel *= 1.2\n                        else:\n                            self.rotation_vel /= 1.2\n                    self.moving_lr_vel += self.change_moving_lr_vel\n                    self.mathematical_calculations(Right=True)\n\n        def up_animation():\n            if self.rect.y <= 50:\n                self.rect.y = 50\n            if self.speed_is_max and self.rect.y >= 50:\n                self.press_up += 1\n                if self.press_up == 1:\n                    self.vel_of_forward = 0\n\n                if self.rect.y <= 50:\n                    self.rect.y = 50\n                else:\n                    self.vel_of_forward = min(self.vel_of_forward + 0.1, 10)\n                    self.rect.y -= self.vel_of_forward\n            else:\n                self.speed = min(self.speed + self.acceleration, self.max_speed)\n\n            if self.speed == self.max_speed:\n                self.vel_of_forward = max(self.vel_of_forward, 0)\n                self.speed_is_max = True\n\n        def down_animation():\n            if self.speed_is_max and self.rect.y + self.vel_of_forward <= self.min_y:\n                self.press_down += 1\n                if self.press_down == 1:\n                    self.vel_of_forward = self.max_speed\n                self.vel_of_forward = max(self.vel_of_forward - self.acceleration, 0)\n                self.rect.y += self.vel_of_forward\n\n                if self.rect.y >= self.min_y:\n                    self.rect.y = self.min_y\n\n                if self.rect.y == self.min_y:\n                    self.vel_of_forward = -1\n                    self.speed_is_max = False\n            else:\n                if self.speed - self.acceleration <= 0:\n                    self.speed = 0\n                else:\n                    self.speed = min(self.speed - self.acceleration * 1.2, self.max_speed)\n\n        def soft_back_animation():\n            self.count_soft_back += 1\n            self.press_up = 0\n            self.press_down = 0\n\n            if self.speed > 0:\n                self.mathematical_calculations(SoftBack=True)\n\n        if keys[settings.KEYS[\"MOVE UP\"]] and keys[settings.KEYS[\"MOVE LEFT\"]]:\n            if self.angle < 0:\n                self.angle = 21.078791936\n                self.moving_lr_vel = 0\n            if self.state_collision:\n                left_animation()\n            else:\n                up_animation()\n                left_animation()\n        elif keys[settings.KEYS[\"MOVE UP\"]] and keys[settings.KEYS[\"MOVE RIGHT\"]]:\n            if self.angle > 0:\n                self.angle = -21.078791936\n                self.moving_lr_vel = 0\n            if self.state_collision:\n                right_animation()\n            else:\n                up_animation()\n                right_animation()\n        elif keys[settings.KEYS[\"MOVE UP\"]] and not self.state_collision:\n            up_animation()\n            return_side_move()\n        elif keys[settings.KEYS[\"MOVE LEFT\"]]:\n            if self.angle < 0:\n                self.angle = 21.078791936\n                self.moving_lr_vel = 0\n            left_animation()\n            soft_back_animation()\n        elif keys[settings.KEYS[\"MOVE RIGHT\"]]:\n            if self.angle > 0:\n                self.angle = -21.078791936\n                self.moving_lr_vel = 0\n            right_animation()\n            soft_back_animation()\n        elif keys[settings.KEYS[\"MOVE DOWN\"]] and not self.state_collision:\n            down_animation()\n            return_side_move()\n        else:\n            soft_back_animation()\n            return_side_move()\n\n        '''test = pg.time.get_ticks()\n        up_animation()\n        if self.rect.y == 49:\n            print(test - self.last_update)\n            exit()'''\n\n    def mathematical_calculations(self, Left=False, Right=False, SoftBack=False):\n        if 250 <= self.rect.x <= 940:\n            if Left:\n                if self.rect.x - self.moving_lr_vel < 250 or self.rect.x < 250:\n                    self.rect.x = 250\n                else:\n                    self.rect.x -= self.moving_lr_vel\n            elif Right:\n                if self.rect.x + self.moving_lr_vel > 940 or self.rect.x > 940:\n                    self.rect.x = 940\n                else:\n                    self.rect.x += self.moving_lr_vel\n\n        if SoftBack and 49 <= self.rect.y <= self.min_y:\n            if self.speed_is_max:\n                if self.count_soft_back == 1:\n                    self.vel_of_forward = self.max_speed\n\n                self.vel_of_forward = max(self.vel_of_forward - self.acceleration * 0.85, 0)\n                self.rect.y += self.vel_of_forward\n\n                if self.vel_of_forward < 1:\n                    self.vel_of_forward += 1.5\n\n                if self.rect.y + self.vel_of_forward > self.min_y or self.rect.y > self.min_y:\n                    self.rect.y = self.min_y\n                else:\n                    self.vel_of_forward = max(self.vel_of_forward - 0.1, 0)\n                    self.rect.y += self.vel_of_forward\n\n                if self.rect.y == self.min_y:\n                    self.vel_of_forward = -1\n                    self.speed_is_max = False\n\n            else:\n                self.speed = max(self.speed - 0.1 * 0.5, 0)\n\n                if self.rect.y + self.speed > self.min_y or self.rect.y > self.min_y:\n                    self.rect.y = self.min_y\n                else:\n                    self.rect.y += self.speed\n\n    def blit_rotate_center(self, screen):\n        current_time = pg.time.get_ticks()\n        if (current_time - self.last_update >= self.update_rate) and (self.update_rate != 0):\n            self.last_update = current_time\n            self.frame += 1\n            if self.frame == len(self.images):\n                self.frame = 0\n\n        rotated_image = pg.transform.rotate(self.images[self.frame], self.angle)\n        new_rect = (self.rect.x, self.rect.y)\n        self.mask = pg.mask.from_surface(rotated_image)\n\n        screen.blit(rotated_image, new_rect)\n\n    def rotate_arrow_of_speedometer(self, screen, image_path, pos, scale=1):\n        image = pg.image.load(image_path).convert_alpha()\n        width = image.get_width()\n        height = image.get_height()\n        image = pg.transform.scale(image, (width * scale, height * scale))\n\n        image_rect = image.get_rect(topleft=(pos[0] - image.get_width() / 2, pos[1] - image.get_height() / 2))\n        offset_center_to_pivot = pg.math.Vector2(pos) - image_rect.center\n\n        speed = self.speed * (30 / self.max_speed)\n\n        if self.speed != 0:\n            self.arrow_angle = (speed + (0 if self.speed < self.max_speed else self.vel_of_forward / 2.5)) * 6 - 15\n\n        rotated_offset = offset_center_to_pivot.rotate(-self.arrow_angle)\n\n        rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)\n\n        rotated_image = pg.transform.rotate(image, -self.arrow_angle)\n        rotated_image_rect = rotated_image.get_rect(center=rotated_image_center)\n\n        screen.blit(rotated_image, (rotated_image_rect.x + 85, rotated_image_rect.y + 85))
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/sprites.py b/sprites.py
+--- a/sprites.py	(revision c1db4000b034c5f03443ca6d182580a813102be7)
++++ b/sprites.py	(date 1703239613030)
+@@ -1,10 +1,10 @@
+ import pygame as pg
++from game import *
++from settings import *
++from engine_audio import *
++
+ import random
+ import math
+-from sprites import *
+-from game import *
+-from settings import *
+-import datetime
+ 
+ class Sprites(pg.sprite.Sprite):
+     def __init__(self, x, y, image):
+@@ -210,7 +210,6 @@
+             return self.mask
+ 
+     def move(self, screen):
+-
+         if not self.render_enemy and self.rect.y == -300:
+             pass
+         else:
+@@ -263,6 +262,8 @@
+ 
+         self.state_collision = False
+ 
++        self.engine_music_state = None
++
+ 
+     def collision(self, state=False):
+         if state:
+@@ -271,7 +272,7 @@
+             self.state_collision = False
+             self.angle = 0
+ 
+-    def set_const(self, speed=None, angle=None, update_rate=None, y=None, vel_of_forward=None):
++    def set_const(self, speed=None, angle=None, update_rate=None, y=None, vel_of_forward=None, engine_music_state=None):
+         if speed is not None:
+             self.speed = speed
+         if angle is not None:
+@@ -282,8 +283,12 @@
+             self.rect.y = y
+         if vel_of_forward is not None:
+             self.vel_of_forward = vel_of_forward
++        if engine_music_state is not None:
++            self.engine_music_state = engine_music_state
++        elif engine_music_state == "nothing":
++            self.engine_music_state = None
+ 
+-    def get_const(self, speed=False, angle=False, x=False, y=False, mask=False, vel_of_forward=False):
++    def get_const(self, speed=False, angle=False, x=False, y=False, mask=False, vel_of_forward=False, engine_music_state=False):
+         if speed:
+             return self.speed
+         if angle:
+@@ -296,6 +301,8 @@
+             return self.mask
+         if vel_of_forward:
+             return self.vel_of_forward
++        if engine_music_state:
++            return self.engine_music_state
+ 
+     def move(self, screen):
+         keys = pg.key.get_pressed()
+@@ -432,8 +439,9 @@
+             if self.angle < 0:
+                 self.angle = 21.078791936
+                 self.moving_lr_vel = 0
+-            if self.state_collision:
++            if self.state_collision and self.moving_lr_vel != -1:
+                 left_animation()
++                soft_back_animation()
+             else:
+                 up_animation()
+                 left_animation()
+@@ -441,13 +449,22 @@
+             if self.angle > 0:
+                 self.angle = -21.078791936
+                 self.moving_lr_vel = 0
+-            if self.state_collision:
++            if self.state_collision and self.moving_lr_vel != -1:
+                 right_animation()
++                soft_back_animation()
+             else:
+                 up_animation()
+                 right_animation()
+-        elif keys[settings.KEYS["MOVE UP"]] and not self.state_collision:
+-            up_animation()
++        elif keys[settings.KEYS["MOVE UP"]]:
++            if self.state_collision:
++                if self.moving_lr_vel == -1:
++                    up_animation()
++                else:
++                    soft_back_animation()
++            else:
++                up_animation()
++            self.engine_music_state = "up_sound"
++            print("here")
+             return_side_move()
+         elif keys[settings.KEYS["MOVE LEFT"]]:
+             if self.angle < 0:
+@@ -468,6 +485,7 @@
+             soft_back_animation()
+             return_side_move()
+ 
++
+         '''test = pg.time.get_ticks()
+         up_animation()
+         if self.rect.y == 49:
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"car mechanics ver.1\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/config.json\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/config.json\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/engine_audio.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/engine_audio.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/game.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/game.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/images/cars/chevrolet_camaro_topdown.png\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/objects.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/objects.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/sprites.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/sprites.py\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Python Script\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"RESET_MODE\" value=\"HARD\" />\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2Y7tyl12DgHdbwMw63dnAZPd3tK\" />\n  <component name=\"ProjectLevelVcsManager\">\n    <ConfirmationsSetting value=\"1\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/Users/roman/Desktop/racing_game&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$\" />\n    </key>\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/images/backgrounds\" />\n      <recent name=\"$PROJECT_DIR$/images/cars\" />\n      <recent name=\"$PROJECT_DIR$/images\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Python.main\">\n    <configuration name=\"engine_audio\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/engine_audio.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"game\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5/game.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"main (1)\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/../racing_game-main/versions/racing_game-main5/main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"settings\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"racing_game\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/settings.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Python.main\" />\n        <item itemvalue=\"Python.engine_audio\" />\n        <item itemvalue=\"Python.main (1)\" />\n        <item itemvalue=\"Python.game\" />\n        <item itemvalue=\"Python.settings\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"f743d068-317b-4cfd-a9a6-a6a8673a4cd1\" name=\"Changes\" comment=\"\" />\n      <created>1699888702045</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1699888702045</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Ya pidor\">\n      <created>1699888777909</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699888777909</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"#Creat a window\">\n      <created>1699889537336</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889537336</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"#Creat a window\">\n      <created>1699889565743</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889565743</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"#Creat a window\">\n      <created>1699889842557</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889842557</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"#Creat a window\">\n      <created>1699889957653</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699889957653</updated>\n    </task>\n    <task id=\"LOCAL-00006\" summary=\"#Creat a window\">\n      <created>1699890205093</created>\n      <option name=\"number\" value=\"00006\" />\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699890205093</updated>\n    </task>\n    <task id=\"LOCAL-00007\" summary=\"#Creat a window\">\n      <created>1699891302633</created>\n      <option name=\"number\" value=\"00007\" />\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699891302633</updated>\n    </task>\n    <task id=\"LOCAL-00008\" summary=\"#+Background and Start Button\">\n      <created>1699891727341</created>\n      <option name=\"number\" value=\"00008\" />\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699891727341</updated>\n    </task>\n    <task id=\"LOCAL-00009\" summary=\"#+motor sound\">\n      <created>1699892057414</created>\n      <option name=\"number\" value=\"00009\" />\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699892057414</updated>\n    </task>\n    <task id=\"LOCAL-00010\" summary=\"#+skype sound\">\n      <created>1699892317254</created>\n      <option name=\"number\" value=\"00010\" />\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699892317254</updated>\n    </task>\n    <task id=\"LOCAL-00011\" summary=\"#+skype sound\">\n      <created>1699892462293</created>\n      <option name=\"number\" value=\"00011\" />\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699892462293</updated>\n    </task>\n    <task id=\"LOCAL-00012\" summary=\"#all changed\">\n      <created>1699975122040</created>\n      <option name=\"number\" value=\"00012\" />\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699975122040</updated>\n    </task>\n    <task id=\"LOCAL-00013\" summary=\"#button can change color\">\n      <created>1699998255452</created>\n      <option name=\"number\" value=\"00013\" />\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1699998255452</updated>\n    </task>\n    <task id=\"LOCAL-00014\" summary=\"#add playlist\">\n      <created>1700007285227</created>\n      <option name=\"number\" value=\"00014\" />\n      <option name=\"presentableId\" value=\"LOCAL-00014\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700007285227</updated>\n    </task>\n    <task id=\"LOCAL-00015\" summary=\"#+button class + menu buttons\">\n      <created>1700241994186</created>\n      <option name=\"number\" value=\"00015\" />\n      <option name=\"presentableId\" value=\"LOCAL-00015\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700241994186</updated>\n    </task>\n    <task id=\"LOCAL-00016\" summary=\"#+working menu beta + title\">\n      <created>1700285928795</created>\n      <option name=\"number\" value=\"00016\" />\n      <option name=\"presentableId\" value=\"LOCAL-00016\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700285928795</updated>\n    </task>\n    <task id=\"LOCAL-00017\" summary=\"#some fixies\">\n      <created>1700294234533</created>\n      <option name=\"number\" value=\"00017\" />\n      <option name=\"presentableId\" value=\"LOCAL-00017\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700294234533</updated>\n    </task>\n    <task id=\"LOCAL-00018\" summary=\"#test\">\n      <created>1700309851262</created>\n      <option name=\"number\" value=\"00018\" />\n      <option name=\"presentableId\" value=\"LOCAL-00018\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700309851262</updated>\n    </task>\n    <task id=\"LOCAL-00019\" summary=\"#test2\">\n      <created>1700309955268</created>\n      <option name=\"number\" value=\"00019\" />\n      <option name=\"presentableId\" value=\"LOCAL-00019\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700309955268</updated>\n    </task>\n    <task id=\"LOCAL-00020\" summary=\"#+added classes for cars\">\n      <created>1700368331619</created>\n      <option name=\"number\" value=\"00020\" />\n      <option name=\"presentableId\" value=\"LOCAL-00020\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700368331619</updated>\n    </task>\n    <task id=\"LOCAL-00021\" summary=\"#+added classes for cars\">\n      <created>1700368434983</created>\n      <option name=\"number\" value=\"00021\" />\n      <option name=\"presentableId\" value=\"LOCAL-00021\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700368434983</updated>\n    </task>\n    <task id=\"LOCAL-00022\" summary=\"#+test commit\">\n      <created>1700368591011</created>\n      <option name=\"number\" value=\"00022\" />\n      <option name=\"presentableId\" value=\"LOCAL-00022\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700368591011</updated>\n    </task>\n    <task id=\"LOCAL-00023\" summary=\"#+working menu(without gameloop)\">\n      <created>1700446034949</created>\n      <option name=\"number\" value=\"00023\" />\n      <option name=\"presentableId\" value=\"LOCAL-00023\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700446034949</updated>\n    </task>\n    <task id=\"LOCAL-00024\" summary=\"#+beta1\">\n      <created>1700450447559</created>\n      <option name=\"number\" value=\"00024\" />\n      <option name=\"presentableId\" value=\"LOCAL-00024\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700450447559</updated>\n    </task>\n    <task id=\"LOCAL-00025\" summary=\"#+beta1\">\n      <created>1700450560112</created>\n      <option name=\"number\" value=\"00025\" />\n      <option name=\"presentableId\" value=\"LOCAL-00025\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700450560112</updated>\n    </task>\n    <task id=\"LOCAL-00026\" summary=\"#+fixed buttons\">\n      <created>1700563233826</created>\n      <option name=\"number\" value=\"00026\" />\n      <option name=\"presentableId\" value=\"LOCAL-00026\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700563233826</updated>\n    </task>\n    <task id=\"LOCAL-00027\" summary=\"#+work from here\">\n      <created>1700565072194</created>\n      <option name=\"number\" value=\"00027\" />\n      <option name=\"presentableId\" value=\"LOCAL-00027\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700565072194</updated>\n    </task>\n    <task id=\"LOCAL-00028\" summary=\"#+working buttons\">\n      <created>1700610677894</created>\n      <option name=\"number\" value=\"00028\" />\n      <option name=\"presentableId\" value=\"LOCAL-00028\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700610677894</updated>\n    </task>\n    <task id=\"LOCAL-00029\" summary=\"#+added raw config file (now saves only amount of games you played)\">\n      <created>1700982437058</created>\n      <option name=\"number\" value=\"00029\" />\n      <option name=\"presentableId\" value=\"LOCAL-00029\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1700982437058</updated>\n    </task>\n    <task id=\"LOCAL-00030\" summary=\"#+many changes (check garage lol)\">\n      <created>1701184040740</created>\n      <option name=\"number\" value=\"00030\" />\n      <option name=\"presentableId\" value=\"LOCAL-00030\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1701184040741</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"31\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.History.Properties\">\n    <option name=\"COLUMN_ID_ORDER\">\n      <list>\n        <option value=\"Default.Root\" />\n        <option value=\"Default.Author\" />\n        <option value=\"Default.Date\" />\n        <option value=\"Default.Subject\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"Ya pidor\" />\n    <MESSAGE value=\"#Creat a window\" />\n    <MESSAGE value=\"#+Background and Start Button\" />\n    <MESSAGE value=\"#+motor sound\" />\n    <MESSAGE value=\"#+skype sound\" />\n    <MESSAGE value=\"#all changed\" />\n    <MESSAGE value=\"#button can change color\" />\n    <MESSAGE value=\"#add playlist\" />\n    <MESSAGE value=\"#+button class + menu buttons\" />\n    <MESSAGE value=\"#+working menu beta + title\" />\n    <MESSAGE value=\"#some fixies\" />\n    <MESSAGE value=\"#test\" />\n    <MESSAGE value=\"#test2\" />\n    <MESSAGE value=\"#+added classes for cars\" />\n    <MESSAGE value=\"#+test commit\" />\n    <MESSAGE value=\"#+working menu(without gameloop)\" />\n    <MESSAGE value=\"#+beta1\" />\n    <MESSAGE value=\"#+fixed buttons\" />\n    <MESSAGE value=\"#+work from here\" />\n    <MESSAGE value=\"#+working buttons\" />\n    <MESSAGE value=\"#+added raw config file (now saves only amount of games you played)\" />\n    <MESSAGE value=\"#+many changes (check garage lol)\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"#+many changes (check garage lol)\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision c1db4000b034c5f03443ca6d182580a813102be7)
++++ b/.idea/workspace.xml	(date 1703229949042)
+@@ -4,12 +4,11 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="car mechanics ver.1">
++    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="car engine and car mechanics">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/engine_audio.py" beforeDir="false" afterPath="$PROJECT_DIR$/engine_audio.py" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/images/cars/chevrolet_camaro_topdown.png" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/objects.py" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/sprites.py" afterDir="false" />
+     </list>
+@@ -394,7 +393,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1701184040741</updated>
+     </task>
+-    <option name="localTasksCounter" value="31" />
++    <task id="LOCAL-00031" summary="car engine and car mechanics">
++      <created>1703037850755</created>
++      <option name="number" value="00031" />
++      <option name="presentableId" value="LOCAL-00031" />
++      <option name="project" value="LOCAL" />
++      <updated>1703037850755</updated>
++    </task>
++    <option name="localTasksCounter" value="32" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.History.Properties">
+@@ -441,6 +447,7 @@
+     <MESSAGE value="#+working buttons" />
+     <MESSAGE value="#+added raw config file (now saves only amount of games you played)" />
+     <MESSAGE value="#+many changes (check garage lol)" />
+-    <option name="LAST_COMMIT_MESSAGE" value="#+many changes (check garage lol)" />
++    <MESSAGE value="car engine and car mechanics" />
++    <option name="LAST_COMMIT_MESSAGE" value="car engine and car mechanics" />
+   </component>
+ </project>
+\ No newline at end of file

@@ -12,22 +12,34 @@
   },
   "cars": [
     {
-      "chosen": false,
-      "name": "chevrolet_camaro",
+      "chosen": true,
+      "name": "Chevrolet Camaro",
       "specs": {
         "speed": 10,
-        "endurance": 10
+        "braking": 0.1,
+        "driveability": 0.5
       },
       "size": 1.5
     },
     {
-      "chosen": true,
-      "name": "dodge_srt_viper",
+      "chosen": false,
+      "name": "Dodge Srt Viper",
       "specs": {
-        "speed": 15,
-        "endurance": 15
+        "speed": 13,
+        "braking": 0.2,
+        "driveability": 0.75
       },
       "size": 0.3
+    },
+    {
+      "chosen": false,
+      "name": "Lamborghini Huracan",
+      "specs": {
+        "speed": 17,
+        "braking": 0.3,
+        "driveability": 0.9
+      },
+      "size": 3
     }
   ],
   "player_stats": {
@@ -40,7 +52,7 @@
     "defeats": 0,
     "distance_travelled": 0,
     "crashed": 0,
-    "time_in_game": 10959075
+    "time_in_game": 11380754
   },
   "bg": {
     "menu_bg": "menu_bg2",
