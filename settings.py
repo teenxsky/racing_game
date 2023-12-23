@@ -3,10 +3,12 @@ import json
 
 class Settings:
     def __init__(self):
-        try:
-            settings_file = "config.json"
-            self.user_settings = json.load(open(settings_file))
+        self.user_settings = dict()
+        self.open_json("config.json")
 
+    def open_json(self, json_file):
+        try:
+            self.user_settings = json.load(open(json_file))
             for user_setting_key in self.user_settings:
                 setattr(self, user_setting_key, self.user_settings[user_setting_key])
         except FileNotFoundError as exc:
@@ -20,11 +22,8 @@ class Settings:
         with open('config.json', 'w') as f:
             json.dump(self.user_settings, f, indent=2)
 
-    def set_default(self):
-        with open('config.json', 'w') as f:
-            with open('default.json', 'r') as data:
-                data_default = json.load(data)
-                json.dump(data_default, f, indent=2)
+    def set_default(self): # Doesn't work
+        self.open_json("default.json")
 
 
 settings = Settings()

@@ -190,12 +190,16 @@ class Enemy:
         self.enemy_speed = enemy_speed
         self.main_speed = main_speed
 
+        self.time = pg.time.get_ticks()
         self.last_update = pg.time.get_ticks()
         self.frame = 0
 
         self.mask = None
 
         self.render_enemy = True
+        self.rendering_frequency = -1
+
+        self.another_x = [-1, -1, -1]
 
     def render(self, state=True):
         if state:
@@ -203,11 +207,18 @@ class Enemy:
         else:
             self.render_enemy = False
 
-    def set_speed(self, enemy_speed=None, main_speed=None):
+    def set_speed(self, enemy_speed=None, main_speed=None, rendering_frequency=None, another_x=None):
         if enemy_speed is not None:
             self.enemy_speed = enemy_speed
         if main_speed is not None:
             self.main_speed = main_speed
+        if rendering_frequency is not None:
+            self.rendering_frequency = rendering_frequency
+        if another_x is not None:
+            for i in range(3):
+                if self.another_x[i] != -1:
+                    self.another_x[i] = another_x
+                    break
 
     def get_const(self, x=False, y=False, mask=False):
         if x:
@@ -218,25 +229,34 @@ class Enemy:
             return self.mask
 
     def move(self, screen):
-
         if not self.render_enemy and self.rect.y == -300:
             pass
         else:
-            self.rect.move_ip(0, self.enemy_speed + self.main_speed)
-            if self.rect.y > 720 and self.rect.topright[1] > 720:
-                self.rect.x = random.randrange(250, 950)
-                self.rect.y = -300
-
             current_time = pg.time.get_ticks()
-            if current_time - self.last_update >= 100 and self.enemy_speed != 0:
-                self.last_update = current_time
-                self.frame += 1
-                if self.frame == len(self.images):
-                    self.frame = 0
 
-            self.mask = pg.mask.from_surface(self.images[self.frame])
+            if current_time - self.time > self.rendering_frequency:
+                if current_time - self.time > self.rendering_frequency and self.rect.y == -300:
+                    self.time = pg.time.get_ticks()
 
-            screen.blit(self.images[self.frame], (self.rect.x, self.rect.y))
+                self.rect.move_ip(0, self.enemy_speed + self.main_speed)
+                if self.rect.y > 720 and self.rect.topright[1] > 720:
+                    self.rect.x = random.randrange(250, 950)
+                    while self.another_x[0] - 120 > self.rect.x > self.another_x[0] + 120 and \
+                            self.another_x[1] - 120 > self.rect.x > self.another_x[1] + 120 and \
+                            self.another_x[2] - 120 > self.rect.x > self.another_x[2] + 120:
+                        self.rect.x = random.randrange(250, 950)
+                    self.rect.y = -300
+
+                current_time = pg.time.get_ticks()
+                if current_time - self.last_update >= 100 and self.enemy_speed != 0:
+                    self.last_update = current_time
+                    self.frame += 1
+                    if self.frame == len(self.images):
+                        self.frame = 0
+
+                self.mask = pg.mask.from_surface(self.images[self.frame])
+
+                screen.blit(self.images[self.frame], (self.rect.x, self.rect.y))
 
 
 class Player:
@@ -290,7 +310,6 @@ class Player:
             self.rect.y = y
         if vel_of_forward is not None:
             self.vel_of_forward = vel_of_forward
-
     def get_const(self, speed=False, angle=False, x=False, y=False, mask=False, vel_of_forward=False):
         if speed:
             return self.speed
@@ -441,7 +460,8 @@ class Player:
                 self.angle = 21.078791936
                 self.moving_lr_vel = 0
             if self.state_collision:
-                left_animation()
+                if self.vel_of_forward != -1:
+                    left_animation()
             else:
                 up_animation()
                 left_animation()
@@ -450,12 +470,17 @@ class Player:
                 self.angle = -21.078791936
                 self.moving_lr_vel = 0
             if self.state_collision:
-                right_animation()
+                if self.vel_of_forward != -1:
+                    right_animation()
             else:
                 up_animation()
                 right_animation()
-        elif keys[settings.KEYS["MOVE UP"]] and not self.state_collision:
-            up_animation()
+        elif keys[settings.KEYS["MOVE UP"]]:
+            if self.state_collision:
+                if self.vel_of_forward == -1:
+                    up_animation()
+            else:
+                up_animation()
             return_side_move()
         elif keys[settings.KEYS["MOVE LEFT"]]:
             if self.angle < 0:
@@ -469,7 +494,7 @@ class Player:
                 self.moving_lr_vel = 0
             right_animation()
             soft_back_animation()
-        elif keys[settings.KEYS["MOVE DOWN"]] and not self.state_collision:
+        elif keys[settings.KEYS["MOVE DOWN"]]:
             down_animation()
             return_side_move()
         else:

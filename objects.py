@@ -89,7 +89,8 @@ class Button:
 
 
 class Picture:
-    def __init__(self, x, y, image_name, scale=1.0):
+    def __init__(self, x, y, image_name, scale=1.0, set_topleft=False, set_midleft=False, set_midright=False,
+                 set_bottomleft=False, set_midbottom=False, set_bottomright=False):
         image = pg.image.load(image_name).convert_alpha()
         width = image.get_width()
         height = image.get_height()
@@ -100,7 +101,21 @@ class Picture:
 
         self.center = (x, y)
         self.rect = self.image.get_rect()
-        self.rect.center = self.center
+
+        if set_topleft:
+            self.rect.topleft = (x, y)
+        elif set_midleft:
+            self.rect.midleft = (x, y)
+        elif set_midright:
+            self.rect.midright = (x, y)
+        elif set_bottomleft:
+            self.rect.bottomleft = (x, y)
+        elif set_midbottom:
+            self.rect.midbottom = (x, y)
+        elif set_bottomright:
+            self.rect.bottomright = (x, y)
+        else:
+            self.rect.center = (x, y)
 
         self.current_size = 0
         self.pulse = True
@@ -112,11 +127,15 @@ class Picture:
         self.rect = self.image.get_rect()
         self.rect.center = self.center
 
-    def draw(self, surface):
+    def draw(self, surface, block=False, surface_topleft=(0, 0)):
         action = False
-        pos = pg.mouse.get_pos()
-        if self.rect.collidepoint(pos):
-            action = True
+        x, y = surface_topleft
+        if not block:
+            pos = pg.mouse.get_pos()
+            x_b = (pos[0] >= x) and (pos[0] <= x + surface.get_width())
+            y_b = (pos[1] >= y) and (pos[1] <= y + surface.get_height())
+            if self.rect.collidepoint((pos[0] - x, pos[1] - y)) and x_b and y_b:
+                action = True
         surface.blit(self.image, self.rect)
         return action
 
@@ -183,7 +202,8 @@ class Background(Picture):
 
 class Text:
     def __init__(self, x, y, text='', scale=20, sound=None, color=(255, 255, 255), font="fonts/pxl_tactical.ttf",
-                 set_topleft=False, set_midleft=False, set_midright=False, set_bottomleft=False, set_midbottom=False, set_bottomright=False):
+                 set_topleft=False, set_midleft=False, set_midright=False, set_bottomleft=False, set_midbottom=False,
+                 set_bottomright=False):
         self.center = (x, y)
         self.scale = scale
         self.sound = sound
@@ -251,29 +271,46 @@ class Text:
 
         return action
 
-    def typing(self, surface, width=200, set_left=False, set_right=False):
+    def typing(self, surface, game, max_symbols=15, set_left=False, set_right=False):
+        self.temporary_string = ""
         screen = pg.Surface((1280, 720)).convert_alpha()
-        screen.blit(self.game.screen, (0, 0))
-
         typing = True
         while typing:
-            if self.rect.width >= width:
-                bar = pg.Surface((width, self.rect.height), pg.SRCALPHA).convert_alpha()
-            else:
-                bar = pg.Surface((self.rect.width, self.rect.height), pg.SRCALPHA).convert_alpha()
-            bar.fill((0, 0, 0, 255))
+            screen.blit(surface, (0, 0))
+
+            text = self.font.render(self.temporary_string, False, self.color).convert_alpha()
+            text_rect = text.get_rect()
 
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_DELETE and len(self.temporary_string) > 0:
+                    if event.key == pg.K_BACKSPACE and len(self.temporary_string) > 0:
                         self.temporary_string = self.temporary_string[:-1]
-                    elif event.key == pg.K_ESCAPE:
-                        self.string += event.unicode
+                    elif event.key == settings.KEYS["BACK"]:
+                        typing = False
+                    elif event.key == settings.KEYS["ENTER"]:
+                        if self.temporary_string:
+                            self.string = self.temporary_string
+                            self.text = self.font.render(self.string, False, self.color).convert_alpha()
+                            self.rect = text_rect
+                        typing = False
+                    else:
+                        if len(self.temporary_string) + 1 < max_symbols:
+                            if event.key == pg.K_SPACE:
+                                self.temporary_string += " "
+                            else:
+                                self.temporary_string += pg.key.name(event.key)
 
-            self.text = self.font.render(self.string, False, self.color).convert_alpha()
-            self.rect = self.text.get_rect()
-            self.rect.center = self.center
-            self.draw(surface)
+            if set_left:
+                text_rect.midleft = self.rect.midleft
+            elif set_right:
+                text_rect.topright[0] = self.rect.topright[0]
+            else:
+                text_rect.center = self.center
+
+            if typing:
+                screen.blit(text, text_rect)
+                game.screen.blit(screen, (0, 0))
+                game.blit_screen()
 
 
 class GIF:
@@ -282,7 +319,8 @@ class GIF:
         self.gif = []
 
         for file in sorted(os.listdir(self.path)):
-            self.gif.append(Picture(640, 360, self.path + file, scale=scale))
+            if ".DS_Store" not in file:
+                self.gif.append(Picture(640, 360, self.path + file, scale=scale))
 
         self.last_update = pg.time.get_ticks()
         self.frame = 0
@@ -413,7 +451,8 @@ class MusicPlayer:
             settings.song_number = random.randrange(0, len(self.playlist) - 1)
         else:
             settings.song_number += 1
-            if settings.song_number == len(self.playlist) + len(self.others) or settings.song_number >= len(self.playlist):
+            if settings.song_number == len(self.playlist) + len(self.others) or settings.song_number >= len(
+                    self.playlist):
                 settings.song_number = 0
         self.play()
 
@@ -451,7 +490,8 @@ class MusicPlayer:
         file = filedialog.askopenfilename(title="Choosing directory")
         if file:
             path, name = "/".join(file.split("/")[:-1]) + "/", file.split("/")[-1]
-            self.others.append((path, Text(400, 270, name, 20)))
+            if (path, Text(400, 270, name, 20)) not in self.playlist + self.others:
+                self.others.append((path, Text(400, 270, name, 20)))
 
     def pop_from_playlist(self, song):
         if self.playlist.index(song) == settings.song_number:
@@ -520,7 +560,7 @@ class MusicPlayer:
                 self.running_string_x = 0
 
             for song in song_names:
-                bar.blit(song.text, song. rect)
+                bar.blit(song.text, song.rect)
             cover.draw(surface)
             surface.blit(bar, bar_rect)
 
@@ -570,6 +610,10 @@ class PlayerStats:
 
         self.last_update = pg.time.get_ticks()
 
+        self.coins_sheets_mini = get_sheets(self.coins_image, 5, 1)
+        self.last_update_mini = pg.time.get_ticks()
+        self.frame_mini = 0
+
     def draw_coins(self, surface, coordinates, time=250, set_topleft=False, set_midright=False):
         current_time = pg.time.get_ticks()
         if current_time - self.last_update >= time:
@@ -606,11 +650,15 @@ class PlayerStats:
                 (start_level + (start_level + delta_level * (settings.player_stats["level"] - 1))) *
                 settings.player_stats["level"]) // 2
 
-        score = Text(0, 0, "LVL: " + str(settings.player_stats["level"]) + " - " + str(curr_score) + "/" + str(max_score), 20)
+        score = Text(0, 0,
+                     "LVL: " + str(settings.player_stats["level"]) + " - " + str(curr_score) + "/" + str(max_score), 20)
 
         curr_level = 0
         while curr_level * (max_score / len(self.level_bar)) < curr_score:
-            curr_level += 1
+            if curr_level + 1 < len(self.level_bar):
+                curr_level += 1
+            else:
+                break
 
         if set_topleft:
             self.level_bar[curr_level].rect.topleft = coordinates
@@ -621,7 +669,8 @@ class PlayerStats:
         else:
             self.level_bar[curr_level].rect.center = coordinates
 
-        score.rect.topright = self.level_bar[curr_level].rect.bottomright[0], self.level_bar[curr_level].rect.bottomright[1] + 10
+        score.rect.topright = self.level_bar[curr_level].rect.bottomright[0], \
+                              self.level_bar[curr_level].rect.bottomright[1] + 10
 
         self.level_bar[curr_level].draw(surface)
         score.draw(surface)
@@ -655,3 +704,34 @@ class PlayerStats:
         self.update_time_in_game()
         time = settings.player_stats["time_in_game"]
         return f'{(time // 86400000):03}' + ":" + f'{((time % 86400000) // 3600000):02}' + ":" + f'{((time % 3600000) // 60000):02}'
+
+    def show_cost(self, surface, cost, surface_topleft=(0, 0)):
+        bar = pg.Surface((80, 30), pg.SRCALPHA).convert_alpha()
+
+        cost_text = Text(bar.get_width() - 7, bar.get_height() // 2, str(cost), 20, set_midright=True)
+        if cost <= settings.player_stats["coins"]:
+            bar.fill((76, 175, 80, 235))
+            afford = True
+        else:
+            bar.fill((213, 0, 0, 235))
+            afford = False
+
+        current_time = pg.time.get_ticks()
+        if current_time - self.last_update_mini >= 250:
+            self.frame_mini += 1
+            self.last_update_mini = current_time
+            if self.frame_mini == len(self.coins_sheets_mini):
+                self.frame_mini = 0
+
+        coin_rect = self.coins_sheets_mini[self.frame_mini].get_rect()
+        coin_rect.midleft = (7, bar.get_height() // 2)
+
+        x, y = surface_topleft
+        pos = list(pg.mouse.get_pos())
+        pos[0], pos[1] = pos[0] - x, pos[1] - y
+
+        bar.blit(self.coins_sheets_mini[self.frame_mini], coin_rect)
+        cost_text.draw(bar)
+        surface.blit(bar, pos)
+
+        return afford

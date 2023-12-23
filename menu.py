@@ -26,14 +26,13 @@ class Menu:
             if event.type == pg.QUIT:
                 self.game.running, self.game.playing = False, False
                 self.game.garage_menu.player_stats.update_time_in_game()
-                self.game.player.clean_covers()
+                self.game.music_player.clean_covers()
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.game.keys["MOUSE DOWN"] = True
             if event.type == pg.KEYDOWN:
                 if event.key == settings.KEYS["BACK"]:
                     self.game.keys["BACK"] = True
-                    settings.set_default()
                 if event.key == settings.KEYS["ENTER"]:
                     self.game.keys["ENTER"] = True
                 if event.key == settings.KEYS["MOVE LEFT"]:
@@ -41,17 +40,18 @@ class Menu:
                 if event.key == settings.KEYS["MOVE RIGHT"]:
                     self.game.keys["MOVE RIGHT"] = True
                 if event.key == settings.KEYS["PLAY MUSIC"]:
-                    self.game.player.play()
+                    self.game.music_player.play()
                 if event.key == settings.KEYS["CHANGE MUSIC"]:
-                    self.game.player.next()
+                    self.game.music_player.next()
             if event.type == pg.MOUSEWHEEL:
                 self.game.keys["MOUSEWHEEL"] = event.y
-            if event.type == self.game.player.MUSIC_END:
-                self.game.player.playing = False
-                if self.game.player.loop:
-                    self.game.player.play()
+                self.game.keys["MOUSEWHEEL_X"] = event.x
+            if event.type == self.game.music_player.MUSIC_END:
+                self.game.music_player.playing = False
+                if self.game.music_player.loop:
+                    self.game.music_player.play()
                 else:
-                    self.game.player.next()
+                    self.game.music_player.next()
 
 
 class MainMenu(Menu):
@@ -86,28 +86,24 @@ class MainMenu(Menu):
         self.authors_button = Button(1155, self.github_icon.rect.bottomleft[1], "images/buttons/authors_button_off.png",
                                      "images/buttons/authors_button_on.png", button_sound, 0.1, set_midbottom=True)
 
-        if settings.player_stats["name"]:
-            self.user_name = Text(640, self.github_icon.rect.centery, f'Hello, {settings.player_stats["name"]}!', 40)
-        else:
+        if not settings.player_stats["name"]:
             settings.player_stats["name"] = getpass.getuser()
-            self.user_name = Text(640, self.github_icon.rect.centery, f'Hello, {getpass.getuser()}!', 40)
 
         settings.song_number = 0
+
+        self.menu_bg = None
+        self.menu_bg_speed = None
 
         self.block = False
 
     def display_menu(self):
-        path = f'images/backgrounds/bgs/{settings.bg["menu_bg"]}/'
-        menu_bg = GIF(path)
-        menu_bg.resize(1280, 720)
-        menu_bg_speed = settings.bg_speed[settings.bg["menu_bg"]]
-
+        self.load_menu_bg()
         self.game.menu_state = "MENU"
 
         while self.game.running and not self.game.playing:
             self.check_events()
 
-            menu_bg.draw(self.game.screen, menu_bg_speed)
+            self.menu_bg.draw(self.game.screen, self.menu_bg_speed)
             self.title_picture.draw_with_pulse(self.game.screen)
 
             if self.start_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
@@ -123,11 +119,14 @@ class MainMenu(Menu):
             if self.quit_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
                 self.game.running, self.game.playing = False, False
                 self.game.garage_menu.player_stats.update_time_in_game()
-                self.game.player.clean_covers()
+                self.game.music_player.clean_covers()
 
-            self.game.player.draw_current_song(self.game.screen, (20, self.github_icon.rect.bottomleft[1]), set_bottomleft=True)
+            self.game.music_player.draw_current_song(self.game.screen, (20, self.github_icon.rect.bottomleft[1]),
+                                                     set_bottomleft=True)
 
-            self.user_name.draw(self.game.screen)
+            user_name = Text(640, self.github_icon.rect.centery, f'Hello, {settings.player_stats["name"]}!', 40)
+            user_name.draw(self.game.screen)
+
             if self.github_icon.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
                 webbrowser.open("https://github.com/teenxsky/racing_game", new=0, autoraise=True)
 
@@ -174,6 +173,10 @@ class MainMenu(Menu):
             for level in levels:
                 level.rect.center = levels_gui_2.rect.center = (curr_lvl_x + distance, 360)
                 level.draw(self.game.screen)
+                if settings.levels[levels.index(level)]["score"] <= settings.player_stats["score"]:
+                    settings.levels[levels.index(level)]["access"] = True
+                else:
+                    settings.levels[levels.index(level)]["access"] = False
                 if settings.levels[levels.index(level)]["access"]:
                     if level.rect.center == (640, 360):
                         if self.levels_start_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
@@ -183,9 +186,13 @@ class MainMenu(Menu):
                     block = pg.surface.Surface((570, 320), pg.SRCALPHA)
                     block = block.convert_alpha()
                     block.fill((0, 0, 0, 200))
+                    need_score = Text(*level.rect.center, str(settings.player_stats["score"]) + "/" + str(
+                        settings.levels[levels.index(level)]["score"]), 40)
                     self.game.screen.blit(block, level.rect)
+                    need_score.draw(self.game.screen)
                 levels_gui_2.draw(self.game.screen)
-                c_1 = Text(curr_lvl_x + distance, 690, f'DIFFICULTY: {settings.levels[levels.index(level)]["difficulty"]}', 30)
+                c_1 = Text(curr_lvl_x + distance, 690,
+                           f'DIFFICULTY: {settings.levels[levels.index(level)]["difficulty"]}', 30)
                 c_1.draw(self.game.screen)
                 distance += 700
             distance -= 700
@@ -204,6 +211,12 @@ class MainMenu(Menu):
                 self.game.menu_state = "MENU"
 
             self.game.blit_screen()
+
+    def load_menu_bg(self):
+        path = f'images/backgrounds/bgs/{settings.bg["menu_bg"]}/'
+        self.menu_bg = GIF(path)
+        self.menu_bg.resize(1280, 720)
+        self.menu_bg_speed = settings.bg_speed[settings.bg["menu_bg"]]
 
     def check_input(self):
         self.block = self.game.menu_state == "MUSIC" \
@@ -286,7 +299,7 @@ class SetsMenu(Menu):
         if self.sets_volume_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
             self.sub_state = "VOLUME"
 
-        bar = pg.surface.Surface((510, 170))
+        bar = pg.surface.Surface((510, 170)).convert_alpha()
         bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (640, 350)
@@ -312,7 +325,7 @@ class SetsMenu(Menu):
     def display_controls(self):
         self.text_controls.draw(self.game.screen)
 
-        bar = pg.surface.Surface((510, 190))
+        bar = pg.surface.Surface((510, 190)).convert_alpha()
         bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (640, 360)
@@ -354,7 +367,7 @@ class SetsMenu(Menu):
 
     def display_volume(self):
         self.text_volume.draw(self.game.screen)
-        bar = pg.surface.Surface((510, 170))
+        bar = pg.surface.Surface((510, 170)).convert_alpha()
         bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (640, 350)
@@ -373,7 +386,7 @@ class SetsMenu(Menu):
             level_rect.topleft = (10, text.rect.bottomleft[1])
             if pg.mouse.get_pressed()[0] and level_rect.collidepoint(pos) and pos[0] <= 400:
                 setattr(settings, '_'.join(text.string.lower().split()), pos[0] / 400)
-                self.game.player.set_volume()
+                self.game.music_player.set_volume()
             bar.blit(level, level_rect)
             distance += 70
 
@@ -390,27 +403,54 @@ class SetsMenu(Menu):
 class GarageMenu(Menu):
     def __init__(self, game):
         super().__init__(game)
-
         self.player_stats = PlayerStats()
 
         button_sound = pg.mixer.Sound("audio/button_sound.mp3")
-        self.garage_close_button = Button(50, 50, "images/buttons/close_button_off.png",
-                                          "images/buttons/close_button_on.png", button_sound, 0.15)
+        self.garage_close_button = Button(30, 30, "images/buttons/close_button_off.png",
+                                          "images/buttons/close_button_on.png", button_sound, 0.15, set_topleft=True)
 
-        self.garage_back_button = Button(290, 360, "images/buttons/back_button_off.png",
+        self.garage_back_button = Button(530, 200, "images/buttons/back_button_off.png",
                                          "images/buttons/back_button_on.png", button_sound, 0.15)
-        self.garage_forward_button = Button(990, 360, "images/buttons/forward_button_off.png",
+        self.garage_forward_button = Button(530, 290, "images/buttons/forward_button_off.png",
                                             "images/buttons/forward_button_on.png", button_sound, 0.15)
-
-        self.character = Picture(850, 475, "images/HUD/seller.png", 0.8)
 
         self.license_icon = Button(1170, 80, "images/user_photo/license_icon_off.png",
                                    "images/user_photo/license_icon_on.png", button_sound, 0.13)
         self.license_img = Picture(330, 360, "images/user_photo/license.png", 0.5)
-        self.photo_button = Button(50, 50, "images/buttons/photo_button_off.png",
-                                   "images/buttons/photo_button_on.png", button_sound, 0.15)
+        self.photo_button = Button(554, 490, "images/buttons/photo_button_off.png",
+                                   "images/buttons/photo_button_on.png", button_sound, 0.07)
+
+        self.logo_pic = Picture(543, 483, "images/user_photo/team_logo.png", scale=0.15)
+
+        self.window_specs_1 = Picture(20, 120, "images/backgrounds/window_garage.png", 0.4, set_topleft=True)
+        self.window_specs_2 = Picture(20, 400, "images/backgrounds/window_garage.png", 0.4, set_topleft=True)
+
+        self.scroll_y_1 = 0
+        self.scroll_x_2 = 0
 
         self.license = False
+
+        self.camera_on = False
+
+        self.bgs = []
+        for file in sorted(os.listdir("images/backgrounds/bgs/")):
+            try:
+                preview = os.listdir("images/backgrounds/bgs/" + file + "/")[1]
+                if ".png" in preview:
+                    level_img = Picture(640, 360, "images/backgrounds/bgs/" + file + "/" + preview)
+                    level_img.resize(140, 100)
+                    self.bgs.append((level_img, file))
+            except IndexError:
+                pass
+            except pygame.error:
+                pass
+            except NotADirectoryError:
+                pass
+
+        self.choose_button = Button(120, 300, "images/buttons/choose_button_off.png",
+                                    "images/buttons/choose_button_on.png", button_sound, 0.1)
+        self.buy_button = Button(400, 300, "images/buttons/buy_button_off.png", "images/buttons/buy_button_on.png",
+                                 button_sound, 0.1)
 
         self.sub_state = "GARAGE"
         self.block = False
@@ -425,14 +465,13 @@ class GarageMenu(Menu):
         for car in settings.cars:
             cars.append((car["specs"], car["name"], Picture(640, 550, f'images/cars/{car["name"]}.png', car["size"])))
 
-        curr_lvl_x = 640
+        curr_lvl_x = 860
         while self.game.menu_state == "GARAGE" and self.game.running:
             self.check_events()
 
             garage_bg.draw(self.game.screen, garage_bg_speed)
 
             if self.license_icon.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
-                settings.player_stats["coins"] += 1
                 self.sub_state = "LICENSE"
 
             self.player_stats.draw_coins(self.game.screen, (self.license_icon.rect.midleft[0] - 25,
@@ -447,20 +486,20 @@ class GarageMenu(Menu):
                 center = (curr_lvl_x + distance, 550)
                 car[2].rect.center = center
                 car[2].draw(self.game.screen)
-                if center[0] == 640:
-                    self.show_specs(self.game.screen, 100, 200, car[1], car[0])
+                if center[0] == 860:
+                    self.show_specs(car, cars.index(car))
                 distance += 700
             distance -= 700
 
             if self.game.keys["ENTER"]:
                 self.player_stats.increase_score(100)
 
-            if curr_lvl_x + 700 <= 640:
+            if curr_lvl_x + 700 <= 860:
                 if (self.garage_back_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]) or (
                         self.game.keys["MOVE LEFT"]):
                     curr_lvl_x += 700
 
-            if curr_lvl_x + distance - 700 >= 640:
+            if curr_lvl_x + distance - 700 >= 860:
                 if (self.garage_forward_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]) or (
                         self.game.keys["MOVE RIGHT"]):
                     curr_lvl_x -= 700
@@ -468,90 +507,182 @@ class GarageMenu(Menu):
             if self.garage_close_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
                 self.game.menu_state = "MENU"
 
+            self.show_menu_shop()
+
             self.check_input()
             self.game.blit_screen()
 
         pg.time.delay(500)
 
-    def show_specs(self, surface, x, y, name, specs):
-        bar = pg.surface.Surface((470, 220), pg.SRCALPHA)
-        bar = bar.convert_alpha()
-        bar.fill((0, 0, 0, 200))
+    def show_specs(self, car, car_index):
+        specs, name, _ = car
 
-        car_name = Text(10, 10, name, 35, set_topleft=True)
-        car_name.draw(bar)
+        self.window_specs_1.draw(self.game.screen)
 
-        spec_y = 30
+        bar_1 = pg.surface.Surface((380, 90)).convert_alpha()
+        bar_1.fill(BROWN)
+        bar_1_rect = bar_1.get_rect()
+        bar_1_rect.topleft = (75, 185)
+
+        distance = 0
         for spec in specs.keys():
-            c_1 = Text(10, 10 + spec_y, spec + " " + str(specs[spec]), 30, set_topleft=True, color=BLUE)
-            c_1.draw(bar)
-            spec_y += 30
+            s_key = Text(0, distance + self.scroll_y_1, spec + ": ", 20, set_topleft=True, color=BLUE)
+            s_val = Text(s_key.rect.topright[0], distance + self.scroll_y_1, str(specs[spec]["val"]), 20,
+                         set_topleft=True)
+            s_key.draw(bar_1)
 
-        surface.blit(bar, (x, y))
+            if settings.cars[car_index]["own"]:
+                if s_val.draw_as_button(bar_1, self.block, surface_topleft=bar_1_rect.topleft):
+                    if self.player_stats.show_cost(bar_1, settings.cars[car_index]["specs"][spec]["cost"],
+                                                   surface_topleft=bar_1_rect.topleft) and self.game.keys["MOUSE DOWN"]:
+                        if settings.cars[car_index]["specs"][spec]["val"] + settings.cars[car_index]["specs"][spec][
+                            "d_val"] <= settings.cars[car_index]["specs"][spec]["max_val"]:
+                            settings.cars[car_index]["specs"][spec]["val"] += settings.cars[car_index]["specs"][spec][
+                                "d_val"]
+                            self.player_stats.decrease_coins(settings.cars[car_index]["specs"][spec]["cost"])
+                            settings.cars[car_index]["specs"][spec]["cost"] += settings.cars[car_index]["specs"][spec][
+                                "d_cost"]
+                if not settings.cars[car_index]["chosen"]:
+                    if self.choose_button.draw(self.game.screen, self.block) and self.game.keys["MOUSE DOWN"]:
+                        for car in settings.cars:
+                            car["chosen"] = False
+                        settings.cars[car_index]["chosen"] = True
+            else:
+                if self.buy_button.draw(self.game.screen, self.block):
+                    if self.player_stats.show_cost(self.game.screen, settings.cars[car_index]["cost"]) and self.game.keys[
+                        "MOUSE DOWN"]:
+                        settings.cars[car_index]["own"] = True
+
+            distance += 30
+
+        pos = pg.mouse.get_pos()
+        if bar_1_rect.collidepoint(pos) and self.scroll_y_1 + (self.game.keys["MOUSEWHEEL"] * 10) <= 0 \
+                and (distance + self.scroll_y_1) + (self.game.keys["MOUSEWHEEL"] * 10) >= bar_1_rect.height:
+            self.scroll_y_1 += self.game.keys["MOUSEWHEEL"] * 10
+
+        self.game.screen.blit(bar_1, bar_1_rect)
+
+        car_name = Text(260, 165, " ".join(name.split("_")), 27)
+        car_name.draw(self.game.screen)
+
+    def show_menu_shop(self):
+        self.window_specs_2.draw(self.game.screen)
+
+        bar_2 = pg.surface.Surface((380, 120)).convert_alpha()
+        bar_2.fill(BROWN)
+        bar_2_rect = bar_2.get_rect()
+        bar_2_rect.topleft = (75, 460)
+
+        car_name = Text(260, 445, "BG SHOP", 27)
+        car_name.draw(self.game.screen)
+
+        distance = 0
+        for bg in self.bgs:
+            bg[0].rect.midleft = self.scroll_x_2 + distance, bar_2_rect.height // 2
+            if bg[0].draw(bar_2, self.block, surface_topleft=bar_2_rect.topleft):
+                if self.player_stats.show_cost(bar_2, 500, surface_topleft=bar_2_rect.topleft) and self.game.keys[
+                    "MOUSE DOWN"]:
+                    settings.bg["menu_bg"] = bg[1]
+                    self.player_stats.decrease_coins(500)
+                    self.game.main_menu.load_menu_bg()
+            distance += 180
+
+        pos = pg.mouse.get_pos()
+        if bar_2_rect.collidepoint(pos) and self.scroll_x_2 + (self.game.keys["MOUSEWHEEL"] * 10) <= 0 \
+                and (distance + self.scroll_x_2) + (self.game.keys["MOUSEWHEEL"] * 10) >= bar_2_rect.width:
+            self.scroll_x_2 += self.game.keys["MOUSEWHEEL"] * 10
+
+        self.game.screen.blit(bar_2, bar_2_rect)
 
     def display_license(self):
-            bar = pg.surface.Surface((1280, 720), pg.SRCALPHA).convert_alpha()
-            bar.fill((0, 0, 0, 150))
-            self.game.screen.blit(bar, (0, 0))
+        bar = pg.surface.Surface((1280, 720), pg.SRCALPHA).convert_alpha()
+        bar.fill((0, 0, 0, 150))
+        self.game.screen.blit(bar, (0, 0))
 
-            text_player_statistics = Text(660, 130, "PLAYER STATISTICS", 45, set_midleft=True)
-            distance = 80
-            for key in settings.player_stats.keys():
-                if key == "time_in_game":
-                    text = self.player_stats.get_time_in_game()
-                else:
-                    text = settings.player_stats[key]
-
-                curr_text = Text(text_player_statistics.rect.midleft[0], text_player_statistics.rect.midleft[1] + distance, f'{" ".join(key.split("_"))}: {text}', 30, set_midleft=True)
+        text_player_statistics = Text(660, 130, "PLAYER STATISTICS", 45, set_midleft=True)
+        distance = 80
+        for key in settings.player_stats.keys():
+            if key == "time_in_game":
+                text = self.player_stats.get_time_in_game()
+            else:
+                text = settings.player_stats[key]
+            if key != "photo":
+                curr_text = Text(text_player_statistics.rect.midleft[0],
+                                 text_player_statistics.rect.midleft[1] + distance,
+                                 f'{" ".join(key.split("_"))}: {text}', 30, set_midleft=True)
                 curr_text.draw(self.game.screen)
                 distance += 40
 
-            license_img = self.license_img
+        license_img = self.license_img
 
-            i = 1
-            license_name = Text(94, 443, settings.player_stats["name"].upper(), 21, font="fonts/pixelscript.ttf", color=BLACK, set_midleft=True)
-            while license_name.rect.midright[0] >= 355:
-                license_name = Text(94, 442, settings.player_stats["name"].upper(), 21-i, font="fonts/pixelscript.ttf", color=BLACK, set_midleft=True)
-                i += 1
+        i = 1
+        license_name = Text(94, 443, settings.player_stats["name"].upper(), 21, font="fonts/pixelscript.ttf",
+                            color=BLACK, set_midleft=True)
+        while license_name.rect.midright[0] >= 365:
+            license_name = Text(94, 442, settings.player_stats["name"].upper(), 21 - i, font="fonts/pixelscript.ttf",
+                                color=BLACK, set_midleft=True)
+            i += 1
 
-            license_level = Text(94, 323, str(settings.player_stats["level"]), 21, font="fonts/pixelscript.ttf", set_midleft=True)
+        license_level = Text(129, 323, str(settings.player_stats["level"]), 21, font="fonts/pixelscript.ttf")
 
-            license_name_mini = Text(200, 295, "NAME: " + str(settings.player_stats["name"]), 23, set_midleft=True)
+        license_name_mini_0 = Text(200, 295, "NAME: ", 23, set_midleft=True)
+        license_name_mini_1 = Text(license_name_mini_0.rect.bottomright[0], 295, str(settings.player_stats["name"]), 23,
+                                   set_midleft=True)
 
-            current_car = ""
-            for car in settings.cars:
-                if car["chosen"]:
-                    current_car = " ".join(car["name"].split("_"))
-            license_car = Text(200, 325, "CAR: " + current_car, 23, set_midleft=True)
+        current_car = ""
+        for car in settings.cars:
+            if car["chosen"]:
+                current_car = " ".join(car["name"].split("_"))
+        license_car = Text(200, 325, "CAR: " + current_car, 23, set_midleft=True)
 
-            license_wins = Text(200, 355, "WINS: " + str(settings.player_stats["wins"]), 23, set_midleft=True)
+        license_wins = Text(200, 355, "WINS: " + str(settings.player_stats["wins"]), 23, set_midleft=True)
 
-            if self.photo_button.draw(self.game.screen):
-                pass
+        text_player_statistics.draw(self.game.screen)
+        license_img.draw(self.game.screen)
+        license_name.draw(self.game.screen)
+        license_level.draw(self.game.screen)
+        license_car.draw(self.game.screen)
+        license_wins.draw(self.game.screen)
 
-            text_player_statistics.draw(self.game.screen)
-            license_img.draw(self.game.screen)
-            license_name.draw(self.game.screen)
-            license_level.draw(self.game.screen)
-            license_name_mini.draw(self.game.screen)
-            license_car.draw(self.game.screen)
-            license_wins.draw(self.game.screen)
+        license_name_mini_0.draw(self.game.screen)
+        screen_without_name = pg.Surface((1280, 720)).convert_alpha()
+        screen_without_name.blit(self.game.screen, (0, 0))
 
-            self.check_events()
-            if self.game.keys["BACK"]:
-                self.sub_state = "GARAGE"
+        if license_name_mini_1.draw_as_button(self.game.screen):
+            if self.player_stats.show_cost(self.game.screen, 100) and self.game.keys["MOUSE DOWN"]:
+                self.player_stats.decrease_coins(100)
+                license_name_mini_1.typing(screen_without_name, self.game, set_left=True)
+                settings.player_stats["name"] = license_name_mini_1.string
+
+        photo = None
+        for file in sorted(os.listdir("images/user_photo/")):
+            if file == "photo_" + str(settings.player_stats["photo"]) + ".png":
+                photo = Picture(495, 430, "images/user_photo/" + file)
+                photo.resize(150, 150)
+        photo.draw(self.game.screen)
+
+        self.logo_pic.draw(self.game.screen)
+
+        if self.photo_button.draw(self.game.screen):
+            if self.player_stats.show_cost(self.game.screen, 200) and self.game.keys["MOUSE DOWN"]:
+                self.camera_on = True
+
+        if self.camera_on:
+            self.make_photo()
+
+        if self.game.keys["BACK"]:
+            self.sub_state = "GARAGE"
 
     def make_photo(self):
         bar = pg.surface.Surface((470, 220), pg.SRCALPHA)
         bar = bar.convert_alpha()
         bar.fill((0, 0, 0, 200))
 
-        camera_on = True
         cam = cv2.VideoCapture(0)
         cam.set(cv2.CAP_PROP_FPS, 60)
 
         success, frame = cam.read()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = numpy.fliplr(frame)
         # frame = numpy.rot90(frame)
 
@@ -568,6 +699,7 @@ class GarageMenu(Menu):
             # image3.resize((100, 100))
             # image1.paste(image3, (850, 200))
             image1.save("images/user_photo/merged_image.png", "PNG")
+            self.camera_on = False
 
         frame = pg.surfarray.make_surface(frame)
         bar.blit(frame, (-500, 0))
@@ -629,52 +761,52 @@ class MusicMenu(Menu):
 
         self.text_music.draw(self.game.screen)
 
-        if self.game.player.random_play:
+        if self.game.music_player.random_play:
             if self.random_button_on.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.random_play = False
+                self.game.music_player.random_play = False
         else:
             if self.random_button_off.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.random_play = True
+                self.game.music_player.random_play = True
 
         if self.prev_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-            self.game.player.prev()
+            self.game.music_player.prev()
 
         if pg.mixer.music.get_busy():
             if self.pause_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.pause()
+                self.game.music_player.pause()
         else:
             if self.play_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.play()
+                self.game.music_player.play()
 
-        if self.game.player.loop:
+        if self.game.music_player.loop:
             if self.loop_button_on.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.loop = False
+                self.game.music_player.loop = False
         else:
             if self.loop_button_off.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.loop = True
+                self.game.music_player.loop = True
 
         if self.next_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-            self.game.player.next()
+            self.game.music_player.next()
 
         if self.song_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-            self.game.player.choose_song()
+            self.game.music_player.choose_song()
 
         if self.folder_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-            self.game.player.choose_dir()
+            self.game.music_player.choose_dir()
             self.text_playlist.rect.x = 10
 
         if self.refresh_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
-            self.game.player.refresh()
+            self.game.music_player.refresh()
             self.text_playlist.rect.topleft = (10, 0)
 
-        self.playlist(self.game.screen)
+        self.display_playlist(self.game.screen)
 
         if self.music_close_button.draw(self.game.screen, False) and self.game.keys["MOUSE DOWN"]:
-            self.game.player.save_to_settings()
+            self.game.music_player.save_to_settings()
             self.game.menu_state = "MENU"
 
-    def playlist(self, surface):
-        bar = pg.surface.Surface((538, 220))
+    def display_playlist(self, surface):
+        bar = pg.surface.Surface((538, 220)).convert_alpha()
         bar.fill(BROWN)
         bar_rect = bar.get_rect()
         bar_rect.center = (604, 328)
@@ -682,7 +814,7 @@ class MusicMenu(Menu):
         self.text_playlist.draw(bar)
         self.text_others.draw(bar)
 
-        songs = self.game.player.get_songs()
+        songs = self.game.music_player.get_songs()
         distance = 10
         for song in songs:
             song[1].rect.topleft = (self.text_playlist.rect.x + 32, self.text_playlist.rect.bottomleft[1] + distance)
@@ -692,30 +824,30 @@ class MusicMenu(Menu):
                     self.pause_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                     if self.pause_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
                         "MOUSE DOWN"]:
-                        self.game.player.pause()
+                        self.game.music_player.pause()
                 else:
                     self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                     song[1].draw(bar, mp3_cut=True)
                     if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
                         "MOUSE DOWN"]:
-                        self.game.player.play()
+                        self.game.music_player.play()
             else:
                 song[1].draw(bar, mp3_cut=True)
                 self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                 if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                     settings.song_number = songs.index(song)
-                    self.game.player.playing = False
-                    self.game.player.play()
+                    self.game.music_player.playing = False
+                    self.game.music_player.play()
             pg.draw.rect(bar, BROWN, (bar_rect.width - 40, song[1].rect.y, 40, 40))
             self.minus_button.rect.midright = (bar_rect.width - 7, song[1].rect.midleft[1])
             if self.minus_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.pop_from_playlist(song)
+                self.game.music_player.pop_from_playlist(song)
             distance += 30
 
         self.text_others.rect.topleft = (
             self.text_playlist.rect.x, self.text_playlist.rect.bottomleft[1] + 10 + distance)
         distance += 50
-        others = self.game.player.get_others()
+        others = self.game.music_player.get_others()
         for song in others:
             song[1].rect.topleft = (self.text_playlist.rect.x + 32, self.text_playlist.rect.bottomleft[1] + distance)
             if settings.song_number == others.index(song) + len(songs):
@@ -724,24 +856,24 @@ class MusicMenu(Menu):
                     self.pause_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                     if self.pause_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
                         "MOUSE DOWN"]:
-                        self.game.player.pause()
+                        self.game.music_player.pause()
                 else:
                     self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                     song[1].draw(bar, mp3_cut=True)
                     if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys[
                         "MOUSE DOWN"]:
-                        self.game.player.play()
+                        self.game.music_player.play()
             else:
                 song[1].draw(bar, mp3_cut=True)
                 self.play_mini_button.rect.midright = (song[1].rect.midleft[0] - 7, song[1].rect.midleft[1])
                 if self.play_mini_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                     settings.song_number = others.index(song) + len(songs)
-                    self.game.player.playing = False
-                    self.game.player.play()
+                    self.game.music_player.playing = False
+                    self.game.music_player.play()
             pg.draw.rect(bar, BROWN, (bar_rect.width - 40, song[1].rect.y, 40, 40))
             self.plus_button.rect.midright = (bar_rect.width - 7, song[1].rect.midleft[1])
             if self.plus_button.draw(bar, surface_topleft=bar_rect.topleft) and self.game.keys["MOUSE DOWN"]:
-                self.game.player.pop_from_others(song)
+                self.game.music_player.pop_from_others(song)
             distance += 30
 
         l_1 = self.text_others.rect.bottomleft[1]
@@ -777,11 +909,15 @@ class Authors(Menu):
 
         self.girl = Sheet("images/HUD/Sheets/girl.png", scale=2.8)
 
+        self.fefu_logo = Picture(640, 445, "images/fefu_logo.png", 0.5)
+
     def display_menu(self):
         self.game.screen.blit(self.authors_bg.image, self.authors_bg.rect)
 
         for text in self.text_authors:
             text.draw(self.game.screen)
+
+        self.fefu_logo.draw(self.game.screen)
 
         self.girl.draw(self.game.screen, (825, 375), speed=200)
         if self.authors_close_button.draw(self.game.screen) and self.game.keys["MOUSE DOWN"]:
