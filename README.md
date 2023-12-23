@@ -1,7 +1,7 @@
 <h1 align = 'center'>00Racing :car:</h1>
 
 **Название команды:** `00TEAM` </br> 
-**Презентация:** </br>
+**Презентация:** <a href = 'https://docs.google.com/presentation/d/1vPE_Pq3594tLDzdZoWJ9UE2ZCLpenEnN/edit?usp=drive_link&ouid=109280810157950793267&rtpof=true&sd=true'>скачать</a></br>
 **Наставник:** `Шелопаев Алексей` </br>
 **Участники:**
 * `Куторгин Руслан`
