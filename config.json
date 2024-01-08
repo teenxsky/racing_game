@@ -1,185 +1,21 @@
 {
-  "KEYS": {
-    "MOVE UP": 1073741906,
-    "BACK": 27,
-    "MOVE LEFT": 1073741904,
-    "MOVE RIGHT": 1073741903,
-    "MOVE DOWN": 1073741905,
-    "ENTER": 13,
-    "PLAY MUSIC": 112,
-    "CHANGE MUSIC": 91,
-    "NITRO": 1073742049
+  "SCREEN_SIZE": [1280, 720],
+  "COVERS_PATH": "Resources/Audio/music/covers/",
+  "MUSIC_DIR_PATH": "Resources/Audio/music/",
+  "BGS_SPEED": {
+    "menu_bg_01": 20,
+    "menu_bg_02": 150,
+    "menu_bg_03": 150,
+    "garage_bg_01": 100,
+    "garage_bg_02": 100,
+    "levels_bg_01": 150
   },
-  "cars": [
-    {
-      "cost": 0,
-      "own": true,
-      "chosen": true,
-      "name": "Chevrolet Camaro",
-      "specs": {
-        "speed": {
-          "val": 10,
-          "d_val": 1,
-          "max_val": 12,
-          "cost": 30,
-          "d_cost": 10
-        },
-        "braking": {
-          "val": 0.1,
-          "d_val": 0.025,
-          "max_val": 0.2,
-          "cost": 30,
-          "d_cost": 10
-        },
-        "driveability": {
-          "val": 0.5,
-          "d_val": 0.025,
-          "max_val": 0.6,
-          "cost": 30,
-          "d_cost": 10
-        }
-      },
-      "size": 1.5
-    },
-    {
-      "cost": 500,
-      "own": false,
-      "chosen": false,
-      "name": "Dodge Srt Viper",
-      "specs": {
-        "speed": {
-          "val": 13,
-          "d_val": 1,
-          "max_val": 15,
-          "cost": 30,
-          "d_cost": 10
-        },
-        "braking": {
-          "val": 0.2,
-          "d_val": 0.025,
-          "max_val": 0.3,
-          "cost": 30,
-          ",d_cost": 10
-        },
-        "driveability": {
-          "val": 0.75,
-          "d_val": 0.025,
-          "max_val": 0.85,
-          "cost": 30,
-          "d_cost": 10
-        }
-      },
-      "size": 0.3
-    },
-    {
-      "cost": 1000,
-      "own": false,
-      "chosen": false,
-      "name": "Lamborghini Huracan",
-      "specs": {
-        "speed": {
-          "val": 17,
-          "d_val": 1,
-          "max_val": 19,
-          "cost": 30,
-          "d_cost": 10
-        },
-        "braking": {
-          "val": 0.3,
-          "d_val": 0.025,
-          "max_val": 0.4,
-          "cost": 30,
-          "d_cost": 10
-        },
-        "driveability": {
-          "val": 0.9,
-          "d_val": 0.025,
-          "max_val": 1,
-          "cost": 30,
-          "d_cost": 10
-        }
-      },
-      "size": 3
-    }
-  ],
-  "player_stats": {
-    "name": "roma",
-    "level": 0,
-    "coins": 10000,
-    "score": 0,
-    "car_own": 1,
-    "wins": 0,
-    "defeats": 0,
-    "distance_travelled": 0,
-    "crashed": 0,
-    "time_in_game": 15647706,
-    "photo": 1
-  },
-  "bg": {
-    "menu_bg": "garage_bg2",
-    "garage_bg": "garage_bg1",
-    "levels_bg": "levels_bg1"
-  },
-  "bg_speed": {
-    "menu_bg1": 20,
-    "menu_bg2": 150,
-    "garage_bg1": 100,
-    "garage_bg2": 100,
-    "levels_bg1": 150
-  },
-  "levels": [
-    {
-      "number": "1",
-      "access": true,
-      "difficulty": "EASY",
-      "score": 0
-    },
-    {
-      "number": "2",
-      "access": false,
-      "difficulty": "MIDDLE",
-      "score": 2100
-    },
-    {
-      "number": "3",
-      "access": false,
-      "difficulty": "HARD",
-      "score": 3300
-    }
-  ],
-  "general_volume": 0.2475,
-  "music_volume": 0.0425,
-  "sounds_volume": 0.5,
-  "song_number": 0,
-  "songs": [
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Avril Lavigne - Girlfriend.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "GunsNRoses - Paradise City.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Kavinsky - Nightcall.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "Motley Crue - Girls.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "N.E.R.D. - Rockstar.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "RADIOTAPOK - Monster.mp3"
-    ],
-    [
-      "/Users/roman/Desktop/racing_game/audio/music/",
-      "The Doors - Riders on the Storm.mp3"
-    ]
-  ],
-  "others": []
+  "BGS_SOUNDS_MAX_VOLUME": {
+    "menu_bg_01": 0.1,
+    "menu_bg_02": 0.2,
+    "menu_bg_03": 0.4,
+    "garage_bg_01": 0.3,
+    "garage_bg_02": 0.3,
+    "levels_bg_01": 0.5
+  }
 }

@@ -1,5 +1,4 @@
-from game import Game
-from objects import *
+from Modules import *
 
 g = Game()
 

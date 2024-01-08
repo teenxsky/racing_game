@@ -1,0 +1,262 @@
+{
+  "KEYS": {
+    "MOVE UP": 1073741906,
+    "BACK": 27,
+    "MOVE LEFT": 1073741904,
+    "MOVE RIGHT": 1073741903,
+    "MOVE DOWN": 1073741905,
+    "ENTER": 13,
+    "PLAY MUSIC": 112,
+    "CHANGE MUSIC": 91,
+    "NITRO": 1073742049
+  },
+  "cars": [
+    {
+      "cost": 0,
+      "own": true,
+      "chosen": true,
+      "name": "Chevrolet Camaro",
+      "specs": {
+        "speed": {
+          "val": 10,
+          "d_val": 1,
+          "max_val": 12,
+          "cost": 30,
+          "d_cost": 10
+        },
+        "braking": {
+          "val": 0.125,
+          "d_val": 0.025,
+          "max_val": 0.2,
+          "cost": 40,
+          "d_cost": 10
+        },
+        "driveability": {
+          "val": 0.5,
+          "d_val": 0.025,
+          "max_val": 0.6,
+          "cost": 30,
+          "d_cost": 10
+        }
+      },
+      "garage_size": 1.7,
+      "topdown_size": 0.2,
+      "garage_car_y": 550,
+      "garage_car_x": 640
+    },
+    {
+      "cost": 500,
+      "own": false,
+      "chosen": false,
+      "name": "Dodge Srt Viper",
+      "specs": {
+        "speed": {
+          "val": 13,
+          "d_val": 1,
+          "max_val": 15,
+          "cost": 30,
+          "d_cost": 10
+        },
+        "braking": {
+          "val": 0.2,
+          "d_val": 0.025,
+          "max_val": 0.3,
+          "cost": 30,
+          ",d_cost": 10
+        },
+        "driveability": {
+          "val": 0.75,
+          "d_val": 0.025,
+          "max_val": 0.85,
+          "cost": 30,
+          "d_cost": 10
+        }
+      },
+      "garage_size": 0.4,
+      "topdown_size": 0.2,
+      "garage_car_y": 550,
+      "garage_car_x": 640
+    },
+    {
+      "cost": 1000,
+      "own": false,
+      "chosen": false,
+      "name": "Lamborghini Huracan",
+      "specs": {
+        "speed": {
+          "val": 18,
+          "d_val": 1,
+          "max_val": 19,
+          "cost": 40,
+          "d_cost": 10
+        },
+        "braking": {
+          "val": 0.325,
+          "d_val": 0.025,
+          "max_val": 0.4,
+          "cost": 40,
+          "d_cost": 10
+        },
+        "driveability": {
+          "val": 0.925,
+          "d_val": 0.025,
+          "max_val": 1,
+          "cost": 40,
+          "d_cost": 10
+        }
+      },
+      "garage_size": 3.2,
+      "topdown_size": 0.2,
+      "garage_car_y": 550,
+      "garage_car_x": 640
+    },
+    {
+      "cost": 2000,
+      "own": false,
+      "chosen": false,
+      "name": "Shattle",
+      "specs": {
+        "speed": {
+          "val": 10,
+          "d_val": 1,
+          "max_val": 12,
+          "cost": 40,
+          "d_cost": 10
+        },
+        "braking": {
+          "val": 0.1,
+          "d_val": 0.025,
+          "max_val": 0.12,
+          "cost": 50,
+          "d_cost": 10
+        },
+        "driveability": {
+          "val": 0.3,
+          "d_val": 0.025,
+          "max_val": 1,
+          "cost": 50,
+          "d_cost": 10
+        }
+      },
+      "garage_size": 4.0,
+      "topdown_size": 0.2,
+      "garage_car_y": 450,
+      "garage_car_x": 1060
+    }
+  ],
+  "player_stats": {
+    "name": "pomet",
+    "level": 21,
+    "coins": 350021,
+    "score": 42620,
+    "car_own": 1,
+    "wins": 0,
+    "defeats": 34,
+    "distance_travelled": 0,
+    "crashed": 114,
+    "time_in_game": 27522867,
+    "photo": 1
+  },
+  "current_bg": {
+    "menu_bg": "menu_bg_03",
+    "garage_bg": "garage_bg_01",
+    "levels_bg": "levels_bg_01"
+  },
+  "levels": [
+    {
+      "number": "1",
+      "access": true,
+      "difficulty": "EASY",
+      "score": 0,
+      "description": {
+        "text": "Embark on a breathtaking race through the Forest of Vladivostok, a track that weaves its way through an ancient and mystic woodland!",
+        "bar_color": [
+          88,
+          126,
+          98,
+          200
+        ]
+      }
+    },
+    {
+      "number": "2",
+      "access": true,
+      "difficulty": "MIDDLE",
+      "score": 2100,
+      "description": {
+        "text": "As you rev up your engines, snowflakes will dance in the headlight beams, setting the stage for a magical, yet treacherously slippery challenge!",
+        "bar_color": [
+          137,
+          142,
+          144,
+          200
+        ]
+      }
+    },
+    {
+      "number": "3",
+      "access": true,
+      "difficulty": "HARD",
+      "score": 3300,
+      "description": {
+        "text": "Feel the heat rise from the shimmering tarmac as you speed through ancient ruins, skid around treacherous dunes, and navigate through twisted canyons that echo with the roar of high-octane engines!",
+        "bar_color": [
+          108,
+          121,
+          136,
+          200
+        ]
+      }
+    },
+    {
+      "number": "4",
+      "access": true,
+      "difficulty": "FEFU",
+      "score": 3400,
+      "description": {
+        "text": "Welcome to the adrenaline-pumped Russky Bridge, the world's longest cable-stayed bridge, now re-imagined for the ultimate virtual racing experience!",
+        "bar_color": [
+          129,
+          118,
+          107,
+          200
+        ]
+      }
+    }
+  ],
+  "general_volume": 0.295,
+  "music_volume": 0.165,
+  "sounds_volume": 1.0,
+  "song_number": 0,
+  "songs": [
+    [
+      "Resources/Audio/music/",
+      "Avril Lavigne - Girlfriend.mp3"
+    ],
+    [
+      "Resources/Audio/music/",
+      "GunsNRoses - Paradise City.mp3"
+    ],
+    [
+      "Resources/Audio/music/",
+      "Kavinsky - Nightcall.mp3"
+    ],
+    [
+      "Resources/Audio/music/",
+      "Motley Crue - Girls.mp3"
+    ],
+    [
+      "Resources/Audio/music/",
+      "N.E.R.D. - Rockstar.mp3"
+    ],
+    [
+      "Resources/Audio/music/",
+      "RADIOTAPOK - Monster.mp3"
+    ],
+    [
+      "Resources/Audio/music/",
+      "The Doors - Riders on the Storm.mp3"
+    ]
+  ],
+  "others": []
+}
