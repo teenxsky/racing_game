@@ -58,10 +58,12 @@ class MainMenu(Menu):
                     "MOUSE DOWN"]:
                 self.game.menu_state = "LEVELS"
                 self.last_update = pg.time.get_ticks()
+                self.game.transition = True
             if self.garage_button.draw(self.game.screen, (20, self.start_button.rect.bottomleft[1] + 25), self.block,
                                        position="topleft") and self.game.keys["MOUSE DOWN"]:
                 self.game.menu_state = "GARAGE"
                 self.last_update = pg.time.get_ticks()
+                self.game.transition = True
             if self.music_button.draw(self.game.screen, (20, self.garage_button.rect.bottomleft[1] + 25), self.block,
                                       position="topleft") and self.game.keys["MOUSE DOWN"]:
                 self.game.menu_state = "MUSIC"
@@ -112,7 +114,6 @@ class MainMenu(Menu):
             self.game.blit_screen()
             self.bg_sound.stop(fadeout=500)
             # pg.time.delay(250)
-            self.game.transition = True
             if delay(self.last_update):
                 self.game.levels_menu.display_menu()
 

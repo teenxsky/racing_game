@@ -635,7 +635,7 @@ class Game:
                 settings.player_stats["crashed"] += 1
                 if self.lives == 0:
                     self.game_state = "GAME OVER"
-                    self.garage_menu.player_stats.increase_coins(self.coins)
+                    self.garage_menu.player_stats.coins += self.coins
                     self.garage_menu.player_stats.increase_score(self.score)
                     settings.player_stats["defeats"] += 1
 

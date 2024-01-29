@@ -79,22 +79,20 @@ class PlayerStats:
             return self.increase_score(0)
         return 0
 
-    @staticmethod
-    def increase_coins(value):
-        settings.player_stats["coins"] += value
+    @property
+    def coins(self):
+        return settings.player_stats["coins"]
 
-    @staticmethod
-    def decrease_coins(value):
-        if settings.player_stats["coins"] - value >= 0:
-            settings.player_stats["coins"] -= value
-            return 1
-        return 0
+    @coins.setter
+    def coins(self, value):
+        settings.player_stats["coins"] = value
 
     def update_time_in_game(self):
         settings.player_stats["time_in_game"] += pg.time.get_ticks() - self.last_update_time_in_game
         self.last_update_time_in_game = pg.time.get_ticks()
 
-    def get_time_in_game(self):
+    @property
+    def time_in_game(self):
         self.update_time_in_game()
         time = settings.player_stats["time_in_game"]
         return f'{(time // 86400000):03}' + ":" + f'{((time % 86400000) // 3600000):02}' + ":" + f'{((time % 3600000) // 60000):02}'

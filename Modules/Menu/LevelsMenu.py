@@ -28,6 +28,9 @@ class LevelsMenu(Menu):
         self.sub_state = "LEVELS"
         self.block = False
 
+        self.exit = None
+        self.last_update = None
+
     def display_menu(self):
 
         index = 0
@@ -121,16 +124,21 @@ class LevelsMenu(Menu):
                     curr_lvl_x -= 700
 
             if self.levels_close_button.draw(self.game.screen, (40, 40), self.block) and self.game.keys["MOUSE DOWN"]:
-                self.game.menu_state = "MENU"
+                self.last_update = pg.time.get_ticks()
+                self.exit = True
+                self.game.transition = True
 
             for sub_text_bar in sub_text_bars:
                 if sub_text_bar:
                     self.game.screen.blit(*sub_text_bar)
 
             self.check_input()
-            self.game.blit_screen()
+            if self.exit and delay(self.last_update):
+                self.game.menu_state = "MENU"
+                self.exit = False
+            else:
+                self.game.blit_screen()
 
-        pg.time.delay(500)
         self.bg_sound.stop(fadeout=500)
 
     def __display_level_statistic(self):

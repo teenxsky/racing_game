@@ -90,6 +90,7 @@ class MusicPlayer:
 
     def next(self):
         self.playing = False
+        self.paused = False
         if self.random_play:
             self.song_number = random.randrange(0, len(self.playlist) - 1)
         else:
@@ -101,6 +102,7 @@ class MusicPlayer:
 
     def prev(self):
         self.playing = False
+        self.paused = False
         if self.random_play:
             self.song_number = random.randrange(0, len(self.playlist) - 1)
         else:
@@ -210,7 +212,7 @@ class MusicPlayer:
 
     def draw_current_song(self, surface, coordinates, scale=0.5, position="center", text_up=False, game=None, block=False):
         """argument 'game' 'block' are for drawing the player interface(e.g. 'play button'), the 'game' arg is supposed to be an instance of the main class Game"""
-        if self.playing and self.playlist or self.others:
+        if self.playlist or self.others:
             song_name, cover = self.current_cover
 
             setattr(cover.rect, position, coordinates)

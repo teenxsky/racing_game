@@ -114,18 +114,17 @@ class GarageMenu(Menu):
                     self.game.keys["MOUSE DOWN"]:
                 # self.game.menu_state = "MENU"
                 self.last_update = pg.time.get_ticks()
-                self.exit  = True
-
-            if self.exit:
+                self.exit = True
                 self.game.transition = True
-                if delay(self.last_update):
-                    self.game.menu_state = "MENU"
-                    self.exit = False
 
             self.show_menu_shop()
 
             self.check_input()
-            self.game.blit_screen()
+            if self.exit and delay(self.last_update):
+                self.game.menu_state = "MENU"
+                self.exit = False
+            else:
+                self.game.blit_screen()
 
         self.bg_sound.stop(fadeout=500)
         # pg.time.delay(500)
@@ -153,7 +152,7 @@ class GarageMenu(Menu):
                     if self.player_stats.show_cost(bar_1, settings.cars[car_index]["specs"][spec]["cost"],
                                                    surface_topleft=bar_1_rect.topleft) and self.game.keys["MOUSE DOWN"]:
                         if settings.cars[car_index]["specs"][spec]["val"] + settings.cars[car_index]["specs"][spec][
-                            "d_val"] <= settings.cars[car_index]["specs"][spec]["max_val"]:
+                                "d_val"] <= settings.cars[car_index]["specs"][spec]["max_val"]:
                             settings.cars[car_index]["specs"][spec]["val"] += settings.cars[car_index]["specs"][spec][
                                 "d_val"]
                             self.player_stats.decrease_coins(settings.cars[car_index]["specs"][spec]["cost"])
@@ -161,7 +160,7 @@ class GarageMenu(Menu):
                                 "d_cost"]
                 if not settings.cars[car_index]["chosen"]:
                     if self.choose_button.draw(self.game.screen, (120, 300), self.block) and self.game.keys[
-                        "MOUSE DOWN"]:
+                            "MOUSE DOWN"]:
                         for car in settings.cars:
                             car["chosen"] = False
                         settings.cars[car_index]["chosen"] = True
@@ -200,7 +199,7 @@ class GarageMenu(Menu):
             if bg[0].draw(bar_2, (self.scroll_x_2 + distance, bar_2_rect.height // 2), self.block,
                           surface_topleft=bar_2_rect.topleft, position="midleft"):
                 if self.player_stats.show_cost(bar_2, 500, surface_topleft=bar_2_rect.topleft) and self.game.keys[
-                    "MOUSE DOWN"]:
+                        "MOUSE DOWN"]:
                     settings.current_bg["menu_bg"] = bg[1]
                     self.player_stats.decrease_coins(500)
                     self.game.main_menu.menu_bg, self.game.main_menu.menu_bg_speed = load_bg("menu_bg")
