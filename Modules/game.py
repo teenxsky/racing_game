@@ -367,6 +367,10 @@ class Game:
                 obj.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
 
     def game(self):
+
+        if not car_sound.num_channels:
+            car_sound.play(loops=-1, fade_ms=500)
+
         # setting the values of variables
         if self.P1.get_const(speed=True) == 0:
             self.P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
@@ -429,8 +433,7 @@ class Game:
             self.P1.move(self.screen)
             self.actions_with_enemies("move")
 
-            # checking for collisions with objects
-            self.collisions_with_objects()
+            # checking for collisions with objects self.collisions_with_objects()
 
     def collision(self):
         # setting the values of variables to start a collision
@@ -546,6 +549,8 @@ class Game:
     def paused(self):
         # show background
         self.first_bg.random_scroll(self.screen, 0)
+
+        car_sound.stop()
 
         # setting the values of variables
         self.time = pg.time.get_ticks()

@@ -12,6 +12,9 @@ SOUNDS = set()
 button_sound = SoundFX("Resources/Audio/button_sound.mp3")
 SOUNDS.add(button_sound)
 
+car_sound = SoundFX("Resources/Audio/Car/car_sound.mp3", 0.85)
+SOUNDS.add(button_sound)
+
 
 class Menu:
     def __init__(self, game):

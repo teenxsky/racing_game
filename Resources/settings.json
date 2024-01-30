@@ -146,14 +146,14 @@
   "player_stats": {
     "name": "pro100roma",
     "level": 35,
-    "coins": 347712,
-    "score": 97595,
+    "coins": 347716,
+    "score": 98120,
     "car_own": 1,
     "wins": 0,
-    "defeats": 48,
+    "defeats": 49,
     "distance_travelled": 0,
-    "crashed": 159,
-    "time_in_game": 32539243,
+    "crashed": 165,
+    "time_in_game": 32635853,
     "photo": 1
   },
   "current_bg": {
@@ -225,7 +225,7 @@
   ],
   "general_volume": 0.295,
   "music_volume": 0.225,
-  "sounds_volume": 0.43,
+  "sounds_volume": 1.0,
   "song_number": 0,
   "songs": [
     [
