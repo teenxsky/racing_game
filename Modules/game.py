@@ -230,6 +230,8 @@ class Game:
             self.hud()
             self.blit_screen()
 
+        self.garage_menu.player_stats.coins += self.coins
+        self.garage_menu.player_stats.increase_score(self.score)
         pg.time.delay(500)
         pg.mixer.fadeout(500)
 
@@ -498,14 +500,23 @@ class Game:
             self.game_over_bg.draw(self.screen, (640, 360))
             game_over_text = Text("GAME OVER", 50)
             game_over_text.draw(self.screen, (640, 150))
+
+            coins_gain = Text(f"+ {self.coins} coins", scale=35)
+            coins_gain.draw(self.screen, (640, 450))
+
+            score_gain = Text(f"+ {self.score} score", scale=35)
+            score_gain.draw(self.screen, (640, 400))
+
         if state == "PAUSED":
             self.pause_bg.draw(self.screen, (640, 360))
             paused_text = Text("PAUSED", 50)
             paused_text.draw(self.screen, (640, 150))
-            coins_text = Text("COINS: " + str(settings.player_stats["coins"]), 30)
-            score_text = Text("SCORE: " + str(settings.player_stats["score"]), 30)
-            coins_text.draw(self.screen, (640, 350))
-            score_text.draw(self.screen, (640, 400))
+
+            coins_gain = Text(f"+ {self.coins} coins", scale=35)
+            coins_gain.draw(self.screen, (640, 350))
+
+            score_gain = Text(f"+ {self.score} score", scale=35)
+            score_gain.draw(self.screen, (640, 400))
 
         # creating and showing text on screen
         coins_text = Text("COINS:" + str(self.coins), scale=35, color=color)
@@ -582,8 +593,6 @@ class Game:
                 settings.player_stats["crashed"] += 1
                 if self.lives == 0:
                     self.game_state = "GAME OVER"
-                    self.garage_menu.player_stats.coins += self.coins
-                    self.garage_menu.player_stats.increase_score(self.score)
                     settings.player_stats["defeats"] += 1
 
                     pos = [self.player_group.sprites()[0].rect.center[0], self.player_group.sprites()[0].rect.top]
@@ -630,8 +639,6 @@ class Game:
                 if event.key == settings.KEYS["BACK"] and self.game_state != "GAME OVER":
                     self.keys["BACK"] = True
                     if self.game_state == "PAUSED":
-                        self.garage_menu.player_stats.increase_coins(self.coins)
-                        self.garage_menu.player_stats.increase_score(self.score)
                         self.game_state = "GAME"
                     else:
                         self.game_state = "PAUSED"

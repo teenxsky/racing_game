@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+vrode work">
+    <list default="true" id="f743d068-317b-4cfd-a9a6-a6a8673a4cd1" name="Changes" comment="#+vrode work1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/Menu/GarageMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Menu/GarageMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Menu/MusicMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Menu/MusicMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Objects/APIObjects/MusicPlayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Objects/APIObjects/MusicPlayer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Objects/APIObjects/PlayerStats.py" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Objects/APIObjects/PlayerStats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Modules/Objects/sprites.py" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/Objects/sprites.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Modules/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Modules/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Resources/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Resources/settings.json" afterDir="false" />
     </list>
@@ -460,7 +456,14 @@
       <option name="project" value="LOCAL" />
       <updated>1706523911404</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="#+vrode work1">
+      <created>1706577395830</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1706577395830</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -485,7 +488,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="#button can change color" />
     <MESSAGE value="#add playlist" />
     <MESSAGE value="#+button class + menu buttons" />
     <MESSAGE value="#+working menu beta + title" />
@@ -510,6 +512,7 @@
     <MESSAGE value="#+version1 (full working game)" />
     <MESSAGE value="#+version2 (few updates)" />
     <MESSAGE value="#+vrode work" />
-    <option name="LAST_COMMIT_MESSAGE" value="#+vrode work" />
+    <MESSAGE value="#+vrode work1" />
+    <option name="LAST_COMMIT_MESSAGE" value="#+vrode work1" />
   </component>
 </project>

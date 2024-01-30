@@ -210,7 +210,7 @@ class GarageMenu(Menu):
         bar_2_rect.topleft = (window_x + 55, window_y + 60)
 
         shop_name = Text("BG SHOP", 27)
-        shop_name.draw(self.game.screen, (window_x + 240, window_y + 445))
+        shop_name.draw(self.game.screen, (window_x + 240, window_y + 45))
 
         cost_bar, afford = None, None
 
