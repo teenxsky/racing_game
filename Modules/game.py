@@ -42,9 +42,13 @@ class Game:
         # BUTTONS GAME
 
         self.close_button_game = Button("Resources/Images/Buttons/close_button_off.png",
-                                        "Resources/Images/Buttons/close_button_on.png", button_sound, 0.25)
-        self.back_button = Button("Resources/Images/Buttons/back_button_off.png", "Resources/Images/Buttons/back_button_on.png",
-                                  button_sound, 0.25)
+                                        "Resources/Images/Buttons/close_button_on.png",
+                                        button_sound,
+                                        0.25)
+        self.back_button = Button("Resources/Images/Buttons/back_button_off.png",
+                                  "Resources/Images/Buttons/back_button_on.png",
+                                  button_sound,
+                                  0.25)
 
         # BACKGROUND
 
@@ -91,16 +95,43 @@ class Game:
         self.transition = False
         self.last_update = pg.time.get_ticks()
 
-    def game_loop(self):
-        def add_sprites(imgs, sprite_group, type=None):
+        # GAME ATTRIBUTES
+
+        self.map_number = None
+        self.lives = None
+        self.blinks_counter = None
+        self.coins = None
+        self.score = None
+        self.main_speed = None
+        self.enemy_speed = None
+        self.angle_of_main = None
+        self.player_group = None
+        self.coins_group = None
+        self.ruby_group = None
+        self.explosion_group = None
+        self.P1 = None
+        self.E1 = None
+        self.E2 = None
+        self.E3 = None
+        self.E4 = None
+        self.enemies = None
+        self.Gold_Co = None
+        self.Ruby_Co = None
+        self.Oil = None
+        self.first_bg = None
+        self.time = None
+        self.time2 = None
+
+    def set_default_attributes(self):
+        def add_sprites(images, sprite_group, state=None):
             obj = None
-            for frame in range(len(imgs)):
-                if type == "Vehicle":
-                    obj = OppVehicle(0, 0, imgs[frame].image)
-                if type == "PlayerVehicle":
-                    obj = PlayerVehicle(790, 590, imgs[frame].image)
-                if type == "Elements":
-                    obj = Elements(0, 0, imgs[frame])
+            for frame in range(len(images)):
+                if state == "Vehicle":
+                    obj = OppVehicle(0, 0, images[frame].image)
+                if state == "PlayerVehicle":
+                    obj = PlayerVehicle(790, 590, images[frame].image)
+                if state == "Elements":
+                    obj = Elements(0, 0, images[frame])
 
                 sprite_group.add(obj)
 
@@ -109,33 +140,35 @@ class Game:
                 if car["chosen"]:
                     return car
 
+        # choosing map
         self.map_number = int(settings.levels[self.curr_level]["number"])
 
+        # set game variables
         self.lives = 3
         self.blinks_counter = 0
         self.coins = 0
         self.score = 0
-
-        self.main_speed = 0
+        self.main_speed = 1
+        self.enemy_speed = 5
+        self.angle_of_main = 0
         max_player_speed = choose_car()["specs"]["speed"]["val"]
         player_acceleration = choose_car()["specs"]["braking"]["val"]
         change_moving_lr_vel = choose_car()["specs"]["driveability"]["val"]
 
-        self.enemy_speed = 2
-        self.angle_of_main = 0
-
+        # creating sprite groups
         self.player_group = pg.sprite.Group()
         enemy1_group = pg.sprite.Group()
         enemy2_group = pg.sprite.Group()
         enemy3_group = pg.sprite.Group()
         enemy4_group = pg.sprite.Group()
-
+        oil_group = pg.sprite.Group()
         self.coins_group = pg.sprite.Group()
         self.ruby_group = pg.sprite.Group()
-        oil_group = pg.sprite.Group()
         self.explosion_group = pg.sprite.Group()
 
-        add_sprites(GIF(f'Resources/Images/cars/{choose_car()["name"]} topdown/', scale=choose_car()["topdown_size"]).gif, self.player_group,
+        add_sprites(GIF(f'Resources/Images/cars/{choose_car()["name"]} topdown/',
+                    scale=choose_car()["topdown_size"]).gif,
+                    self.player_group,
                     "PlayerVehicle")
         add_sprites(self.opp1, enemy1_group, "Vehicle")
         add_sprites(self.opp2, enemy2_group, "Vehicle")
@@ -146,13 +179,13 @@ class Game:
         add_sprites(self.rubin_coin_images, self.ruby_group, "Elements")
         add_sprites([self.oil_stain_image.image], oil_group, "Elements")
 
+        # creating instances of the class for subsequent manipulations
         self.P1 = Player(self.player_group.sprites(), max_player_speed, player_acceleration, change_moving_lr_vel)
 
         self.E1 = Enemy(enemy1_group.sprites(), self.enemy_speed, self.main_speed)
         self.E2 = Enemy(enemy2_group.sprites(), self.enemy_speed, self.main_speed)
         self.E3 = Enemy(enemy3_group.sprites(), self.enemy_speed, self.main_speed)
         self.E4 = Enemy(enemy4_group.sprites(), self.enemy_speed, self.main_speed)
-
         self.enemies = [self.E1, self.E2, self.E3, self.E4]
         self.first_enemy = 0
         self.second_enemy = 1
@@ -162,6 +195,7 @@ class Game:
         self.Ruby_Co = CoinsMechanics(self.ruby_group.sprites(), self.main_speed, "ruby")
         self.Oil = OilMechanics(oil_group.sprites(), self.main_speed)
 
+        # set background
         self.first_bg = None
         bgs = []
         for file in sorted(os.listdir(f'Resources/Images/Backgrounds/Levels/level{str(self.map_number)}/')):
@@ -177,6 +211,10 @@ class Game:
         self.time = pg.time.get_ticks()
         self.time2 = pg.time.get_ticks()
 
+    def game_loop(self):
+        # setting attributes for start game
+        self.set_default_attributes()
+        # game loop
         while self.playing:
             self.check_events()
 
@@ -190,54 +228,17 @@ class Game:
                 self.game()
 
             self.hud()
-
             self.blit_screen()
 
         pg.time.delay(500)
         pg.mixer.fadeout(500)
 
-    def game(self):
-        if self.P1.get_const(speed=True) == 0:
-            self.P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
-        self.main_speed = self.P1.get_const(speed=True)
-        self.actions_with_enemies("set_speed")
-        self.Gold_Co.set_const(speed=self.main_speed)
-        self.Ruby_Co.set_const(speed=self.main_speed)
-        self.Oil.set_const(speed=self.main_speed)
-
-        self.first_bg.random_scroll(self.screen, self.main_speed + 20)
-
-        self.Oil.move(self.screen)
-
-        self.P1.move(self.screen)
-        self.actions_with_enemies("move")
-
-        self.main_speed = self.P1.get_const(speed=True)
-        Player.blit_rotate_center(self.P1, self.screen)
-        self.angle_of_main = self.P1.get_const(angle=True)
-
-        oil_mask = self.Oil.get_const(mask=True)
-        oil_rect_x = self.Oil.get_const(x=True)
-        oil_rect_y = self.Oil.get_const(y=True)
-
-        player_mask = self.P1.get_const(mask=True)
-        player_rect_x = self.P1.get_const(x=True)
-        player_rect_y = self.P1.get_const(y=True)
-
-        self.Gold_Co.move(self.screen)
-
-        gold_coin_mask = self.Gold_Co.get_const(mask=True)
-        gold_coin_rect_x = self.Gold_Co.get_const(x=True)
-        gold_coin_rect_y = self.Gold_Co.get_const(y=True)
-
-        self.Ruby_Co.move(self.screen)
-
-        rubin_coin_mask = self.Ruby_Co.get_const(mask=True)
-        rubin_coin_rect_x = self.Ruby_Co.get_const(x=True)
-        rubin_coin_rect_y = self.Ruby_Co.get_const(y=True)
-
-        if oil_mask is not None:
-            if player_mask.overlap(oil_mask, (oil_rect_x - player_rect_x, oil_rect_y - player_rect_y)):
+    def collisions_with_objects(self):
+        # actions when hitting oil
+        if self.Oil.get_const(mask=True) is not None:
+            if self.P1.get_const(mask=True).overlap(self.Oil.get_const(mask=True),
+                                                    (self.Oil.get_const(x=True) - self.P1.get_const(x=True),
+                                                     self.Oil.get_const(y=True) - self.P1.get_const(y=True))):
                 if self.P1.get_const(vel_of_forward=True) != -1:
                     self.P1.collision(True)
                 else:
@@ -245,299 +246,39 @@ class Game:
 
                 if self.main_speed > 5:
                     self.main_speed /= 1.05
+                    self.main_speed = max(self.main_speed, 1)
 
                 self.P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
                 self.actions_with_enemies("set_speed")
 
-        if player_mask.overlap(gold_coin_mask,
-                               (gold_coin_rect_x - player_rect_x, gold_coin_rect_y - player_rect_y)):
+        # actions when hitting a gold coin
+        if self.P1.get_const(mask=True).overlap(self.Gold_Co.get_const(mask=True),
+                                                (self.Gold_Co.get_const(x=True) - self.P1.get_const(x=True),
+                                                 self.Gold_Co.get_const(y=True) - self.P1.get_const(y=True))):
             self.Gold_Co = CoinsMechanics(self.coins_group.sprites(), self.main_speed, "gold")
             self.coins += 1
 
-        if rubin_coin_mask is not None:
-            if player_mask.overlap(rubin_coin_mask,
-                                   (rubin_coin_rect_x - player_rect_x, rubin_coin_rect_y - player_rect_y)):
+        # actions when hitting a ruby coin
+        if self.Ruby_Co.get_const(mask=True) is not None:
+            if self.P1.get_const(mask=True).overlap(self.Ruby_Co.get_const(mask=True),
+                                                    (self.Ruby_Co.get_const(x=True) - self.P1.get_const(x=True),
+                                                    self.Ruby_Co.get_const(y=True) - self.P1.get_const(y=True))):
                 self.Ruby_Co = CoinsMechanics(self.ruby_group.sprites(), self.main_speed, "ruby")
                 self.coins += 10
 
-        self.collision_with_enemies(self.E1)
-        self.collision_with_enemies(self.E2)
-        self.collision_with_enemies(self.E3)
-        self.collision_with_enemies(self.E4)
-
-        if all(not i for i in pg.key.get_pressed()):
-            if pg.time.get_ticks() - self.time > 5000:
-                self.show_hints()
-        else:
-            self.time = pg.time.get_ticks()
-
-    def collision(self):
-        if self.blinks_counter == 0:
-            self.P1.collision(True)
-            self.E1.render(False)
-            self.Gold_Co.render(False)
-            self.Ruby_Co.render(False)
-            self.Oil.render(False)
-
-        self.blinks_counter += 1
-
-        self.P1.set_const(speed=self.main_speed)
-
-        a = datetime.datetime.now()
-        b = datetime.datetime.now()
-
-        while (b - a).microseconds < 250000:
-            self.blit_screen()
-            self.main_speed = self.P1.get_const(speed=True)
-            self.actions_with_enemies("set_speed")
-            self.first_bg.random_scroll(self.screen, self.main_speed + 20)
-            self.hud()
-            self.P1.move(self.screen)
-            self.actions_with_enemies("move")
-            b = datetime.datetime.now()
-            self.speedometer_base.draw(self.screen, (1100, 560), position="bottomleft")
-            self.P1.rotate_arrow_of_speedometer(self.screen, "Resources/Images/Hud/speedometer/arrow.png",
-                                                self.speedometer_base.rect.center, 1.35)
-
-            self.Gold_Co.set_const(speed=self.main_speed)
-            self.Ruby_Co.set_const(speed=self.main_speed)
-            self.Oil.set_const(speed=self.main_speed)
-
-            self.Oil.move(self.screen)
-
-            oil_mask = self.Oil.get_const(mask=True)
-            oil_rect_x = self.Oil.get_const(x=True)
-            oil_rect_y = self.Oil.get_const(y=True)
-
-            player_mask = self.P1.get_const(mask=True)
-            player_rect_x = self.P1.get_const(x=True)
-            player_rect_y = self.P1.get_const(y=True)
-
-            self.Gold_Co.move(self.screen)
-
-            gold_coin_mask = self.Gold_Co.get_const(mask=True)
-            gold_coin_rect_x = self.Gold_Co.get_const(x=True)
-            gold_coin_rect_y = self.Gold_Co.get_const(y=True)
-
-            self.Ruby_Co.move(self.screen)
-
-            rubin_coin_mask = self.Ruby_Co.get_const(mask=True)
-            rubin_coin_rect_x = self.Ruby_Co.get_const(x=True)
-            rubin_coin_rect_y = self.Ruby_Co.get_const(y=True)
-
-            if oil_mask is not None:
-                if player_mask.overlap(oil_mask, (oil_rect_x - player_rect_x, oil_rect_y - player_rect_y)):
-                    if self.P1.get_const(vel_of_forward=True) != -1:
-                        self.P1.collision(True)
-                    else:
-                        self.P1.collision(False)
-
-                    if self.main_speed > 5:
-                        self.main_speed /= 1.05
-
-                    self.P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
-                    self.actions_with_enemies("set_speed")
-
-            if player_mask.overlap(gold_coin_mask,
-                                   (gold_coin_rect_x - player_rect_x, gold_coin_rect_y - player_rect_y)):
-                self.Gold_Co = CoinsMechanics(self.coins_group.sprites(), self.main_speed, "gold")
-                self.coins += 1
-
-            if rubin_coin_mask is not None:
-                if player_mask.overlap(rubin_coin_mask,
-                                       (rubin_coin_rect_x - player_rect_x, rubin_coin_rect_y - player_rect_y)):
-                    self.Ruby_Co = CoinsMechanics(self.ruby_group.sprites(), self.main_speed, "ruby")
-                    self.coins += 10
-
-        a = datetime.datetime.now()
-        b = datetime.datetime.now()
-
-        while (b - a).microseconds < 250000:
-            self.blit_screen()
-            self.main_speed = self.P1.get_const(speed=True)
-            self.actions_with_enemies("set_speed")
-            self.first_bg.random_scroll(self.screen, self.main_speed + 20)
-            self.hud()
-            self.P1.move(self.screen)
-            self.actions_with_enemies("move")
-            Player.blit_rotate_center(self.P1, self.screen)
-            b = datetime.datetime.now()
-            self.speedometer_base.draw(self.screen, (1100, 560), position="bottomleft")
-            self.P1.rotate_arrow_of_speedometer(self.screen, "Resources/Images/Hud/speedometer/arrow.png",
-                                                self.speedometer_base.rect.center, 1.35)
-
-            self.Gold_Co.set_const(speed=self.main_speed)
-            self.Ruby_Co.set_const(speed=self.main_speed)
-            self.Oil.set_const(speed=self.main_speed)
-
-            self.Oil.move(self.screen)
-
-            oil_mask = self.Oil.get_const(mask=True)
-            oil_rect_x = self.Oil.get_const(x=True)
-            oil_rect_y = self.Oil.get_const(y=True)
-
-            player_mask = self.P1.get_const(mask=True)
-            player_rect_x = self.P1.get_const(x=True)
-            player_rect_y = self.P1.get_const(y=True)
-
-            self.Gold_Co.move(self.screen)
-
-            gold_coin_mask = self.Gold_Co.get_const(mask=True)
-            gold_coin_rect_x = self.Gold_Co.get_const(x=True)
-            gold_coin_rect_y = self.Gold_Co.get_const(y=True)
-
-            self.Ruby_Co.move(self.screen)
-
-            rubin_coin_mask = self.Ruby_Co.get_const(mask=True)
-            rubin_coin_rect_x = self.Ruby_Co.get_const(x=True)
-            rubin_coin_rect_y = self.Ruby_Co.get_const(y=True)
-
-            if oil_mask is not None:
-                if player_mask.overlap(oil_mask, (oil_rect_x - player_rect_x, oil_rect_y - player_rect_y)):
-                    if self.P1.get_const(vel_of_forward=True) != -1:
-                        self.P1.collision(True)
-                    else:
-                        self.P1.collision(False)
-
-                    if self.main_speed > 5:
-                        self.main_speed /= 1.05
-
-                    self.P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
-                    self.actions_with_enemies("set_speed")
-
-            if player_mask.overlap(gold_coin_mask,
-                                   (gold_coin_rect_x - player_rect_x, gold_coin_rect_y - player_rect_y)):
-                self.Gold_Co = CoinsMechanics(self.coins_group.sprites(), self.main_speed, "gold")
-                self.coins += 1
-
-            if rubin_coin_mask is not None:
-                if player_mask.overlap(rubin_coin_mask,
-                                       (rubin_coin_rect_x - player_rect_x, rubin_coin_rect_y - player_rect_y)):
-                    self.Ruby_Co = CoinsMechanics(self.ruby_group.sprites(), self.main_speed, "ruby")
-                    self.coins += 10
-
-        if self.blinks_counter == 3:
-            self.blinks_counter = 0
-            self.game_state = "GAME"
-            self.P1.collision(False)
-            self.E1.render(True)
-            self.Gold_Co.render(True)
-            self.Ruby_Co.render(True)
-            self.Oil.render(True)
-            self.P1.move(self.screen)
-            self.actions_with_enemies("move")
-            self.angle_of_main = 0
-            Player.blit_rotate_center(self.P1, self.screen)
-
-    def game_over(self):
-        self.lives = 3
-        self.first_bg.random_scroll(self.screen, 0)
-
-        self.P1.set_const(speed=0, angle=self.angle_of_main, update_rate=0)
-        self.actions_with_enemies("stop")
-        self.actions_with_enemies("move")
-        self.Gold_Co.set_const(speed=0)
-        self.Gold_Co.move(self.screen)
-        self.Ruby_Co.set_const(speed=0)
-        self.Ruby_Co.move(self.screen)
-        self.Oil.set_const(speed=0)
-        self.Oil.move(self.screen)
-        Player.blit_rotate_center(self.P1, self.screen)
-        self.speedometer_base.draw(self.screen, (1100, 560), position="bottomleft")
-        self.P1.rotate_arrow_of_speedometer(self.screen, "Resources/Images/Hud/speedometer/arrow.png",
-                                            self.speedometer_base.rect.center, 1.35)
-        self.explosion_group.draw(self.screen)
-        self.explosion_group.update()
-
-        self.game_over_bg.draw(self.screen, (640, 360))
-
-        game_over_text = Text("GAME OVER", 50)
-        game_over_text.draw(self.screen, (640, 150))
-
-        coins_text = Text("COINS: " + str(settings.player_stats["coins"]), 30)
-        score_text = Text("SCORE: " + str(settings.player_stats["score"]), 30)
-
-        coins_text.draw(self.screen, (640, 350))
-        score_text.draw(self.screen, (640, 400))
-
-        if self.close_button_game.draw(self.screen, (510, 530)) and self.clicked:
-            self.playing = False
-            self.game_state = "GAME"
-
-    def hud(self):
-        # color = None
-        if self.map_number == 2:
-            color = (255, 255, 255)
-        else:
-            color = (0, 0, 0)
-
-        coins_text = Text("COINS:" + str(self.coins), scale=35, color=color)
-        score_text = Text("SCORE:" + str(self.score), scale=35, color=color)
-
-        coins_text.draw(self.screen, (20, 20), position="topleft")
-        score_text.draw(self.screen, (20, 50), position="topleft")
-
-        for i in range(self.lives):
-            heart_pic = Picture("Resources/Images/Hud/heart.png", scale=2.25)
-            heart_pic.draw(self.screen, (1125 + i * 50, 40))
-
-        self.speedometer_base.draw(self.screen, (1100, 560), position="bottomleft")
-        self.P1.rotate_arrow_of_speedometer(self.screen, "Resources/Images/Hud/speedometer/arrow.png",
-                                            self.speedometer_base.rect.center, 1.35)
-
-        self.music_player.draw_current_song(self.screen, (10, 710), position="bottomleft")
-
-    def paused(self):
-        self.first_bg.random_scroll(self.screen, 0)
-        self.time = pg.time.get_ticks()
-        self.P1.set_const(speed=0, angle=self.angle_of_main, update_rate=0)
-        self.actions_with_enemies("stop")
-        self.actions_with_enemies("move")
-        self.Gold_Co.set_const(speed=0)
-        self.Gold_Co.move(self.screen)
-        self.Ruby_Co.set_const(speed=0)
-        self.Ruby_Co.move(self.screen)
-        self.Oil.set_const(speed=0)
-        self.Oil.move(self.screen)
-        Player.blit_rotate_center(self.P1, self.screen)
-        self.speedometer_base.draw(self.screen, (1100, 560), position="bottomleft")
-        self.P1.rotate_arrow_of_speedometer(self.screen, "Resources/Images/Hud/speedometer/arrow.png",
-                                            self.speedometer_base.rect.center, 1.35)
-
-        self.pause_bg.draw(self.screen, (640, 360))
-
-        paused_text = Text("PAUSED", 50)
-        paused_text.draw(self.screen, (640, 150))
-
-        coins_text = Text("COINS: " + str(settings.player_stats["coins"]), 30)
-
-        score_text = Text("SCORE: " + str(settings.player_stats["score"]), 30)
-
-        coins_text.draw(self.screen, (640, 350))
-        score_text.draw(self.screen, (640, 400))
-
-        if self.close_button_game.draw(self.screen, (510, 530)) and self.clicked:
-            self.playing = False
-            if self.blinks_counter != 0:
-                self.game_state = "COLLISION"
-            else:
-                self.game_state = "GAME"
-        if self.back_button.draw(self.screen, (770, 530)) and self.clicked:
-            if self.blinks_counter != 0:
-                self.game_state = "COLLISION"
-            else:
-                self.game_state = "GAME"
-
     def actions_with_enemies(self, type_of_actions):
+        # moving enemy cars
         if type_of_actions == "move":
             current_time = pg.time.get_ticks()
+
+            # if map_number is 1 then show 1 an enemy car
             if self.map_number == 1:
                 self.enemies[self.first_enemy].move(self.screen)
-
                 if self.enemies[self.first_enemy].get_const(y=True) == -300:
                     self.score += 15
                     self.first_enemy = (self.first_enemy + 1) % 4
 
+            # if map_number is 2 then show 2 an enemy car
             if self.map_number == 2:
                 for i in range(4):
                     if i != self.first_enemy:
@@ -564,7 +305,8 @@ class Game:
                         self.score += 20
                     self.second_enemy = (self.second_enemy + 2) % 4
 
-            if self.map_number == 3 or self.map_number == 4:
+            # if map_number is 3 then show 3 an enemy car
+            if self.map_number > 2:
                 for i in range(4):
                     if i != self.first_enemy:
                         self.enemies[self.first_enemy].set_speed(
@@ -612,13 +354,218 @@ class Game:
                             self.third_enemy = i % 4
                             break
 
+        # stopping an enemy cars
         if type_of_actions == "stop":
             for obj in self.enemies:
                 obj.set_speed(enemy_speed=0, main_speed=0)
 
+        # setting the speed of enemy cars
         if type_of_actions == "set_speed":
             for obj in self.enemies:
                 obj.set_speed(enemy_speed=self.enemy_speed, main_speed=self.main_speed)
+
+    def game(self):
+        # setting the values of variables
+        if self.P1.get_const(speed=True) == 0:
+            self.P1.set_const(speed=self.main_speed, angle=self.angle_of_main, update_rate=100)
+        self.main_speed = max(self.P1.get_const(speed=True), 1)
+        self.actions_with_enemies("set_speed")
+        self.Gold_Co.set_const(speed=self.main_speed)
+        self.Ruby_Co.set_const(speed=self.main_speed)
+        self.Oil.set_const(speed=self.main_speed)
+
+        # showing background
+        self.first_bg.random_scroll(self.screen, self.main_speed + 15)
+
+        # moving objects and cars
+        self.P1.move(self.screen)
+        self.Oil.move(self.screen)
+        self.Gold_Co.move(self.screen)
+        self.Ruby_Co.move(self.screen)
+
+        # updating global variables in the game.py
+        self.main_speed = max(self.P1.get_const(speed=True), 1)
+        self.angle_of_main = self.P1.get_const(angle=True)
+
+        # output other things to the screen
+        Player.blit_rotate_center(self.P1, self.screen)
+        self.actions_with_enemies("move")
+
+        # checking for collisions with objects and enemy vehicles
+        self.collisions_with_objects()
+        self.collision_with_enemies(self.E1)
+        self.collision_with_enemies(self.E2)
+        self.collision_with_enemies(self.E3)
+        self.collision_with_enemies(self.E4)
+
+        # show hints
+        if all(not i for i in pg.key.get_pressed()):
+            if pg.time.get_ticks() - self.time > 5000:
+                self.show_hints()
+        else:
+            self.time = pg.time.get_ticks()
+
+    def blinks(self, state=None):
+        a = datetime.datetime.now()
+        b = datetime.datetime.now()
+
+        while (b - a).microseconds < 250000:
+            b = datetime.datetime.now()
+
+            # output to the screen
+            self.blit_screen()
+            self.first_bg.random_scroll(self.screen, self.main_speed + 15)
+            self.hud()
+            if state == "ON":
+                Player.blit_rotate_center(self.P1, self.screen)
+
+            # setting the values of variables
+            self.main_speed = max(self.P1.get_const(speed=True), 1)
+            self.actions_with_enemies("set_speed")
+
+            # moving objects and cars
+            self.P1.move(self.screen)
+            self.actions_with_enemies("move")
+
+            # checking for collisions with objects
+            self.collisions_with_objects()
+
+    def collision(self):
+        # setting the values of variables to start a collision
+        if self.blinks_counter == 0:
+            self.P1.collision(True)
+            self.E1.render(False)
+            self.Gold_Co.render(False)
+            self.Ruby_Co.render(False)
+            self.Oil.render(False)
+
+        # updating global variables
+        self.blinks_counter += 1
+        self.P1.set_const(speed=self.main_speed)
+
+        # blinking of objects and cars on the screen
+        self.blinks("OFF")
+        self.blinks("ON")
+
+        # setting the values of variables to finish a collision
+        if self.blinks_counter == 3:
+            self.blinks_counter = 0
+            self.game_state = "GAME"
+
+            self.P1.collision(False)
+            self.E1.render(True)
+            self.Gold_Co.render(True)
+            self.Ruby_Co.render(True)
+            self.Oil.render(True)
+            self.angle_of_main = 0
+
+            self.P1.move(self.screen)
+            self.actions_with_enemies("move")
+
+            Player.blit_rotate_center(self.P1, self.screen)
+
+    def game_over(self):
+        # show background
+        self.first_bg.random_scroll(self.screen, 0)
+
+        # setting the values of variables
+        self.lives = 3
+        self.P1.set_const(speed=0, angle=self.angle_of_main, update_rate=0)
+        self.actions_with_enemies("stop")
+        self.actions_with_enemies("move")
+        self.Gold_Co.set_const(speed=0)
+        self.Gold_Co.move(self.screen)
+        self.Ruby_Co.set_const(speed=0)
+        self.Ruby_Co.move(self.screen)
+        self.Oil.set_const(speed=0)
+        self.Oil.move(self.screen)
+
+        # showing car, game over window and explosion on screen
+        Player.blit_rotate_center(self.P1, self.screen)
+        self.explosion_group.draw(self.screen)
+        self.explosion_group.update()
+        self.hud("GAME_OVER")
+
+    def hud(self, state=None):
+        # set text color
+        if self.map_number == 3 or self.map_number == 4:
+            color = (255, 255, 255)
+        else:
+            color = (0, 0, 0)
+
+        # showing game over and pause info
+        if state == "GAME_OVER":
+            self.game_over_bg.draw(self.screen, (640, 360))
+            game_over_text = Text("GAME OVER", 50)
+            game_over_text.draw(self.screen, (640, 150))
+        if state == "PAUSED":
+            self.pause_bg.draw(self.screen, (640, 360))
+            paused_text = Text("PAUSED", 50)
+            paused_text.draw(self.screen, (640, 150))
+            coins_text = Text("COINS: " + str(settings.player_stats["coins"]), 30)
+            score_text = Text("SCORE: " + str(settings.player_stats["score"]), 30)
+            coins_text.draw(self.screen, (640, 350))
+            score_text.draw(self.screen, (640, 400))
+
+        # creating and showing text on screen
+        coins_text = Text("COINS:" + str(self.coins), scale=35, color=color)
+        score_text = Text("SCORE:" + str(self.score), scale=35, color=color)
+        coins_text.draw(self.screen, (20, 20), position="topleft")
+        score_text.draw(self.screen, (20, 50), position="topleft")
+
+        # showing hearts on screen
+        for i in range(self.lives):
+            heart_pic = Picture("Resources/Images/Hud/heart.png", scale=2.25)
+            heart_pic.draw(self.screen, (1125 + i * 50, 55))
+
+        # showing speedometer on screen
+        self.speedometer_base.draw(self.screen, (1091, 720), position="bottomleft")
+        self.P1.rotate_arrow_of_speedometer(self.screen, "Resources/Images/Hud/speedometer/arrow.png",
+                                            self.speedometer_base.rect.center, 1.35)
+
+        # showing name of current_song on screen
+        self.music_player.draw_current_song(self.screen, (10, 710), position="bottomleft")
+
+        # if state is game_over then showing game close button
+        if state == "GAME_OVER":
+            if self.close_button_game.draw(self.screen, (510, 530)) and self.clicked:
+                self.playing = False
+                self.game_state = "GAME"
+
+    def paused(self):
+        # show background
+        self.first_bg.random_scroll(self.screen, 0)
+
+        # setting the values of variables
+        self.time = pg.time.get_ticks()
+        self.P1.set_const(speed=0, angle=self.angle_of_main, update_rate=0)
+        self.actions_with_enemies("stop")
+        self.actions_with_enemies("move")
+        self.Gold_Co.set_const(speed=0)
+        self.Gold_Co.move(self.screen)
+        self.Ruby_Co.set_const(speed=0)
+        self.Ruby_Co.move(self.screen)
+        self.Oil.set_const(speed=0)
+        self.Oil.move(self.screen)
+        Player.blit_rotate_center(self.P1, self.screen)
+
+        # showing hud
+        self.hud("PAUSED")
+
+        # closing game
+        if self.close_button_game.draw(self.screen, (510, 530)) and self.clicked:
+            self.playing = False
+            if self.blinks_counter != 0:
+                self.game_state = "COLLISION"
+            else:
+                self.game_state = "GAME"
+
+        # resuming game
+        if self.back_button.draw(self.screen, (770, 530)) and self.clicked:
+            if self.blinks_counter != 0:
+                self.game_state = "COLLISION"
+            else:
+                self.game_state = "GAME"
 
     def collision_with_enemies(self, enemy):
         player_mask = self.P1.get_const(mask=True)
@@ -712,7 +659,8 @@ class Game:
             if current_time - self.last_update < transition_time / 2:
                 bar.fill((0, 0, 0, ((current_time - self.last_update) / (transition_time / 2)) * 255))
             elif current_time - self.last_update < transition_time:
-                bar.fill((0, 0, 0, ((transition_time - (current_time - self.last_update)) / (transition_time / 2)) * 255))
+                bar.fill((0, 0, 0,
+                          ((transition_time - (current_time - self.last_update)) / (transition_time / 2)) * 255))
                 if ((transition_time - (current_time - self.last_update)) / (transition_time / 2)) * 255:
                     self.transition = False
             else:
@@ -721,8 +669,3 @@ class Game:
 
         pg.display.update()
         self.frame_per_second.tick(self.FPS)
-
-
-
-
-

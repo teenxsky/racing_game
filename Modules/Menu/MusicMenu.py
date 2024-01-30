@@ -94,11 +94,11 @@ class MusicMenu(Menu):
 
         if self._folder_button.draw(self.game.screen, (915, 400)) and self.game.keys["MOUSE DOWN"]:
             self.game.music_player.choose_dir()
-            self._text_playlist.rect.x = 10
+            self._scroll_y = 0
 
         if self._refresh_button.draw(self.game.screen, (915, 330)) and self.game.keys["MOUSE DOWN"]:
             self.game.music_player.refresh()
-            self._text_playlist.rect.topleft = (10, 0)
+            self._scroll_y = 0
 
         self.__display_playlist(self.game.screen)
 
@@ -143,6 +143,7 @@ class MusicMenu(Menu):
                             "MOUSE DOWN"]:
                     self.game.music_player.song_number = songs.index(song)
                     self.game.music_player.playing = False
+                    self.game.music_player.paused = False
                     self.game.music_player.play()
             pg.draw.rect(bar, BROWN, (bar_rect.width - 40, song[1].rect.y, 40, 40))
             if self._minus_button.draw(bar, (bar_rect.width - 7, song[1].rect.midleft[1]), position="midright",
@@ -182,6 +183,7 @@ class MusicMenu(Menu):
                             "MOUSE DOWN"]:
                     self.game.music_player.song_number = others.index(song) + len(songs)
                     self.game.music_player.playing = False
+                    self.game.music_player.paused = False
                     self.game.music_player.play()
             pg.draw.rect(bar, BROWN, (bar_rect.width - 40, song[1].rect.y, 40, 40))
             if self._plus_button.draw(bar, (bar_rect.width - 7, song[1].rect.midleft[1]), position="midright",

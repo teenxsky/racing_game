@@ -136,13 +136,6 @@ class MusicPlayer:
         if path:
             self.MUSIC_DIR_PATH = path + '/'
             self.refresh()
-            self.clean_covers()
-            self.__load_covers()
-            self.__set_current_cover()
-            pg.mixer.music.stop()
-            self.playing = False
-            self.play()
-            self.song_number = 0
 
     def choose_song(self):
         file = filedialog.askopenfilename(title="Choosing directory")
@@ -181,10 +174,17 @@ class MusicPlayer:
     def refresh(self):
         self.playlist = list(
             (self.MUSIC_DIR_PATH, Text(file, 20)) for file in sorted(os.listdir(self.MUSIC_DIR_PATH)) if file.endswith(".mp3"))
-        config.MUSIC_DIR_PATH = self.MUSIC_DIR_PATH
-        self.song_number = 0
+        self.MUSIC_DIR_PATH = config.MUSIC_DIR_PATH
         self.others = []
         self.save_to_settings()
+        self.clean_covers()
+        self.__load_covers()
+        self.__set_current_cover()
+        pg.mixer.music.stop()
+        self.playing = False
+        self.song_number = 0
+        if os.listdir(self.MUSIC_DIR_PATH):
+            self.play()
 
     def __set_current_cover(self):
         tracks = self.playlist + self.others

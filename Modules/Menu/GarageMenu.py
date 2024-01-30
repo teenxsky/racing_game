@@ -43,7 +43,7 @@ class GarageMenu(Menu):
                 preview = os.listdir("Resources/Images/Backgrounds/bgs/" + file + "/")[1]
                 try:
                     level_img = Picture("Resources/Images/Backgrounds/bgs/" + file + "/" + preview, (140, 100))
-                    self.bgs.append((level_img, file))
+                    self.bgs.append({"image": level_img, "file": file})
                 except pygame.error:
                     pass
 
@@ -66,10 +66,14 @@ class GarageMenu(Menu):
 
         cars = []
         for car in settings.cars:
-            cars.append((car["specs"], car["name"],
-                         Picture(f'Resources/Images/cars/{car["name"]}.png', car["garage_size"])))
+            car_info = {"specs": car["specs"],
+                        "name": car["name"],
+                        "garage_car_y": car["garage_car_y"],
+                        "image": Picture(f'Resources/Images/cars/{car["name"]}.png', car["garage_size"])}
+            cars.append(car_info)
 
-        curr_lvl_x = 860
+        car_x_center = 430
+        curr_lvl_x = car_x_center
         while self.game.menu_state == "GARAGE" and self.game.running:
             self.check_events()
 
@@ -78,39 +82,43 @@ class GarageMenu(Menu):
             if not self.bg_sound.num_channels:
                 self.bg_sound.play(loops=-1, fade_ms=500)
 
-            if self.license_icon.draw(self.game.screen, (1170, 80), self.block) and self.game.keys["MOUSE DOWN"]:
+            if self.license_icon.draw(self.game.screen, (1260, 20), self.block, position="topright") and self.game.keys["MOUSE DOWN"]:
                 self.sub_state = "LICENSE"
 
             self.player_stats.draw_coins(self.game.screen,
-                                         (self.license_icon.rect.midleft[0] - 25, self.license_icon.rect.midleft[1]),
+                                         (self.license_icon.rect.midleft[0] - 20, self.license_icon.rect.midleft[1]),
                                          position="midright")
             self.player_stats.draw_level(self.game.screen, (
-                self.license_icon.rect.bottomright[0], self.license_icon.rect.bottomright[1] + 15), position="topleft")
+                self.license_icon.rect.bottomright[0], self.license_icon.rect.bottomright[1] + 20), position="topright")
 
-            distance = 0
+            specs_to_show = None
+            distance, i = 0, 0
             for car in cars:
-                car[2].draw(self.game.screen, (curr_lvl_x + distance, car[2].rect.center[1]))
-                if curr_lvl_x + distance == 860:
-                    self.show_specs(car, cars.index(car))
+                if curr_lvl_x + distance == car_x_center:
+                    specs_to_show = car, i
+                car["image"].draw(self.game.screen, (curr_lvl_x + distance, car["garage_car_y"]))
+                i += 1
                 distance += 700
             distance -= 700
+
+            self.show_specs(*specs_to_show)
 
             if self.game.keys["ENTER"]:
                 self.player_stats.increase_score(100)
 
-            if curr_lvl_x + 700 <= 860:
-                if (self.garage_back_button.draw(self.game.screen, (530, 200), self.block) and self.game.keys[
+            if curr_lvl_x + 700 <= car_x_center:
+                if (self.garage_back_button.draw(self.game.screen, (20, 700), self.block, position="bottomleft") and self.game.keys[
                     "MOUSE DOWN"]) or (
                         self.game.keys["MOVE LEFT"]):
                     curr_lvl_x += 700
 
-            if curr_lvl_x + distance - 700 >= 860:
-                if (self.garage_forward_button.draw(self.game.screen, (530, 290), self.block) and self.game.keys[
+            if curr_lvl_x + distance - 700 >= car_x_center:
+                if (self.garage_forward_button.draw(self.game.screen, (725, 700), self.block, position="bottomleft") and self.game.keys[
                     "MOUSE DOWN"]) or (
                         self.game.keys["MOVE RIGHT"]):
                     curr_lvl_x -= 700
 
-            if self.garage_close_button.draw(self.game.screen, (30, 30), self.block, position="topleft") and \
+            if self.garage_close_button.draw(self.game.screen, (20, 20), self.block, position="topleft") and \
                     self.game.keys["MOUSE DOWN"]:
                 # self.game.menu_state = "MENU"
                 self.last_update = pg.time.get_ticks()
@@ -130,14 +138,19 @@ class GarageMenu(Menu):
         # pg.time.delay(500)
 
     def show_specs(self, car, car_index):
-        specs, name, _ = car
+        specs = car["specs"]
+        name = car["name"]
 
-        self.window_specs_1.draw(self.game.screen, (20, 120), position="topleft")
+        self.window_specs_1.draw(self.game.screen, (1260, 195), position="topright")
+
+        window_x, window_y = self.window_specs_1.rect.topleft
 
         bar_1 = pg.surface.Surface((380, 90)).convert_alpha()
         bar_1.fill(BROWN)
         bar_1_rect = bar_1.get_rect()
-        bar_1_rect.topleft = (75, 185)
+        bar_1_rect.topleft = (window_x + 55, window_y + 65)
+
+        cost_bar, afford = None, None
 
         distance = 0
         for spec in specs.keys():
@@ -149,26 +162,27 @@ class GarageMenu(Menu):
             if settings.cars[car_index]["own"]:
                 if s_val.draw_as_button(bar_1, (s_key.rect.topright[0], distance + self.scroll_y_1), self.block,
                                         surface_topleft=bar_1_rect.topleft, position="topleft"):
-                    if self.player_stats.show_cost(bar_1, settings.cars[car_index]["specs"][spec]["cost"],
-                                                   surface_topleft=bar_1_rect.topleft) and self.game.keys["MOUSE DOWN"]:
+
+                    cost_bar, afford = self.player_stats.get_cost_bar(settings.cars[car_index]["specs"][spec]["cost"])
+
+                    if afford and self.game.keys["MOUSE DOWN"]:
                         if settings.cars[car_index]["specs"][spec]["val"] + settings.cars[car_index]["specs"][spec][
                                 "d_val"] <= settings.cars[car_index]["specs"][spec]["max_val"]:
                             settings.cars[car_index]["specs"][spec]["val"] += settings.cars[car_index]["specs"][spec][
                                 "d_val"]
-                            self.player_stats.decrease_coins(settings.cars[car_index]["specs"][spec]["cost"])
+                            self.player_stats.coins -= settings.cars[car_index]["specs"][spec]["cost"]
                             settings.cars[car_index]["specs"][spec]["cost"] += settings.cars[car_index]["specs"][spec][
                                 "d_cost"]
                 if not settings.cars[car_index]["chosen"]:
-                    if self.choose_button.draw(self.game.screen, (120, 300), self.block) and self.game.keys[
+                    if self.choose_button.draw(self.game.screen, (window_x + 100, window_y + 180), self.block) and self.game.keys[
                             "MOUSE DOWN"]:
                         for car in settings.cars:
                             car["chosen"] = False
                         settings.cars[car_index]["chosen"] = True
             else:
-                if self.buy_button.draw(self.game.screen, (400, 300), self.block):
-                    if self.player_stats.show_cost(self.game.screen, settings.cars[car_index]["cost"]) and \
-                            self.game.keys[
-                                "MOUSE DOWN"]:
+                if self.buy_button.draw(self.game.screen, (window_x + 380, window_y + 180), self.block):
+                    cost_bar, afford = self.player_stats.get_cost_bar(settings.cars[car_index]["cost"])
+                    if afford and self.game.keys["MOUSE DOWN"]:
                         settings.cars[car_index]["own"] = True
 
             distance += 30
@@ -179,29 +193,37 @@ class GarageMenu(Menu):
             self.scroll_y_1 += self.game.keys["MOUSEWHEEL"] * 10
 
         self.game.screen.blit(bar_1, bar_1_rect)
+        if cost_bar:
+            self.game.screen.blit(cost_bar[0], cost_bar[1])
 
         car_name = Text(" ".join(name.split("_")), 27)
-        car_name.draw(self.game.screen, (260, 165))
+        car_name.draw(self.game.screen, (window_x + 240, window_y + 45))
 
     def show_menu_shop(self):
-        self.window_specs_2.draw(self.game.screen, (20, 400), position="topleft")
+        self.window_specs_2.draw(self.game.screen, (1260, 455), position="topright")
+
+        window_x, window_y = self.window_specs_2.rect.topleft
 
         bar_2 = pg.surface.Surface((380, 120)).convert_alpha()
         bar_2.fill(BROWN)
         bar_2_rect = bar_2.get_rect()
-        bar_2_rect.topleft = (75, 460)
+        bar_2_rect.topleft = (window_x + 55, window_y + 60)
 
-        car_name = Text("BG SHOP", 27)
-        car_name.draw(self.game.screen, (260, 445))
+        shop_name = Text("BG SHOP", 27)
+        shop_name.draw(self.game.screen, (window_x + 240, window_y + 445))
+
+        cost_bar, afford = None, None
 
         distance = 0
         for bg in self.bgs:
-            if bg[0].draw(bar_2, (self.scroll_x_2 + distance, bar_2_rect.height // 2), self.block,
+            if bg["image"].draw(bar_2, (self.scroll_x_2 + distance, bar_2_rect.height // 2), self.block,
                           surface_topleft=bar_2_rect.topleft, position="midleft"):
-                if self.player_stats.show_cost(bar_2, 500, surface_topleft=bar_2_rect.topleft) and self.game.keys[
-                        "MOUSE DOWN"]:
-                    settings.current_bg["menu_bg"] = bg[1]
-                    self.player_stats.decrease_coins(500)
+
+                cost_bar, afford = self.player_stats.get_cost_bar(500)
+
+                if afford and self.game.keys["MOUSE DOWN"]:
+                    settings.current_bg["menu_bg"] = bg["file"]
+                    self.player_stats.coins -= 500
                     self.game.main_menu.menu_bg, self.game.main_menu.menu_bg_speed = load_bg("menu_bg")
                     self.game.main_menu.bg_sound = load_bg_sound("menu_bg")
             distance += 180
@@ -212,6 +234,8 @@ class GarageMenu(Menu):
             self.scroll_x_2 += self.game.keys["MOUSEWHEEL"] * 10
 
         self.game.screen.blit(bar_2, bar_2_rect)
+        if cost_bar:
+            self.game.screen.blit(cost_bar[0], cost_bar[1])
 
     def display_license(self):
         bar = pg.surface.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pg.SRCALPHA).convert_alpha()
@@ -219,10 +243,12 @@ class GarageMenu(Menu):
         self.game.screen.blit(bar, (0, 0))
 
         text_player_statistics = Text("PLAYER STATISTICS", 45)
+        text_player_statistics.draw(self.game.screen, (660, 130), position="midleft")
+
         distance = 80
         for key in settings.player_stats.keys():
             if key == "time_in_game":
-                text = self.player_stats.get_time_in_game()
+                text = self.player_stats.time_in_game
             else:
                 text = settings.player_stats[key]
             if key != "photo":
@@ -253,7 +279,7 @@ class GarageMenu(Menu):
 
         license_wins = Text("WINS: " + str(settings.player_stats["wins"]), 23)
 
-        text_player_statistics.draw(self.game.screen, (660, 130), position="midleft")
+
         self.license_img.draw(self.game.screen, (330, 360))
         license_name.draw(self.game.screen, (94, 443), position="midleft")
         license_level.draw(self.game.screen, (129, 323))
@@ -264,10 +290,15 @@ class GarageMenu(Menu):
         screen_without_name = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT)).convert_alpha()
         screen_without_name.blit(self.game.screen, (0, 0))
 
+        cost_bar, afford = None, None
+
         if license_name_mini_1.draw_as_button(self.game.screen, (license_name_mini_0.rect.bottomright[0], 295),
                                               position="midleft"):
-            if self.player_stats.show_cost(self.game.screen, 100) and self.game.keys["MOUSE DOWN"]:
-                self.player_stats.decrease_coins(100)
+
+            cost_bar, afford = self.player_stats.get_cost_bar(100)
+
+            if afford and self.game.keys["MOUSE DOWN"]:
+                self.player_stats.coins -= 100
                 license_name_mini_1.typing(screen_without_name, self.game, set_left=True)
                 settings.player_stats["name"] = license_name_mini_1.string
 
@@ -280,7 +311,10 @@ class GarageMenu(Menu):
         self.logo_pic.draw(self.game.screen, (543, 483))
 
         if self.photo_button.draw(self.game.screen, (554, 490)):
-            if self.player_stats.show_cost(self.game.screen, 200) and self.game.keys["MOUSE DOWN"]:
+
+            cost_bar, afford = self.player_stats.get_cost_bar(10000)
+
+            if afford and self.game.keys["MOUSE DOWN"]:
                 self.camera_on = True
 
         if self.camera_on:

@@ -498,12 +498,6 @@ class Player:
             soft_back_animation()
             return_side_move()
 
-        '''test = pg.time.get_ticks()
-        up_animation()
-        if self.rect.y == 49:
-            print(test - self.last_update)
-            exit()'''
-
     def mathematical_calculations(self, Left=False, Right=False, SoftBack=False):
         if 250 <= self.rect.x <= 940:
             if Left:
@@ -571,7 +565,7 @@ class Player:
 
         speed = self.speed * (30 / self.max_speed)
 
-        if self.speed != 0:
+        if self.speed > 1:
             self.arrow_angle = (speed + (0 if self.speed < self.max_speed else self.vel_of_forward / 2.5)) * 6 - 15
 
         rotated_offset = offset_center_to_pivot.rotate(-self.arrow_angle)
@@ -581,4 +575,4 @@ class Player:
         rotated_image = pg.transform.rotate(image, -self.arrow_angle)
         rotated_image_rect = rotated_image.get_rect(center=rotated_image_center)
 
-        screen.blit(rotated_image, (rotated_image_rect.x + 85, rotated_image_rect.y + 85))
+        screen.blit(rotated_image, (rotated_image_rect.x, rotated_image_rect.y))

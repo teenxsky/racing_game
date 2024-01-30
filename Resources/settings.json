@@ -47,7 +47,7 @@
     {
       "cost": 500,
       "own": true,
-      "chosen": true,
+      "chosen": false,
       "name": "Dodge Srt Viper",
       "specs": {
         "speed": {
@@ -79,8 +79,8 @@
     },
     {
       "cost": 1000,
-      "own": false,
-      "chosen": false,
+      "own": true,
+      "chosen": true,
       "name": "Lamborghini Huracan",
       "specs": {
         "speed": {
@@ -107,8 +107,7 @@
       },
       "garage_size": 3.2,
       "topdown_size": 0.2,
-      "garage_car_y": 550,
-      "garage_car_x": 640
+      "garage_car_y": 550
     },
     {
       "cost": 2000,
@@ -145,20 +144,20 @@
     }
   ],
   "player_stats": {
-    "name": "pomet",
-    "level": 22,
-    "coins": 348085,
-    "score": 45650,
+    "name": "xues-os",
+    "level": 24,
+    "coins": 347002,
+    "score": 52895,
     "car_own": 1,
     "wins": 0,
-    "defeats": 39,
+    "defeats": 43,
     "distance_travelled": 0,
-    "crashed": 132,
-    "time_in_game": 30143038,
+    "crashed": 144,
+    "time_in_game": 31882180,
     "photo": 1
   },
   "current_bg": {
-    "menu_bg": "menu_bg_02",
+    "menu_bg": "garage_bg_02",
     "garage_bg": "garage_bg_01",
     "levels_bg": "levels_bg_01"
   },
@@ -225,8 +224,8 @@
     }
   ],
   "general_volume": 0.295,
-  "music_volume": 0.2925,
-  "sounds_volume": 0.2025,
+  "music_volume": 0.225,
+  "sounds_volume": 0.43,
   "song_number": 0,
   "songs": [
     [

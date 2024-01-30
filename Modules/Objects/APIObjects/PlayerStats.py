@@ -41,9 +41,17 @@ class PlayerStats:
         coin_rect = self.coins_sheets[self.frame].get_rect()
         coin_val = Text(str(settings.player_stats["coins"]), self.coins_scale * 10)
 
-        setattr(coin_rect, position, coordinates)
-        surface.blit(self.coins_sheets[self.frame], coin_rect)
-        coin_val.draw(surface, (coin_rect.midright[0] + 5, coin_rect.midright[1]), position="midleft")
+        bar_width = coin_rect.width + 10 + coin_val.rect.width
+        bar_height = max(coin_rect.height, coin_val.rect.height)
+        bar = pg.Surface((bar_width, bar_height), pg.SRCALPHA).convert_alpha()
+        coin_rect.midleft = (0, bar_height // 2)
+        bar.blit(self.coins_sheets[self.frame], coin_rect)
+        coin_val.draw(bar, (bar_width, bar_height // 2), position="midright")
+        bar_rect = bar.get_rect()
+
+        setattr(bar_rect, position, coordinates)
+
+        surface.blit(bar, bar_rect)
 
     def draw_level(self, surface, coordinates, position="center"):
         start_level = self.start_level
@@ -65,7 +73,7 @@ class PlayerStats:
                 break
 
         self.level_bar[curr_level].draw(surface, coordinates, position=position)
-        score.draw(surface, (self.level_bar[curr_level].rect.bottomright[0], self.level_bar[curr_level].rect.bottomright[1] + 10), position="topleft")
+        score.draw(surface, (self.level_bar[curr_level].rect.bottomright[0], self.level_bar[curr_level].rect.bottomright[1] + 10), position="topright")
 
     def increase_score(self, value):
         start_level = self.start_level
@@ -97,17 +105,9 @@ class PlayerStats:
         time = settings.player_stats["time_in_game"]
         return f'{(time // 86400000):03}' + ":" + f'{((time % 86400000) // 3600000):02}' + ":" + f'{((time % 3600000) // 60000):02}'
 
-    def show_cost(self, surface, cost, surface_topleft=(0, 0), position="midleft"):
-        bar = pg.Surface((80, 30), pg.SRCALPHA).convert_alpha()
+    def get_cost_bar(self, cost):
 
         cost_text = Text(str(cost), 20)
-
-        if cost <= settings.player_stats["coins"]:
-            bar.fill((76, 175, 80, 235))
-            afford = True
-        else:
-            bar.fill((213, 0, 0, 235))
-            afford = False
 
         current_time = pg.time.get_ticks()
         if current_time - self.last_update_mini >= 250:
@@ -117,14 +117,22 @@ class PlayerStats:
                 self.frame_mini = 0
 
         coin_rect = self.coins_sheets_mini[self.frame_mini].get_rect()
-        setattr(coin_rect, position, (7, bar.get_height() // 2))
 
-        x, y = surface_topleft
-        pos = list(pg.mouse.get_pos())
-        pos[0], pos[1] = pos[0] - x, pos[1] - y
+        bar = pg.Surface((coin_rect.width + cost_text.rect.width + 21, max(coin_rect.height, cost_text.rect.height) + 6), pg.SRCALPHA).convert_alpha()
+        bar_rect = bar.get_rect()
+
+        if cost <= settings.player_stats["coins"]:
+            bar.fill((76, 175, 80, 235))
+            afford = True
+        else:
+            bar.fill((213, 0, 0, 235))
+            afford = False
+
+        coin_rect.midleft = (7, bar_rect.height // 2)
 
         bar.blit(self.coins_sheets_mini[self.frame_mini], coin_rect)
-        cost_text.draw(bar, (bar.get_width() - 7, bar.get_height() // 2), position="midright")
-        surface.blit(bar, pos)
+        cost_text.draw(bar, (bar_rect.width - 7, bar_rect.height // 2), position="midright")
 
-        return afford
+        pos = pg.mouse.get_pos()
+
+        return [bar, (pos[0] + 10, pos[1] + 10)], afford
